@@ -1,7 +1,7 @@
 // initialize and connection function to firebase 
 import { initializeApp } from 'https://gstatic.com/firebasejs/firebase-app.js';
 // import the necessary functions
-import { getFirestore, collection, getDoc, addDoc, serverTimeStamp } from 'https://gstatic.com/firebasejs/firebase-app.js';
+import { getFirestore, collection, getDoc, addDoc, deleteDoc, doc, serverTimeStamp } from 'https://gstatic.com/firebasejs/firebase-app.js';
 
 // project configuration settings
 const firebaseConfig = {
@@ -19,24 +19,23 @@ const db = getFireStore();
 // adding elements to collection
 const colRef = collection(db, "bookmark");
 
-// add new event as user press the button
-const addForm = document.querySelector(".add");
-addForm.addEventListener("submit", event => {
-    event.preventDefault();
-
-    // get values enetered by the user
-    addDoc(colRef, {
-        link: addForm.link.value,
-        title:addForm.title.value,
-        category:addForm.category.value,
-        createdAt:serverTimeStamp();
-    })
-    // reset form after successful completion
-    .then( ()=> {
-        addForm.reset();
-        showCard();
-    }) 
-});
+// function to call when deleting a bookmark
+function deleteEvent(){
+        // all elements having delete button    
+        const deleteBtn = document.querySelector("i.delete");
+        // loop through each
+        // delete using the reference id
+        deleteBtn.forEach(button => {
+        button.addEventListener("click", event => {
+            const deleteRef = doc(db, "bookmark", button.dataset.id);
+            deleteDoc(deleteRef)
+                .then(() => {
+                    // remove entire card by moving up one parent block at a time 
+                    button.parentElement.parentElement.parentElement.remove();
+                })
+        })
+    });
+}
 
 // each instance new div is created when new info is added
 function generateTemplate(response, id){
@@ -66,6 +65,8 @@ function showCard(){
         data.docs.forEach(document => {
             // add each newly card
             cards.innerHTML += generateTemplate(document.data(), document.id);
+            // call delete function here as without loading card first delete button is not seen
+            deleteEvent();
         })
     })
     .catch(error => {
@@ -74,3 +75,22 @@ function showCard(){
 }
 
 showCard();
+
+// add new event as user press the button
+const addForm = document.querySelector(".add");
+addForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    // get values enetered by the user
+    addDoc(colRef, {
+        link: addForm.link.value,
+        title:addForm.title.value,
+        category:addForm.category.value,
+        createdAt:serverTimeStamp();
+    })
+    // reset form after successful completion
+    .then( ()=> {
+        addForm.reset();
+        showCard();
+    }) 
+});
