@@ -16,3 +16,16 @@ function submitTopic(){
     document.getElementById("topicTitle").style.display = topic;
 }
 
+// function to add new item
+function addItem(type){
+    const input = document.getElementById("itemInput");
+    const text = input.value.trim();
+
+    // stop function if empty
+    if(text==="") return;
+    // display item on page
+    renderItem(text, type);
+    // clear inout box
+    input.value="";
+    updateScore();
+}
