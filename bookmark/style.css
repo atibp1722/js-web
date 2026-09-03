@@ -161,6 +161,22 @@
     cursor: pointer;
 }
 
+.card .sub-info .category.netflix{
+    background-color: red;
+}
+
+.card .sub-info .category.youtube{
+    background-color: maroon;
+}
+
+.card .sub-info .category.prime{
+    background-color: skyblue;
+}
+
+.card .sub-info .category.other{
+    background-color: burlywood;
+}
+
 @media(max-width:800px){
     .create .add{
         flex-direction: column;

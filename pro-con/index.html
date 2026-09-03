@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro and Con List Maker</title>
+    <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="topic-section" id="topicSection">
+        <h1>What is your topic?</h1>
+        <input type="text" id="topicInput" placeholder="e.g. Should I try new things?">
+        <button onclick="submitTopic()">Submit</button>
+    </div>
+
+    <div id="appContent">
+        <h2 class="topic-title" id="topicTitle"></h2>
+        <div class="input-section">
+            <input type="text" id="itemInput" placeholder="Type a valid point.">
+            <button onclick="addItem('pros')">Add To Pros</button>
+            <button onclick="addItem('cons')">Add To Cons</button>
+        </div>
+        <div class="list-container">
+            <div class="list">
+                <h2>Pros</h2>
+                <ul id="prosList"></ul>
+            </div>
+            <div class="list">
+                <h2>Cons</h2>
+                <ul id="consList"></ul>
+            </div>
+        </div>
+
+        <div class="scoreboard" id="scoreboard">
+            Pros: 0 | Cons: <br>
+            You decide!
+        </div>
+    </div>
+</body>
+</html>
