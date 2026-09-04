@@ -2,7 +2,7 @@
 const canvas = document.getElementById("game")
 const ctx = canvas.getContext('2d');
 
-// indiviual snake block taht is to be incremented as game progresses
+// indiviual snake block that is to be incremented as game progresses
 class SnakePart{
     constructor(x, y){
         this.x = x;
@@ -31,14 +31,85 @@ let appleY = 5;
 let xVelocity = 0;
 let yVelocity = 0;
 
+// score variable
+let score = 0;
+
+// add sound every time collided with apple
+const sound = new Audio("gulp.wav");
+
 // game loop
 function drawGame(){
-    clearScreen();
     changeSnakePosition();
+
+    let result = isGameOver();
+    if(result){
+        return;
+    }
+
+    clearScreen();
     checkAppleCollision();
     drawApple();
     drawSnake();
+    drawScore();
+
+    // increase game speed when certain scored reached
+    if(score > 5){
+        speed = 10;
+    }
+    if(score > 10){
+        speed = 12;
+    }
+    
     setTimeout(drawGame, 1000/speed);
+}
+
+// function for various game over scenarios
+function isGameOver(){
+    let gameOver = false;
+
+    // stop from being game over at very beginning
+    if(xVelocity === 0 && yVelocity === 0){
+        return false;
+    }
+
+    // check if collided with wall horizontally
+    if (headX < 0){
+        gameOver = true;
+    }
+    else if (headX === tileCount){
+        gameOver = true;
+    }
+    // check if collided with wall vertically
+    else if (headY < 0){
+        gameOver = true;
+    }
+    else if (headY === tileCount){
+        gameOver = true;
+    }
+
+    // condition for game over after touch itself
+    for(let i = 0; i<snakeParts.length; i++){
+        let part = snakeParts[i];
+        if(part.x === headX && part.y === headY){
+            gameOver = true;
+            break;
+        }
+    }
+    
+    if(gameOver){
+        // game over message display
+        ctx.fillStyle = 'red';
+        ctx.font = "48px Arial";
+        ctx.fillText("Sorry, game over!", canvas.width/6.5, canvas.height/2);
+    }
+    return gameOver;
+}
+
+// function to display user score on top of canvas
+function drawScore(){
+    ctx.fillStyle = 'white';
+    ctx.font = "11px Arial";
+    ctx.fillText("Score: "+score, canvas.width-50, 10);
 }
 
 function clearScreen(){
@@ -47,10 +118,6 @@ function clearScreen(){
 }
 
 function drawSnake(){
-    // put the snake in the middle of the canvas
-    ctx.fillStyle = 'white';
-    ctx.fillRect(headX*tileCount, headY*tileCount, tileSize, tileSize);
-
     ctx.fillStyle = 'green';
     // loop through snake and draw additional body
     for(let i=0; i<snakeParts.length; i++){
@@ -61,9 +128,14 @@ function drawSnake(){
     // add current position
     snakeParts.push(new SnakePart(headX, headY));
     // remove if larger than allowed length
-    if(snakeParts.length>tailLength){
+    while(snakeParts.length > tailLength){
         snakeParts.shift();
     }
+
+    // put the snake in the middle of the canvas
+    ctx.fillStyle = 'white';
+    ctx.fillRect(headX*tileCount, headY*tileCount, tileSize, tileSize);
+
 }
 
 function drawApple(){
@@ -78,6 +150,9 @@ function checkAppleCollision(){
         appleX = Math.floor(Math.random()*tileCount);
         appleY = Math.floor(Math.random()*tileCount);
         tailLength++;
+        // update score with every apple collided with
+        score++;
+        sound.play();
     }
 }
 
