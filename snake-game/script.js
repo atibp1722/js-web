@@ -37,12 +37,49 @@ let score = 0;
 // add sound every time collided with apple
 const sound = new Audio("gulp.wav");
 
+// store keyboard direction
+let inputXVelocity = 0;
+let inputYVelocity = 0;
+
+// track previous direction of the head
+let prevXVelocity = 0;
+let prevYVelocity = 0; 
+
 // game loop
 function drawGame(){
+    xVelocity = inputXVelocity;
+    yVelocity = inputYVelocity;
+
+    // while going right, prevent from going left
+    if(prevXVelocity === 1 && xVelocity === -1){
+        xVelocity = prevXVelocity;
+    }
+
+    // while going left, prevent from going right
+    if(prevXVelocity === -1 && xVelocity === 1){
+        xVelocity = prevXVelocity;
+    }
+
+    // while going up, prevent from going down
+    if(prevYVelocity === -1 && yVelocity === 1){
+        yVelocity = prevYVelocity;
+    }
+
+    // while going down, prevent from going up
+    if(prevYVelocity === 1 && yVelocity === -1){
+        yVelocity = prevYVelocity;
+    }
+
+    // store current head position before next refresh
+    prevXVelocity = xVelocity;
+    prevYVelocity = yVelocity;
+
     changeSnakePosition();
 
     let result = isGameOver();
     if(result){
+        // stop input after game over
+        document.body.removeEventListener("keydown", keyDown);
         return;
     }
 
@@ -173,8 +210,6 @@ document.body.addEventListener("keydown", keyDown);
 function keyDown(event){
     // up arrow pressed
     if(event.keyCode == 38){
-        if(yVelocity == 1)
-            return;
         // move up
         yVelocity = -1;
         // stop horizontal movement
@@ -182,15 +217,11 @@ function keyDown(event){
     }
     // down arrow pressed
     if(event.keyCode == 40){
-        if(yVelocity == -1)
-            return;
         yVelocity = 1;
         xVelocity = 0;
     }
     // left arrow pressed
     if(event.keyCode == 37){
-        if(xVelocity == 1)
-            return;
         // stop vertical movement
         yVelocity = 0;
         // move left
@@ -198,8 +229,6 @@ function keyDown(event){
     }
     // right arrow pressed
      if(event.keyCode == 39){
-        if(xVelocity == -1)
-            return;
         yVelocity = 0;
         xVelocity = 1;
     }
