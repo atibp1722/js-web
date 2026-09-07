@@ -69,7 +69,7 @@ pauseButton.addEventListener(
     (pauseVideo = () => {
         myVideo.pause();
         pauseButton.classList.add("hide");
-        pauseButton.classList.remove("hide");
+        playButton.classList.remove("hide");
     })
 );
 
@@ -77,3 +77,43 @@ pauseButton.addEventListener(
 playBackContainer.addEventListener("click", () => {
     playBackSpedOptions.classList.remove("hide");
 })
+
+// user click anywhere else
+window.addEventListener("click", (e) => {
+    // if inside the container
+    if(playBackContainer.contains(e.target)){
+        // hide speed options
+        playBackSpedOptions.classList.add("hide");
+        // check if cliked in playback speed
+    }else if (playBackSpedOptions.contains(e.target)){
+        // hide speed options
+        playBackSpedOptions.classList.add("hide");
+    }
+})
+
+// change video playback speed
+const setPlayback = (value) => {
+    playbackSpeedButton.innerText = value + "x";
+    // change playback speed
+    myVideo.playbackRate = value;
+};
+
+// mute the video
+const muter = () => {
+    // show mute icon
+    mute.classList.remove("hide");
+    // hide other sound based icons
+    high.classList.add("hide");
+    low.classList.add("hide");
+    // update volume to 0
+    myVideo.volume = 0;
+    volumeNum.innerHTML = 0;
+    volumeRange.value = 0;
+    // update slider color
+    slider();
+};
+
+// high and low volume button clicked
+high.addEventListener("click", muter);
+low.addEventListener("click", muter);
+
