@@ -94,11 +94,26 @@ translateBtn.addEventListener("click", ()=> {
             return morseChars
                 .map((morseChar) => {
                     // if morse code not found, keep original character
+                    // by looking up morseCode object
                     return reverseMorseCode[morseChar] || morseChar;
             })
             .join("");
         });
         // join all the translated words
         outputField.textContent = translateWords.join(" ");
+    // case when convert normal text to morse code 
+    }else{
+        const words = inputTxt.split(" ");
+        // convert each code to morse code
+        const translateWords = words.map((word) => {
+            const chars = word.split("");
+            // convert each char to morse code
+            // look up char in morseCode object
+            const morseChars = chars.map((char) => {
+                return morseCode[char] || char;
+            });
+            return morseChars.join("");
+        });
+        outputField.textContent = translateWords.join("/");
     }
 });
