@@ -15,7 +15,7 @@ let mute = document.getElementById("mute");
 let sizeScreen = document.getElementById("size-screen");
 let screenCompress = document.getElementById("screen-compress");
 let screenExpand = document.getElementById("screen-expand");
-let currentProgress = document.getElementById("current-progreess");
+let currentProgress = document.getElementById("current-progress");
 let currentTimeRef = document.getElementById("current-time");
 let maxDuration = document.getElementById("max-duration");
 let progressBar = document.getElementById("progress-bar");
@@ -26,7 +26,8 @@ let playBackSpedOptions = document.querySelector(".playback-options");
 // function for volume percentage
 // remaining volume slider color based on draggin action
 function slider(){
-    valPercent = (volumeRange.value / volumeRange.max)*100;
+    valPercent = 
+        (volumeRange.value / volumeRange.max)*100;
     volumeRange.style.background = `linear-gradient(to right, #2887e3 ${valPercent}%, #000000 ${valPercent}%)`;
 }
 
@@ -74,22 +75,19 @@ pauseButton.addEventListener(
 );
 
 // when playback container clicked, show playback speed options
-playBackContainer.addEventListener("click", () => {
-    playBackSpedOptions.classList.remove("hide");
-})
+playBackContainer.addEventListener("click", (event) => {
+    event.stopPropagation();
+    playBackSpedOptions.classList.toggle("hide");
+});
 
 // user click anywhere else
-window.addEventListener("click", (e) => {
+window.addEventListener("click", (event) => {
     // if inside the container
-    if(playBackContainer.contains(e.target)){
-        // hide speed options
-        playBackSpedOptions.classList.add("hide");
-        // check if cliked in playback speed
-    }else if (playBackSpedOptions.contains(e.target)){
+    if(!playBackContainer.contains(event.target)){
         // hide speed options
         playBackSpedOptions.classList.add("hide");
     }
-})
+});
 
 // change video playback speed
 const setPlayback = (value) => {
@@ -119,9 +117,9 @@ low.addEventListener("click", muter);
 
 // volume value from slider
 volumeRange.addEventListener("input", () => {
-    let volumeValue = volumeRange.value / 100;
+    const volumeValue = Number(volumeRange.value);
     // set actual volume
-    myVideo.volume = volumeValue;
+    myVideo.volume = volumeValue / 100;
     volumeNum.innerHTML = volumeRange.value;
     // condition to change volume icon based on volume value
     // low condition
@@ -130,11 +128,12 @@ volumeRange.addEventListener("input", () => {
         high.classList.add("hide");
         mute.classList.add("hide");
         // high condition
-    }else if (volumeRange.value < 50){
+    }else if (volumeRange.value > 50){
         low.classList.remove("hide");
         high.classList.add("hide");
         mute.classList.add("hide");
     }
+    slider();
 });
 
 // full screen button action
@@ -173,9 +172,9 @@ function exitHandler(){
         // check whether browser full screen or not
         if(
             !document.fullscreenElement &&
-            !document.webKitIsFullScreen &&
-            !document.mozFullScreen &&
-            !document.mozFullScreenElement
+            !document.webkitFullscreenElement  &&
+            !document.mozFullScreenElement  &&
+            !document.msFullscreenElement
         )    {
             //return to normal size screen
             normalScreen();
@@ -234,6 +233,7 @@ function exitHandler(){
         let coordEnd = !isTouchDevice() ? event.clientX : event.touches[0].clientX;
         // calculate difference from progress bar
         let progress = (coordEnd - coordStart) / progressBar.offsetWidth;
+        progress = Math.max(0, Math.min(1, progress));
         currentProgress.style.width = progress * 100 + "%";
         // jump to the time
         myVideo.currentTime = progress * myVideo.duration;
