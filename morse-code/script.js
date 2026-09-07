@@ -77,15 +77,16 @@ const translateBtn = document.getElementById("translate");
 const outputField = document.getElementById("output");
 
 translateBtn.addEventListener("click", ()=> {
-    const inputTxt = inputField.value.trim.toUpperCase();
+    const inputTxt = inputField.value.trim().toUpperCase();
     // check if field empty
     if(inputField === ""){
-        outputField.textContent = "Sorry, please provide input for translation!!";
+        outputField.textContent = 
+            "Sorry, please provide input for translation!!";
         return;
     }
 
     // if input is dot
-    if(inputTxt.includes(".")){
+    if (/^[.\-/\s]+$/.test(inputTxt)){
         const morseWords = inputTxt.split("/");
         // convert each to normal text
         const translateWords = morseWords.map((morseWord) => {
@@ -116,4 +117,5 @@ translateBtn.addEventListener("click", ()=> {
         });
         outputField.textContent = translateWords.join("/");
     }
+    inputField.value = "";
 });
