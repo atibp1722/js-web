@@ -198,11 +198,34 @@ function exitHandler(){
     })
     );
 
+    // convert video time into a format
     const timeFormatter = (timeInput) => {
+        // convert seconds to minutes
         let minute = Math.floor(timeInput/60);
+        // add 0 before a single digit number
         minute = minute < 10 ? "0" + minute : minute;
+        // get the remaining seconds
         let second = Math.floor(timeInput%60);
         second = second < 10 ? "0" + second : second;
         return `${minute}:${second}`;
-    }
+    };
+
+    // set intreval to refresh every second
+    setInterval (() => {
+        myVideo.currentTime;
+        // convert and dispaly time in the format on screen
+        currentTimeRef.innerHTML = timeFormatter(myVideo.currentTime);
+        // calculate width of video already played
+        currentProgress.style.width = (myVideo.currentTime / myVideo.duration.toFixed(3)) * 100 + "%";
+    }, 1000);
+
+    myVideo.addEventListener("timeupdate", () => {
+        // get and write time on screen in format
+        currentTimeRef.innerText = timeFormatter(myVideo.currentTime);
+    });
+
+    isTouchDevice();
+    progressBar.addEventListener(events[deviceType].click, (event) => {
+
+    })
 }
