@@ -76,3 +76,29 @@ const inputField = document.getElementById("input");
 const translateBtn = document.getElementById("translate");
 const outputField = document.getElementById("output");
 
+translateBtn.addEventListener("click", ()=> {
+    const inputTxt = inputField.value.trim.toUpperCase();
+    // check if field empty
+    if(inputField === ""){
+        outputField.textContent = "Sorry, please provide input for translation!!";
+        return;
+    }
+
+    // if input is dot
+    if(inputTxt.includes(".")){
+        const morseWords = inputTxt.split("/");
+        // convert each to normal text
+        const translateWords = morseWords.map((morseWord) => {
+            // convert to an array
+            const morseChars = morseWord.split(" ");
+            return morseChars
+                .map((morseChar) => {
+                    // if morse code not found, keep original character
+                    return reverseMorseCode[morseChar] || morseChar;
+            })
+            .join("");
+        });
+        // join all the translated words
+        outputField.textContent = translateWords.join(" ");
+    }
+});
