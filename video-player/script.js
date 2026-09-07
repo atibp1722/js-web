@@ -117,3 +117,55 @@ const muter = () => {
 high.addEventListener("click", muter);
 low.addEventListener("click", muter);
 
+// volume value from slider
+volumeRange.addEventListener("input", () => {
+    let volumeValue = volumeRange.value / 100;
+    // set actual volume
+    myVideo.volume = volumeValue;
+    volumeNum.innerHTML = volumeRange.value;
+    // condition to change volume icon based on volume value
+    // low condition
+    if (volumeRange.value < 50){
+        low.classList.remove("hide");
+        high.classList.add("hide");
+        mute.classList.add("hide");
+        // high condition
+    }else if (volumeRange.value < 50){
+        low.classList.remove("hide");
+        high.classList.remove("hide");
+        mute.classList.add("hide");
+    }
+});
+
+// full screen button action
+screenExpand.addEventListener("click", () => {
+    // show/hide appropiate icons
+    screenCompress.classList.remove("hide");
+    screenExpand.classList.add("hide");
+    // request full screen mode
+    videoContainer
+        .requestFullscreen()
+        .catch((err) => alert("Sorry, full scree not supported"));
+    if (isTouchDevice){
+        // fallback options if browser option fail
+        let screenOrientation = 
+            screen.orientation || screen.mozOrientation || screen.msOrientation;
+            // check if in portait mode
+        if (screenOrientation.type == "potrait-primary"){
+            pauseVideo();
+            // show rotate device
+            rotateContainer.classList.remove("hide");
+            // hide message after 3 seconds
+            const timeOut = setTimeout(() => {
+                rotateContainer.classList.add("hide");
+            }, 3000);
+        }
+    }
+});
+
+// exit event handlers for full screen 
+document.addEventListener("fullscreenchange", exitHandler);
+document.addEventListener("webkitfullscreenchange", exitHandler);
+document.addEventListener("mozfullscreenchange", exitHandler);
+document.addEventListener("MSFullscreenchange", exitHandler);
+
