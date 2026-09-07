@@ -132,7 +132,7 @@ volumeRange.addEventListener("input", () => {
         // high condition
     }else if (volumeRange.value < 50){
         low.classList.remove("hide");
-        high.classList.remove("hide");
+        high.classList.add("hide");
         mute.classList.add("hide");
     }
 });
@@ -146,12 +146,12 @@ screenExpand.addEventListener("click", () => {
     videoContainer
         .requestFullscreen()
         .catch((err) => alert("Sorry, full scree not supported"));
-    if (isTouchDevice){
+    if (isTouchDevice()){
         // fallback options if browser option fail
         let screenOrientation = 
             screen.orientation || screen.mozOrientation || screen.msOrientation;
             // check if in portait mode
-        if (screenOrientation.type == "potrait-primary"){
+        if (screenOrientation.type == "portrait-primary"){
             pauseVideo();
             // show rotate device
             rotateContainer.classList.remove("hide");
@@ -169,3 +169,40 @@ document.addEventListener("webkitfullscreenchange", exitHandler);
 document.addEventListener("mozfullscreenchange", exitHandler);
 document.addEventListener("MSFullscreenchange", exitHandler);
 
+function exitHandler(){
+    // check whether browser full screen or not
+    if(
+        !document.fullscreenElement &&
+        !document.webKitIsFullScreen &&
+        !document.mozFullScreen &&
+        !document.mozFullScreenElement
+    )    {
+        //return to normal size screen
+        normalScreen();
+    }
+
+    // exiting the full screen
+    screenCompress.addEventListener("click", (normalScreen = () => {
+        screenCompress.classList.add("hide");
+        screenExpand.classList.remove("hide");
+        // exit full screen using various methods
+        if (document.fullscreenElement){
+            if (document.exitFullscreen){
+                document.exitFullscreen();
+            }else if(document.mozCancelFullScreen){
+                document.mozCancelFullScreen();
+            }else if(document.webKitExitFullScreen){
+                document.webKitExitFullScreen();
+            }
+        }
+    })
+    );
+
+    const timeFormatter = (timeInput) => {
+        let minute = Math.floor(timeInput/60);
+        minute = minute < 10 ? "0" + minute : minute;
+        let second = Math.floor(timeInput%60);
+        second = second < 10 ? "0" + second : second;
+        return `${minute}:${second}`;
+    }
+}
