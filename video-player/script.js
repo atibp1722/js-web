@@ -170,15 +170,16 @@ document.addEventListener("mozfullscreenchange", exitHandler);
 document.addEventListener("MSFullscreenchange", exitHandler);
 
 function exitHandler(){
-    // check whether browser full screen or not
-    if(
-        !document.fullscreenElement &&
-        !document.webKitIsFullScreen &&
-        !document.mozFullScreen &&
-        !document.mozFullScreenElement
-    )    {
-        //return to normal size screen
-        normalScreen();
+        // check whether browser full screen or not
+        if(
+            !document.fullscreenElement &&
+            !document.webKitIsFullScreen &&
+            !document.mozFullScreen &&
+            !document.mozFullScreenElement
+        )    {
+            //return to normal size screen
+            normalScreen();
+        }
     }
 
     // exiting the full screen
@@ -225,7 +226,28 @@ function exitHandler(){
     });
 
     isTouchDevice();
+    // listener on progress bar
     progressBar.addEventListener(events[deviceType].click, (event) => {
+        // get the coordinates relative to browser
+        let coordStart = progressBar.getBoundingClientRect().left;
+        // get coordinate where action occured
+        let coordEnd = !isTouchDevice() ? event.clientX : event.touches[0].clientX;
+        // calculate difference from progress bar
+        let progress = (coordEnd - coordStart) / progressBar.offsetWidth;
+        currentProgress.style.width = progress * 100 + "%";
+        // jump to the time
+        myVideo.currentTime = progress * myVideo.duration;
+        // start playing after reaching that time
+        myVideo.play();
+        pauseButton.classList.remove("hide");
+        playButton.classList.add("hide");
+    });
 
-    })
-}
+    // page loading
+    window.onload = () => {
+        // wait till meta data loaded
+        myVideo.onloadedmetadata = () => {
+            maxDuration.innerText = timeFormatter(myVideo.duration);
+        };
+        slider();
+    };
