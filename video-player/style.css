@@ -179,3 +179,62 @@ input[type="range"]::-webkit-slider-thumb{
     display: block;
 }
 
+@media all and (display-mode: fullscreen) {
+  .container {
+    padding: 0;
+  }
+  .video-container {
+    width: 100%;
+    margin: 0;
+  }
+  .controls {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+  }
+  #progress-bar {
+    width: 80%;
+  }
+  .song-timer {
+    width: 20%;
+    font-size: 1.2em;
+  }
+  .fa-solid {
+    color: #dddddd;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .video-container,
+  .controls {
+    width: 100%;
+  }
+  span {
+    display: inline;
+  }
+  #progress-bar {
+    width: 60%;
+  }
+  .song-timer {
+    width: 40%;
+    font-size: 0.9em;
+  }
+  .fa-solid {
+    font-size: 1rem;
+  }
+  .control-btn,
+  #screen-expand,
+  #screen-compress {
+    width: 2em;
+    height: 1.5em;
+  }
+}
+
+@media only screen and (max-width: 768px) and (display-mode:fullscreen){
+    .video-container{
+        margin-top:50%;
+    }
+}
