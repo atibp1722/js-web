@@ -156,6 +156,7 @@ let container = document.querySelector(".container");
 let winScreen = document.querySelector(".win-screen");
 let submitBtn = document.querySelector(".submit");
 // game related variables
+let inputBox;
 let inputCount, inputRow, tryCount;
 let backSpaceCount = 0;
 let randWord, finalWord;
@@ -178,7 +179,6 @@ const startGame = async() => {
     // clear the game container
     container.innerHTML = "";
     inputCount = 0;
-    successCount = 0;
     tryCount = 0;
     finalWord = "";
 
@@ -200,7 +200,7 @@ const startGame = async() => {
     // select input box elements
     inputBox = document.querySelectorAll(".input-box");
     // enable first input of first row
-    updateDivConfig(inputRow[tryCount].firstChild, false);
+    updateDivConfig(inputRow[0].firstChild, false);
     randWord = getRandomWord();
     console.log(randWord);
 };    
@@ -230,24 +230,25 @@ const checker = async(e) => {
             finalWord += value;
             // if not so enable the next input box
             if (inputCount <4 ){
-                updateDivConfig(e.target.nextSibling, false);
+                updateDivConfig(e.target.nextElementSibling, false);
             }
         }
         inputCount += 1;
+        updateDivConfig(e.target, true);
     // empty input and backspace pressed
     }else if (value.length == 0 && e.key == "Backspace"){
         // remove last chracter from the word
         finalWord = finalWord.substring(0, finalWord.length-1);
-        // if already on first box then eable it
+        // if already on first box then enable it
         if (inputCount == 0){
             updateDivConfig(e.target, false);
             return false;
         }
         // disable current box
         updateDivConfig(e.target, true);
-        e.traget.previousSibling.value = "";
+        e.target.previousElementSibling.value = "";
         // enable previous input box
-        updateDivConfig(e.target.previousSibling, false);
+        updateDivConfig(e.target.previousElementSibling, false);
         // move back 1 position
         inputCount -= 1;
     }
@@ -272,7 +273,10 @@ const validateWord = async() => {
         }
     });
     // terminate if not exist
-    if (failed){
+    if (failed) {
+        if (isTouchDevice()) {
+            submitBtn.classList.remove("hide");
+        }
         return false;
     }
     // track words in correct position
@@ -288,7 +292,7 @@ const validateWord = async() => {
             // remember the place of correct word
             successLetters += randWord[i];
         // letter not in correct position
-        // but can exist somewhere withi the random word 
+        // but can exist somewhere within the random word 
         }else if (randWord.includes(finalWord[i]) && !successLetters.includes(finalWord[i])){
             // activate the exists class
             currentInputs[i].classList.add("exists");
@@ -326,4 +330,4 @@ const validateWord = async() => {
     inputCount = 0;
 };
 
-window.onload = startGame();
+window.onload = startGame;
