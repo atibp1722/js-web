@@ -218,4 +218,38 @@ const getRandomWord = () =>
     }
 };
 
-const 
+// checker to handle input and backspace
+const checker = async(e) => {
+    // value typed into box and then disable the box
+    let value = e.target.value.toUpperCase();
+    updateDivConfig(e.target, true);
+    // check if 1 character
+    if (value.length == 1){
+        // not more than 5 words and backspace not pressed
+        if (inputCount <=4 && e.key != "Backspace"){
+            finalWord += value;
+            // if not so enable the next input box
+            if (inputCount <4 ){
+                updateDivConfig(e.target.nextSibling, false);
+            }
+        }
+        inputCount += 1;
+    // empty input and backspace pressed
+    }else if (value.length == 0 && e.key == "Backspace"){
+        // remove last chracter from the word
+        finalWord = finalWord.substring(0, finalWord.length-1);
+        // if already on first box then eable it
+        if (inputCount == 0){
+            updateDivConfig(e.target, false);
+            return false;
+        }
+        // disable current box
+        updateDivConfig(e.target, true);
+        e.traget.previousSibling.value = "";
+        // enable previous input box
+        updateDivConfig(e.target.previousSibling, false);
+        // move back 1 position
+        inputCount -= 1;
+    }
+};
+
