@@ -253,3 +253,77 @@ const checker = async(e) => {
     }
 };
 
+// game comparison logic
+const validateWord = async() => {
+    if (isTouchDevice()){
+        submitBtn.classList.add("hide");
+    }
+    let failed = false;
+    // get the row currently in play
+    let currentInputs = inputRow[tryCount].querySelectorAll(".input-box");
+    // word exists check
+    await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${finalWord}`
+    ).then ((response) => {
+        if (response.status == "404"){
+            console.clear();
+            alert("Soory, the word does not exist.");
+            failed = true;
+        }
+    });
+    // terminate if not exist
+    if (failed){
+        return false;
+    }
+    // track words in correct position
+    let successCount = 0;
+    // prevent duplication
+    let successLetters = "";
+    // loop through random word
+    for (let i in randWord){
+        if (finalWord[i] == randWord[i]){
+            // change color if correct
+            currentInputs[i].classList.add("correct");
+            successCount += 1;
+            // remember the place of correct word
+            successLetters += randWord[i];
+        // letter not in correct position
+        // but can exist somewhere withi the random word 
+        }else if (randWord.includes(finalWord[i]) && !successLetters.includes(finalWord[i])){
+            // activate the exists class
+            currentInputs[i].classList.add("exists");
+        // not in corerct position or in the word altogether
+        }else{
+            currentInputs[i].classList.add("incorrect");
+        }
+    }
+    // tracking the user attempts
+    tryCount += 1;
+    if (successCount == 5){
+        setTimeout(() => {
+            winScreen.classList.remove("hide");
+            // display number of guesses
+            winScreen.innerHTML = `<span>Total guesses: ${tryCount}</span>
+                                   <button onclick="startGame()">New Game</button>
+                                  `;
+        }, 1000);
+    // reset counter for next row    
+    } else {
+        inputCount = 0;
+        finalWord = "";
+        // all avaiable attempts used
+        if (tryCount == 6){
+            tryCount = 0;
+            winScreen.classList.remove("hide");
+            // loosing message display
+            winScreen.innerHTML = `<span>You lose!</span>
+                                <button onclick="startGame()">New Game</button>`;
+            return false;
+        }
+        // enable first box of next row
+        updateDivConfig(inputRow[tryCount].firstChild, false);
+    }
+    inputCount = 0;
+};
+
+window.onload = startGame();
