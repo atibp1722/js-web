@@ -181,5 +181,41 @@ const startGame = async() => {
     successCount = 0;
     tryCount = 0;
     finalWord = "";
+
+    // create the game grid
+    for (let i=0; i<6; i++){
+        // element for each row
+        let inputGroup = document.createElement("div");
+        inputGroup.classList.add("input-group");
+        // boxes inside the row
+        for (let j=0; j<5; j++){
+            // add input box on current row
+            inputGroup.innerHTML += `<input type="text" class="input-box" onkeyup="checker(event)" maxlength="1" disabled>`;
+        }
+        // add it to game container window
+        await container.appendChild(inputGroup);
+    }
+    // select all rows
+    inputRow = document.querySelectorAll(".input-group");
+    // select input box elements
+    inputBox = document.querySelectorAll(".input-box");
+    // enable first input of first row
+    updateDivConfig(inputRow[tryCount].firstChild, false);
+    randWord = getRandomWord();
+    console.log(randWord);
+};    
+
+// get a random word
+const getRandomWord = () => 
+    words[Math.floor(Math.random() * words.length)].toUpperCase();
+    // enable/disable input box 
+    const updateDivConfig = (element, disabledStatus) => {
+        // set disabled status
+        element.disabled = disabledStatus;
+        if (!disabledStatus){
+            // put coursor focus on input
+            element.focus();
+    }
 };
 
+const 
