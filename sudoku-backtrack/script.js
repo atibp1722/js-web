@@ -46,3 +46,48 @@ let su_answer = undefined;
 // no cell currently selected
 let selected_cell = -1;
 
+// creating a new game grid
+const newGrid = (size) => {
+    // creating rows for the game grid
+    let arr = new Array(size);
+    for(let i=0; i<size; i++){
+        arr[i] = new Array(size);
+    }
+    // fill the rows
+    for(let i=0; i<Math.pow(size, 2); i++){
+        // gives the rows and columns of the game grid
+        arr[Math.floor(i / size)][i % size] = CONSTANT.UNASSIGNED;
+    }
+    return arr;
+};
+
+// check if duplicates exist in column
+const isColSafe = (grid, col, value) => {
+    // iterate through every row
+    for(let row=0; row<CONSTANT.GRID_SIZE; row++){
+        // if value already exist cannot repeat at the location
+        if (grid[row][col] === value) return false;
+    }
+    return true;
+};
+
+// check if duplicates exist in row
+const isRowSafe = (grid, row, value) => {
+    // iterate through every column
+    for(let col=0; col<CONSTANT.GRID_SIZE; col++){
+        if (grid[row][col] === value) return false;
+    }
+    return true;
+};
+
+// check if duplicates exist in 3x3 box
+const isBoxSafe = (grid, box_row, box_col, value) => {
+    // iterate through rows and columns inside the box
+    for(let row=0; row<CONSTANT.BOX_SIZE; row++){
+        for(let col=0; col<CONSTANT.BOX_SIZE; col++){
+            if (grid[row + box_row][col + box_col] === value) return false;
+        }
+    }
+    return true;
+};
+
