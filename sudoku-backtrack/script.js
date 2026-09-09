@@ -364,3 +364,79 @@ const resetBg = () => {
     cells.forEach((e) => e.classList.remove("hover"));
 };
 
+// check for duplicates
+const checkErr = (value) => {
+    // check one cell at a time
+    const addErr = (cell) => {
+        // convert string to number
+        // refresh error after half second
+        if (parseInt(cell.getAttribute("data-value")) === value){
+            cell.classList.add("err");
+            cell.classList.add("cell-err");
+            setTimeout(() => {
+                cell.classList.remove("err");
+            }, 500);
+        }
+    };
+
+    // get current cell
+    let index = selected_cell;
+
+    // find its row and colum position
+    let row = Math.floor(index / CONSTANT.GRID_SIZE);
+    let col = index % CONSTANT.GRID_SIZE;
+
+    // finds its position within 3x3 box
+    let box_start_row = row - (row%3);
+    let box_start_col = col - (col%3);
+
+    // check the box
+    for(let i=0; i<CONSTANT.BOX_SIZE; i++){
+        for(let j=0; j<CONSTANT.BOX_SIZE; j++){
+            // dont mark the selected cell
+            let cell = cells[9 * (box_start_row + i) + (box_start_col + j)];
+            if (!cell.classList.contains("selected")) addErr(cell);
+        }
+    }
+
+    // check above
+    let step = 9;
+    while (index - step >= 0){
+        addErr(cells[index - step]);
+        step += 9;
+    }
+
+    // check below
+    step = 9;
+    while (index + step < 81){
+        addErr(cells[index + step]);
+        step += 9;
+    }
+
+    // check left
+    step = 1;
+    while (index - step >= 9 * row ){
+        addErr(cells[index - step]);
+        step += 1;
+    }
+
+    // check right
+    step = 1;
+    while (index + step < 9 * row+9 ){
+        addErr(cells[index + step]);
+        step += 1;
+    }
+};
+
+// check whether game is won
+const isGameWin = () => sudokuCheck(su_answer);
+
+// show the result screen
+const showResult = () => {
+    // stop timer
+    clearInterval(timer);
+    // activate result screen
+    result_screen.classList.add("active");
+    // show time taken to complete game
+    result_time.innerHTML = showTime(seconds);
+};
