@@ -149,3 +149,70 @@ const isFullGrid = (grid) => {
     });
 };
 
+// backtracking to solve a game grid
+const sudokuCreate = (grid) => {
+    // object to store position of empty cell
+    let unassigned_pos = {
+        row: -1,
+        col: -1,
+    };
+
+    //find empty cell in the grid
+    if (!findUnassignedPos(grid, unassigned_pos)) return true;
+    // shuffle the numbers in the array
+    let number_list = shuffleArray([...CONSTANT.NUMBERS]);
+
+    // get row and column of empty cell
+    let row = unassigned_pos.row;
+    let col = unassigned_pos.col;
+
+    // try and check if a number can be put safely at current position 
+    number_list.forEach((num, i) => {
+        if (isSafe(grid, row, col, num)){
+            // place number in empty cell
+            grid[row][col] = num;
+            // check if game grid is full
+            if (isFullGrid(grid)){
+                // then puzzle is complete
+                return true;
+            } else {
+                if (sudokuCreate(grid)){
+                    return true;
+                }
+            }
+            // if number is not correct then remove from cell
+            grid[row][col] = CONSTANT.UNASSIGNED
+        }
+    });
+    return isFullGrid(grid);
+};
+
+// function to check if a game can be sucessfully solved
+const sudokuCheck = (grid) => {
+    let unassigned_pos = {
+        row: -1,
+        col: -1,
+    };
+
+    // find empty position
+    if (!findUnassignedPos(grid, unassigned_pos)) return true;
+
+    // iterate each row and check number is ok  
+    grid.forEach((row, i) => {
+        row.forEach((num, j) => {
+            if (isSafe(grid, i, j, num)){
+                if (isFullGrid(grid)){
+                    return true;
+                } else {
+                    if (sudokuCreate(grid)){
+                        return true;
+                    }
+                }
+            }
+        });
+    });
+    return isFullGrid(grid);
+};
+
+const rand = () => Math.floor(Math.random() * CONSTANT.GRID_SIZE);
+
