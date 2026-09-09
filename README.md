@@ -1,5 +1,5 @@
 # js-web
-Compilation of web based works using JavaScript. Works are neatly arranged in their own folders and are independent of each other. 
+Compilation works and applications built using JavaScript, also used are HTML and CSS. Works are neatly arranged in their own folders and are independent of each other. 
 
 # bookmark
 a manager that allows for quick and easy organization of frequented websites
