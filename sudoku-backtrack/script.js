@@ -91,3 +91,61 @@ const isBoxSafe = (grid, box_row, box_col, value) => {
     return true;
 };
 
+// check if number can be placed in a cell
+const isSafe = (grid, row, col, value) => {
+    // check value does not exist in row, column or box
+    return(
+        isColSafe(grid, col, value)&&
+        isRowSafe(grid, row, value)&&
+        isBoxSafe(grid, row - (row%3), col - (col%3), value)&&
+        // box number also cannot be assigned 0
+        value != CONSTANT.UNASSIGNED
+    );
+};
+
+// find unassigned empty cell
+const findUnassignedPos = (grid, pos) => {
+    // iterate through every row and column 
+    for(let row=0; row<CONSTANT.GRID_SIZE; row++){
+        for(let col=0; col<CONSTANT.GRID_SIZE; col++){
+            // check if current position empty
+            if (grid[row][col] === CONSTANT.UNASSIGNED){
+                // save row and column number
+                pos.row = row;
+                pos.col = col;
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+// shuffle the game grid
+const shuffleArray = (arr) => {
+    let curr_index = arr.length;
+
+    // run until all positions have been shuffled
+    while(curr_index !== 0){
+        let rand_index = Math.floor(Math.random() * curr_index);
+        // move back 1 position
+        curr_index--;
+
+        // perform shuffle using temp variable
+        // swap current index with random index 
+        let temp = arr[curr_index];
+        arr[curr_index] = arr[rand_index];
+        arr[rand_index] = temp;
+    }
+    return arr;
+};
+
+// check if game grid is full
+const isFullGrid = (grid) => {
+    // every row and column have met conditions and cannot be 0
+    return grid.every((row, i) => {
+        return row.every((value, j) => {
+            return value !== CONSTANT.UNASSIGNED;
+        });
+    });
+};
+
