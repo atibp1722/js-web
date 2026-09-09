@@ -216,3 +216,55 @@ const sudokuCheck = (grid) => {
 
 const rand = () => Math.floor(Math.random() * CONSTANT.GRID_SIZE);
 
+// remove cells from completed game
+const removeCells = (grid, level) => {
+    let res = [...grid];
+    // number of cells to remove
+    let attempts = level;
+    // keep removing cells until all attempts exhausted
+    while (attempts > 0){
+        // random row and column 
+        let row = rand();
+        let col = rand();
+        // do not choose cell already removed
+        while (res[row][col] === 0){
+            row = rand();
+            col = rand();
+        }
+        res[row][col] =CONSTANT.UNASSIGNED;
+    }
+    return res;
+};
+
+// generate a game grid based on difficulty level
+const sudokuGen = (level) => {
+    let sudoku = newGrid(CONSTANT.GRID_SIZE);
+    let check = sudokuCreate(sudoku);
+    if (check){
+        // remove cells based on difficulty 
+        let question = removeCells(sudoku, level);
+        return {
+            // show both current and completed puzzle
+            original: sudoku,
+            question: question,
+        };
+    }
+    return undefined;
+};
+
+// visualizing the game grid
+const initGameGrid = () => {
+    let index = 0;
+    
+    // get which row and column cell belong to
+    for(let i=0; i<Math.pow(CONSTANT.GRID_SIZE, 2); i++){
+        let row = Math.floor(i / CONSTANT.GRID_SIZE);
+        let col = i % CONSTANT.GRID_SIZE;
+        // separate the boxes by adding some margin in row and column
+        if (row === 2 || row === 5) cells[index].style.marginBottom = "10px";
+        if (col === 2 || col === 5) cells[index].style.marginRight = "10px";
+
+        // move to next cell
+        index++;
+    }
+};
