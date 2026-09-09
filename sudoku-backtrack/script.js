@@ -255,7 +255,7 @@ const sudokuGen = (level) => {
 // visualizing the game grid
 const initGameGrid = () => {
     let index = 0;
-    
+
     // get which row and column cell belong to
     for(let i=0; i<Math.pow(CONSTANT.GRID_SIZE, 2); i++){
         let row = Math.floor(i / CONSTANT.GRID_SIZE);
@@ -268,3 +268,48 @@ const initGameGrid = () => {
         index++;
     }
 };
+
+// set and get player name
+const setPlayerName = (name) => localStorage.setItem("player_name", name);
+const getPlayerName = () => localStorage.getItem("player_name");
+
+// convert to time to be displayed
+const showTime = (seconds) => 
+    new Date(seconds * 1000).toString().substring(11, 8);
+
+// clear the game board
+const clearSudoku = () => {
+    for(let i=0; i<Math.pow(CONSTANT.GRID_SIZE, 2); i++){
+        // remove content
+        cells[i].innerHTML = "";
+        // make cell editable
+        cells[i].classList.remove("filled");
+        // remove cell highlight
+        cells[i].classList.remove("selected");
+    }
+};
+
+// load a new game grid
+const initSudoku = () => {
+    clearSudoku();
+
+    resetBg();
+    su = sudokuGen(level);
+    // create copy (not of the original)
+    su_answer = su.question.map((row) => [...row]);
+    seconds = 0;
+    // iterate all the game cells
+    for(let i=0; i<Math.pow(CONSTANT.GRID_SIZE, 2); i++){
+        let row = Math.floor(i / CONSTANT.GRID_SIZE);
+        let col = i % CONSTANT.GRID_SIZE;
+        // retrieve the cell's value
+        cells[i].setAttribute("data-value", su.question[row][col]);
+        // check whether cell already filled
+        if (su.question[row][col] !==0 ){
+            cells[i].classList.add("filled");
+            // display number inside the cell 
+            cells[i].innerHTML = su.question[row][col];
+        }
+    }
+};
+
