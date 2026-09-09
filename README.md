@@ -18,3 +18,6 @@ custom video player based on interactivity and features
 
 # wordle
 word guessing game where users try to guess correctly words based on their position
+
+# sudoku-bactrack
+sudoku game using backtracking algorithm
