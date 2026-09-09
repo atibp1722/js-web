@@ -313,3 +313,54 @@ const initSudoku = () => {
     }
 };
 
+// highlight the game cells
+const hoverBg = (index) => {
+    // row and column position of the cell
+    let row = Math.floor(index / CONSTANT.GRID_SIZE);
+    let col = index % CONSTANT.GRID_SIZE;
+    // positions in a 3x3 box
+    let box_start_row = row - (row%3);
+    let box_start_col = col - (col%3);
+    // highlight 3x3 box
+    for(let i=0; i<CONSTANT.BOX_SIZE; i++){
+        for(let j=0; j<CONSTANT.BOX_SIZE; j++){
+            let cell = cells[9 * (box_start_row+i) + (box_start_col+j)];
+            cell.classList.add("hover");
+        }
+    }
+    // highlight cells above
+    let step = 9;
+    // keep moving 1 row upward
+    while (index-step >= 0){
+        cells[index - step].classList.add("hover");
+        step += 9;
+    }
+    // highlight cells below
+    step = 9;
+    // do not go beyond 80 cells
+    // move 1 row downward
+    while (index+step < 81){
+        cells[index + step].classList.add("hover");
+        step += 9;
+    }
+    // highlight left cells
+    step = 1;
+    // move 1 step left
+    while (index - step >= 9 * row ){
+        cells[index - step].classList.add("hover");
+        step += 1;
+    }
+    // highlight right cells
+    step = 1;
+    // move 1 step rght
+    while (index + step < 9 * row+9 ){
+        cells[index + step].classList.add("hover");
+        step += 1;
+    }
+};
+
+// remove all highlights and revert to normal
+const resetBg = () => {
+    cells.forEach((e) => e.classList.remove("hover"));
+};
+
