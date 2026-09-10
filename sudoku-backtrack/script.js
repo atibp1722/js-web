@@ -499,3 +499,42 @@ const initCellsEvent = () => {
     });
 };
 
+// start the game
+const startGame = () => {
+    // hide/show the respective screens
+    start_screen.classList.remove("active");
+    game_screen.classList.add("active");
+
+    // get and set player name
+    player_name.innerHTML = name_input.value.trim();
+    setPlayerName(name_input.value.trim());
+
+    // set game difficulty
+    game_level.innerHTML = CONSTANT.LEVEL_NAME[level_index];
+    // show seconds elapsed
+    showTime(seconds);
+
+    // begin game timer
+    // refresh every second
+    timer = setInterval(() => {
+        if (!pause){
+            seconds = seconds + 1;
+            game_time.innerHTML = showTime(seconds);
+        }
+    }, 1000);
+};
+
+// game revert to start screen
+const returnStartScreen = () => {
+    // start timer
+    clearInterval(timer);
+    // reset game state
+    pause = false;
+    seconds = 0;
+    // hide/shoe game screens
+    start_screen.classList.add("active");
+    game_screen.classList.remove("active");
+    pause_screen.classList.remove("active");
+    result_screen.classList.remove("active");
+};
+
