@@ -440,3 +440,40 @@ const showResult = () => {
     // show time taken to complete game
     result_time.innerHTML = showTime(seconds);
 };
+
+// number input event handler
+const initNumberInputEvent = () => {
+    number_inputs.forEach((e, index) => {
+        e.addEventListener("click", () => {
+            // cell cannot be filled
+            if (!cells[selected_cell].classList.contains("filled")){
+                // show the number
+                cells[selected_cell].innerHTML = index + 1;
+                // store the number
+                cells[selected_cell].setAttribute("data-value", index + 1);
+                // find the number's row and column position
+                let row = Math.floor(selected_cell / CONSTANT.GRID_SIZE);
+                let col = selected_cell % CONSTANT.GRID_SIZE;
+                // save the user number answer
+                su_answer[row][col] = index + 1;
+                removeErr();
+                checkErr(index + 1);
+                // add effect
+                cells[selected_cell].classList.add("zoom-in");
+                setTimeout(() => {
+                    cells[selected_cell].classList.remove("zoom-in");
+                }, 500);
+
+                // check if game solved
+                if (isGameWin()){
+                    removeGameInfo();
+                    showResult();
+                }
+            }
+        });
+    });
+}; 
+
+// remove the error styling
+const removeErr = () => cells.forEach((e) => e.classList.remove("err"));
+
