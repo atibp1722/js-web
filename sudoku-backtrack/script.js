@@ -232,6 +232,7 @@ const removeCells = (grid, level) => {
             col = rand();
         }
         res[row][col] =CONSTANT.UNASSIGNED;
+        attempts--;
     }
     return res;
 };
