@@ -477,3 +477,25 @@ const initNumberInputEvent = () => {
 // remove the error styling
 const removeErr = () => cells.forEach((e) => e.classList.remove("err"));
 
+// event when user clicks on a game cell
+const initCellsEvent = () => {
+    // iterate all the game cells
+    cells.forEach((e, index) => {
+        e.addEventListener("click", () => {
+            // only allow editable cells to be selected
+            if (!e.classList.contains("filled")){
+                cells.forEach((e) => e.classList.remove("selected"));
+                // cell that been clicked by user that is not filled
+                selected_cell = index;
+                // remove previous styling
+                e.classList.remove("err");
+                e.classList.add("selected");
+                // remove highlight from previous game box
+                resetBg();
+                // highlight the current game box
+                hoverBg(index);
+            }
+        });
+    });
+};
+
