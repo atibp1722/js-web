@@ -543,12 +543,14 @@ document.querySelector("#btn-level").addEventListener("click", (e) => {
     // get diffuclty levels in the game
     level_index = 
         level_index + 1 > CONSTANT.LEVEL.length - 1 ? 0: level_index + 1;
-    
+    // cells to be filled based on difficulty
     level = CONSTANT.LEVEL[level_index];
     e.target.innerHTML = CONSTANT.LEVEL_NAME[level_index];
 });
 
+// play game buttom
 document.querySelector("#btn-play").addEventListener("click", () => {
+    // validate name input
     if (name_input.value.trim().length > 0){
         initSudoku();
         startGame();
@@ -561,16 +563,23 @@ document.querySelector("#btn-play").addEventListener("click", () => {
     }
 });
 
+// pause button
 document.querySelector("#btn-pause").addEventListener("click", () => {
+    // display the pause screen
+    // stop the game timer
     pause_screen.classList.add("active");
     pause = true;
 });
 
+/// resume buton
 document.querySelector("#btn-resume").addEventListener("click", () => {
+    // remove the pause screen
     pause_screen.classList.remove("active");
     pause = false;
 });
 
+// new game button
+// return to a new game screen
 document.querySelector("#btn-new-game").addEventListener("click", () => {
     returnStartScreen();
 });
@@ -578,3 +587,37 @@ document.querySelector("#btn-new-game").addEventListener("click", () => {
 document.querySelector("#btn-new-game-2").addEventListener("click", () => {
     returnStartScreen();
 });
+
+// delete button
+document.querySelector("#btn-delte").addEventListener("click", () => {
+    // clear game cell content
+    cells[selected_cell].innerHTML = "";
+    // revert to empty game cell
+    cells[selected_cell].setAttribute("data-value", 0);
+
+    // get the row and column position of the game cell
+    let row = Math.floor(selected_cell / CONSTANT.GRID_SIZE);
+    let col = selected_cell % CONSTANT.GRID_SIZE;
+    // remove the number from user's answer 
+    su_answer[row][col] = 0;
+
+    removeErr();
+});
+
+// game initialization function
+const init = () => {
+    // setup game componeents in respective order
+    initGameGrid();
+    initCellsEvent();
+    initNumberInputEvent();
+
+    // get game player's name
+    if (getPlayerName()){
+        name_input.value = getPlayerName();
+    } else{
+        name_input.focus();
+    }
+};
+
+// call function to start playing the game
+init();
