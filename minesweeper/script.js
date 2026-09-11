@@ -1,5 +1,5 @@
 // initializing the game
-function initGameStart({width, height, minesCount}){
+function initGameState({width, height, minesCount}){
     // initial game states
     const STATE = {
         // total game mines
@@ -69,11 +69,81 @@ function updateMineNeighbors(STATE, mineX, mineY){
     // iterate through each row and column
     for(let y=startY; y<=endY; y++){
         for(let x=startX; x<=endX; x++){
-            // increase mine neighboring the game cell
+            // increase mine number neighboring the game cell
             if (fields[y][x] !== -1){
                 fields[y][x]++;
             }
         }
     }
+}
+
+// create the game buttons
+function createFieldButtons(view, STATE){
+    // add elements to DOM
+    const fragment = new DocumentFragment();
+    // get rows and columns
+    const height = STATE.fields.length;
+    const width = STATE.fields[0].length;
+
+    // loop all rows and columns
+    for(let y=0; y<height; y++){
+        for(let x=0; x<width; x++){
+            // create new button
+            const button = document.createElement("button");
+            // store x and y coordinates
+            button.dataset.x = x;
+            button.dataset.y = y;
+            fragment.append(button);
+        }
+    }
+    // how many rows and columns in game board
+    view.grid.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+    view.grid.style.gridTemplateRows = `repeat(${height}, 1fr)`;
+    // add all to the game grid
+    view.grid.append(fragment);
+}
+
+// get x and y coordinates of buttons
+// convert string value to numbers
+function getButtonPos(button){
+    return{
+        x: Number(button.dataset.x),
+        y: Number(button.dataset.y),
+    };
+}
+
+function initView(view, STATE){
+    // revert to default
+    view.simley.removeAttribute("class");
+    // number of mines left
+    view.minesLeft.innerText = `${STATE.minesLeft}`.padStart(3, '0');
+    view.timer.innerText = "000";
+
+    // iterate very button on game grid
+    // remove all text
+    // enable button
+    // remove any previous stylings
+    for (const button of view.grid.children){
+        button.innerText = "";
+        button.disabled = false;
+        button.removeAttribute("class");
+    }
+}
+
+// start a completely new game
+function restartGame(view, STATE){
+    // stop timer from previous game
+    clearInterval(STATE.timerInterval);
+    // create new game using previous game dimensions
+    const newState = initGameState({
+        width: STATE.fields[0].length,
+        height: STATE.fields.length,
+        minesCount: STATE.minesCount,
+    });
+
+    // copy properties of new object into already exisitng object
+    Object.assign(STATE, newState);
+    // reset game interface
+    initView(view, STATE);
 }
 
