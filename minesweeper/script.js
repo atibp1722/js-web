@@ -64,7 +64,7 @@ function updateMineNeighbors(STATE, mineX, mineY){
     // start one column right of mine
     const endX = Math.min(width-1, mineX+1);
     // start one row below mine
-    const endY = Math.min(height, mineY+1);
+    const endY = Math.min(height-1, mineY+1);
 
     // iterate through each row and column
     for(let y=startY; y<=endY; y++){
@@ -245,7 +245,7 @@ function handleFieldReveal(view, STATE, button){
     // no more playable cells
     // user won the game
     if (STATE.fieldsLeft === 0){
-        view.smiley.classname = "won";
+        view.smiley.className = "won";
         gameOver(view, STATE);
     }
 }
@@ -261,7 +261,7 @@ function revealField(STATE, button){
 
     // get button coordinates
     // get value in cell
-    const {x, y} = getButtonPosition(button);
+    const {x, y} = getButtonPos(button);
     const value = STATE.fields[y][x];
 
     switch(value){
@@ -277,7 +277,7 @@ function revealField(STATE, button){
 
         // cell contains a number
         default:
-            button.classname = `value-${value}`;
+            button.className = `value-${value}`;
             button.innerText = value;
             STATE.fieldsLeft--;
     }
@@ -297,7 +297,7 @@ function gameOver(view, STATE){
 
         // check whether cell contains mine
         // show mine
-        if(STATE.field[y][x] === -1){
+        if(STATE.fields[y][x] === -1){
             revealField(STATE, button);
         }
     }
