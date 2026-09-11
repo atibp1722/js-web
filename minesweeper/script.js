@@ -50,3 +50,30 @@ function insertMines(STATE, minesCount){
     STATE.fieldsLeft -= minesCount;
 }
 
+// generate number around new mine
+function updateMineNeighbors(STATE, mineX, mineY){
+    const {fields} = STATE;
+    // number of row and columns
+    const height = fields.length;
+    const width = fields[0].length;
+
+    // start column left of the mine
+    const startX = Math.max(0, mineX-1);
+    // start one row above mine
+    const startY = Math.max(0, mineY-1);
+    // start one column right of mine
+    const endX = Math.min(width-1, mineX+1);
+    // start one row below mine
+    const endY = Math.min(height, mineY+1);
+
+    // iterate through each row and column
+    for(let y=startY; y<=endY; y++){
+        for(let x=startX; x<=endX; x++){
+            // increase mine neighboring the game cell
+            if (fields[y][x] !== -1){
+                fields[y][x]++;
+            }
+        }
+    }
+}
+
