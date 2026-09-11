@@ -1,4 +1,4 @@
-# js-web
+
 Compilation works and applications built using JavaScript, also used are HTML and CSS. Works are neatly arranged in their own folders and are independent of each other. 
 
 # bookmark
