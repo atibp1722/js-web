@@ -9,7 +9,7 @@ function initGameState({width, height, minesCount}){
         // game over or not
         isGameOver: false,
         // game cells to left to be revealed
-        fieldsLeft: width*height,
+        fieldsLeft: width * height - minesCount,
         // game grid represented as rows and columns
         fields: Array.from({length: height}, () =>
             Array(width).fill(0)),
@@ -21,11 +21,12 @@ function initGameState({width, height, minesCount}){
     return STATE;
 }
 
+
 // insert mines on the game board
 function insertMines(STATE, minesCount){
     // get all the cells on game board
-    const size = STATE.fieldsLeft;
-    // set for stroing mine positions
+    const size = STATE.fields.length * STATE.fields[0].length;
+    // set for storing mine positions
     // used as it cannot hold duplicate values
     const indices = new Set();
     // continue until unique positions are gotten
@@ -46,53 +47,58 @@ function insertMines(STATE, minesCount){
         // update the neighboring cells
         updateMineNeighbors(STATE, x, y);
     }
-    // reduce number of game cells left by mines
-    STATE.fieldsLeft -= minesCount;
 }
+
 
 // generate number around new mine
 function updateMineNeighbors(STATE, mineX, mineY){
     const {fields} = STATE;
+
     // number of row and columns
     const height = fields.length;
     const width = fields[0].length;
-
     // start column left of the mine
-    const startX = Math.max(0, mineX-1);
+
+    const startX = Math.max(0, mineX - 1);
     // start one row above mine
-    const startY = Math.max(0, mineY-1);
+    const startY = Math.max(0, mineY - 1);
+
     // start one column right of mine
-    const endX = Math.min(width-1, mineX+1);
+    const endX = Math.min(width - 1, mineX + 1);
     // start one row below mine
-    const endY = Math.min(height-1, mineY+1);
+    const endY = Math.min(height - 1, mineY + 1);
 
     // iterate through each row and column
-    for(let y=startY; y<=endY; y++){
-        for(let x=startX; x<=endX; x++){
+    for(let y = startY; y <= endY; y++){
+        for(let x = startX; x <= endX; x++){
+
             // increase mine number neighboring the game cell
-            if (fields[y][x] !== -1){
+            if(fields[y][x] !== -1){
                 fields[y][x]++;
             }
         }
     }
 }
 
+
 // create the game buttons
 function createFieldButtons(view, STATE){
     // add elements to DOM
     const fragment = new DocumentFragment();
+
     // get rows and columns
     const height = STATE.fields.length;
     const width = STATE.fields[0].length;
 
     // loop all rows and columns
-    for(let y=0; y<height; y++){
-        for(let x=0; x<width; x++){
+    for(let y = 0; y < height; y++){
+        for(let x = 0; x < width; x++){
             // create new button
             const button = document.createElement("button");
             // store x and y coordinates
             button.dataset.x = x;
             button.dataset.y = y;
+
             fragment.append(button);
         }
     }
@@ -116,14 +122,15 @@ function initView(view, STATE){
     // revert to default
     view.smiley.removeAttribute("class");
     // number of mines left
-    view.minesLeft.innerText = `${STATE.minesLeft}`.padStart(3, '0');
+    view.minesLeft.innerText =
+        `${STATE.minesLeft}`.padStart(3, '0');
     view.timer.innerText = "000";
 
-    // iterate very button on game grid
+    // iterate every button on game grid
     // remove all text
     // enable button
     // remove any previous stylings
-    for (const button of view.grid.children){
+    for(const button of view.grid.children){
         button.innerText = "";
         button.disabled = false;
         button.removeAttribute("class");
@@ -140,85 +147,110 @@ function restartGame(view, STATE){
         height: STATE.fields.length,
         minesCount: STATE.minesCount,
     });
-
-    // copy properties of new object into already exisitng object
+    // copy properties of new object into already existing object
     Object.assign(STATE, newState);
     // reset game interface
     initView(view, STATE);
 }
 
+
 // handle game timer
 function ensureTimerStarted(view, STATE){
     // timer already running
-    if (STATE.timerInterval){
+    if(STATE.timerInterval){
         return;
     }
 
-    STATE.timerStart = new Date();
+    STATE.timerStart = Date.now();
     // refresh the timer every second
     // calculate seconds elapsed since timer started
     // display elapsed time
     STATE.timerInterval = setInterval(() => {
+
         const secondsElapsed = Math.floor(
-            (new Date() - STATE.timerStart) / 1000
+            (Date.now() - STATE.timerStart) / 1000
         );
-        view.timer.innerText = `${secondsElapsed}`.padStart(3, '0');
+
+        view.timer.innerText =
+            `${secondsElapsed}`.padStart(3, '0');
+
     }, 1000);
 }
 
+
 // handle the game events
 function handleGameEvents(view, STATE){
-    // when smilry clicked restart game
+    // when smiley clicked restart game
     view.smiley.addEventListener("click", () => {
-        restartGame(view, STATE)
+        restartGame(view, STATE);
     });
     // prevent right click menu from appearing on screen
     view.grid.addEventListener("contextmenu", (event) => {
-        event.preventDefault()
+        event.preventDefault();
     });
 
     // click on game board
     view.grid.addEventListener("mousedown", (event) => {
         // prevent user action on board after game ends
-        if (STATE.isGameOver){
+        if(STATE.isGameOver){
             return;
         }
         // whether clicked is a button
         const button = event.target;
-        if (button.tagName !== "Button"){
+        if(button.tagName !== "BUTTON"){
             return;
         }
-        // hanlde right/left click action
-        ensureTimerStarted(view, STATE);
-        if (event.button === 2){
+        // handle right/left click action
+        if(event.button === 2){
             // right click actual playing button
             handleFieldFlag(view, STATE, button);
-        } else{
+        }else if(event.button === 0){
+            // don't start timer when clicking a flagged cell
+            if(button.classList.contains("flagged")){
+                return;
+            }
+            // start timer only when left clicking
+            ensureTimerStarted(view, STATE);
             // left click reveals the game cell
             handleFieldReveal(view, STATE, button);
         }
     });
 }
 
+
 // handle filled game cell
 function handleFieldFlag(view, STATE, button){
-    if (button.disabled){
+    if(button.disabled){
+        return;
+    }
+    // check whether cell is already flagged
+    const isFlagged = button.classList.contains("flagged");
+
+    // prevent adding more flags than available mines
+    if(!isFlagged && STATE.minesLeft === 0){
         return;
     }
     // toggle action if already exist or not
-    const isFlagged = button.classList.toggle("flagged");
-    // flag removed remaining mine count decrease
-    STATE.minesLeft += isFlagged ? -1 : 1;
+    button.classList.toggle("flagged");
+    // flag added: remaining mine count decrease
+    // flag removed: remaining mine count increase
+    STATE.minesLeft += isFlagged ? 1 : -1;
     // update info on game screen
-    view.minesLeft.innerText = `${STATE.minesLeft}`.padStart(3, '0');
+    view.minesLeft.innerText =
+        `${STATE.minesLeft}`.padStart(3, '0');
 }
+
 
 // handle what the game cell holds
 function handleFieldReveal(view, STATE, button){
     // get coordinates of button clicked
     const {x, y} = getButtonPos(button);
-    // dont reveal flagged cell
-    if (button.classList.contains("flagged")){
+    // don't reveal flagged cell
+    if(button.classList.contains("flagged")){
+        return;
+    }
+    // don't reveal already revealed cell
+    if(button.disabled){
         return;
     }
     // check the game cell
@@ -227,37 +259,43 @@ function handleFieldReveal(view, STATE, button){
         // switch to game over
         // end game
         case -1:
-            if (revealField(STATE, button)){
+            if(revealField(STATE, button)){
                 button.classList.add("exploded");
                 view.smiley.className = "lost";
                 gameOver(view, STATE);
             }
-            break;
+            return;
+
         // no neighboring mines
         case 0:
             // reveal empty area
             revealEmptyArea(view.grid, STATE, x, y);
             break;
+
         // reveal a numbered cell
         default:
             revealField(STATE, button);
     }
     // no more playable cells
     // user won the game
-    if (STATE.fieldsLeft === 0){
+    if(STATE.fieldsLeft === 0){
         view.smiley.className = "won";
         gameOver(view, STATE);
     }
 }
 
+
 // reveal cell field
 function revealField(STATE, button){
-    if (button.disabled){
+    if(button.disabled){
+        return false;
+    }
+    // don't reveal flagged cell
+    if(button.classList.contains("flagged")){
         return false;
     }
     // disable button to not allow to click
     button.disabled = true;
-    button.classList.remove("flagged");
 
     // get button coordinates
     // get value in cell
@@ -274,13 +312,13 @@ function revealField(STATE, button){
         case 0:
             STATE.fieldsLeft--;
             break;
-
         // cell contains a number
         default:
             button.className = `value-${value}`;
             button.innerText = value;
             STATE.fieldsLeft--;
     }
+
     return true;
 }
 
@@ -288,17 +326,24 @@ function revealField(STATE, button){
 function gameOver(view, STATE){
     // stop timer
     clearInterval(STATE.timerInterval);
+
+    // reset timer interval
+    STATE.timerInterval = undefined;
     STATE.isGameOver = true;
 
     // show all mines on game board
-    for (const button of view.grid.children){
+    for(const button of view.grid.children){
         // get button coordinates
         const {x, y} = getButtonPos(button);
-
         // check whether cell contains mine
         // show mine
         if(STATE.fields[y][x] === -1){
-            revealField(STATE, button);
+            // remove flag before showing mine
+            button.classList.remove("flagged");
+            // disable the mine button
+            button.disabled = true;
+            // show the mine
+            button.classList.add("mine");
         }
     }
 }
@@ -315,14 +360,27 @@ function revealEmptyArea(grid, STATE, x, y){
 
     // visit a cell and explore neighbors
     function visit(i, j){
+
         // stay within game coordinates
-        if (i<0 || i>=width || j<0 || j>=height){
+        if(i < 0 || i >= width || j < 0 || j >= height){
             return;
         }
+
         // convert into single index
         const index = j * width + i;
         // already visited cell
-        if (visited.has(index)){
+        if(visited.has(index)){
+            return;
+        }
+        // get corresponding button
+        const button = grid.children[index];
+        // don't reveal flagged cell
+        if(button.classList.contains("flagged")){
+            return;
+        }
+
+        // don't reveal already revealed cell
+        if(button.disabled){
             return;
         }
         // mark visited
@@ -330,10 +388,9 @@ function revealEmptyArea(grid, STATE, x, y){
 
         // reveal button
         // correspond to button in DOM
-        revealField(STATE, grid.children[index]);
-
-        // if cell not empty dont visit neighbors
-        if (STATE.fields[j][i] !== 0){
+        revealField(STATE, button);
+        // if cell not empty don't visit neighbors
+        if(STATE.fields[j][i] !== 0){
             return;
         }
         // visit left cell
@@ -356,18 +413,21 @@ function main(){
         minesCount: 12,
     });
 
-    // get refrence to all html elements
+    // get reference to all html elements
     const view = {
+
         minesLeft: document.getElementById("mines-left"),
         smiley: document.getElementById("smiley"),
         timer: document.getElementById("timer"),
         grid: document.getElementById("grid"),
     };
-    // create game buttons, board and hanlde game events
+
+    // create game buttons, board and handle game events
     createFieldButtons(view, STATE);
     initView(view, STATE);
     handleGameEvents(view, STATE);
 }
+
 
 // start the game
 main();
