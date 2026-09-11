@@ -294,7 +294,7 @@ function gameOver(view, STATE){
     for (const button of view.grid.children){
         // get button coordinates
         const {x, y} = getButtonPos(button);
-        
+
         // check whether cell contains mine
         // show mine
         if(STATE.field[y][x] === -1){
@@ -303,3 +303,71 @@ function gameOver(view, STATE){
     }
 }
 
+// open empty area when cell contains 0
+function revealEmptyArea(grid, STATE, x, y){
+    // get game board rows and columns
+    const height = STATE.fields.length;
+    const width = STATE.fields[0].length;
+
+    // all cells that have been visited
+    // set prevents visiting same cell again
+    const visited = new Set();
+
+    // visit a cell and explore neighbors
+    function visit(i, j){
+        // stay within game coordinates
+        if (i<0 || i>=width || j<0 || j>=height){
+            return;
+        }
+        // convert into single index
+        const index = j * width + i;
+        // already visited cell
+        if (visited.has(index)){
+            return;
+        }
+        // mark visited
+        visited.add(index);
+
+        // reveal button
+        // correspond to button in DOM
+        revealField(STATE, grid.children[index]);
+
+        // if cell not empty dont visit neighbors
+        if (STATE.fields[j][i] !== 0){
+            return;
+        }
+        // visit left cell
+        visit(i - 1, j);
+        // visit right cell
+        visit(i + 1, j);
+        // visit above cell
+        visit(i, j - 1);
+        // visit below cell
+        visit(i, j + 1);
+    }
+    visit(x, y);
+}
+
+// function to create initial game state
+function main(){
+    const STATE = initGameState({
+        width: 10,
+        height: 12,
+        minesCount: 12,
+    });
+
+    // get refrence to all html elements
+    const view = {
+        minesLeft: document.getElementById("mines-left"),
+        smiley: document.getElementById("smiley"),
+        timer: document.getElementById("timer"),
+        grid: document.getElementById("grid"),
+    };
+    // create game buttons, board and hanlde game events
+    createFieldButtons(view, STATE);
+    initView(view, STATE);
+    handleGameEvents(view, STATE);
+}
+
+// start the game
+main();
