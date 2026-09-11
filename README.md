@@ -21,3 +21,6 @@ word guessing game where users try to guess correctly words based on their posit
 
 # sudoku-bactrack
 sudoku game using backtracking algorithm allow user to set game difficulty level
+
+# minesweeper
+classic game where user click on cells to reveal mine or number until all cells are cleared
