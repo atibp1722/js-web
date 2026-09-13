@@ -26,7 +26,7 @@ let playBackSpedOptions = document.querySelector(".playback-options");
 // function for volume percentage
 // remaining volume slider color based on draggin action
 function slider(){
-    valPercent = 
+    const valPercent = 
         (volumeRange.value / volumeRange.max)*100;
     volumeRange.style.background = `linear-gradient(to right, #2887e3 ${valPercent}%, #000000 ${valPercent}%)`;
 }
@@ -123,14 +123,17 @@ volumeRange.addEventListener("input", () => {
     volumeNum.innerHTML = volumeRange.value;
     // condition to change volume icon based on volume value
     // low condition
-    if (volumeRange.value < 50){
+    if (volumeValue === 0) {
+        mute.classList.remove("hide");
+        low.classList.add("hide");
+        high.classList.add("hide");
+    } else if (volumeValue < 50) {
         low.classList.remove("hide");
         high.classList.add("hide");
         mute.classList.add("hide");
-        // high condition
-    }else if (volumeRange.value > 50){
-        low.classList.remove("hide");
-        high.classList.add("hide");
+    } else {
+        high.classList.remove("hide");
+        low.classList.add("hide");
         mute.classList.add("hide");
     }
     slider();
@@ -216,12 +219,20 @@ function exitHandler(){
         // convert and dispaly time in the format on screen
         currentTimeRef.innerHTML = timeFormatter(myVideo.currentTime);
         // calculate width of video already played
-        currentProgress.style.width = (myVideo.currentTime / myVideo.duration.toFixed(3)) * 100 + "%";
+        if (Number.isFinite(myVideo.duration)) {
+            currentProgress.style.width =
+            (myVideo.currentTime / myVideo.duration) * 100 + "%";
+        }
     }, 1000);
 
     myVideo.addEventListener("timeupdate", () => {
         // get and write time on screen in format
         currentTimeRef.innerText = timeFormatter(myVideo.currentTime);
+
+        if (Number.isFinite(myVideo.duration)) {
+            const progress = (myVideo.currentTime / myVideo.duration) * 100;
+            currentProgress.style.width = `${progress}%`;
+        }
     });
 
     isTouchDevice();
