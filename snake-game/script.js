@@ -15,8 +15,9 @@ let speed = 7;
 
 // variables for positioning and size
 let tileCount = 20;
-let tileSize = canvas.width/tileCount - 2;
-let headX= 10;
+let tileSize = canvas.width / tileCount - 2;
+let gridSize = canvas.width / tileCount;
+let headX = 10;
 let headY = 10;
 // array for snake part
 const snakeParts = [];
@@ -35,7 +36,7 @@ let yVelocity = 0;
 let score = 0;
 
 // add sound every time collided with apple
-const sound = new Audio("gulp.wav");
+const sound = new Audio("eat.wav");
 
 // store keyboard direction
 let inputXVelocity = 0;
@@ -136,7 +137,7 @@ function isGameOver(){
     if(gameOver){
         // game over message display
         ctx.fillStyle = 'red';
-        ctx.font = "48px Arial";
+        ctx.font = "32px Arial";
         ctx.fillText("Sorry, game over!", canvas.width/6.5, canvas.height/2);
     }
     return gameOver;
@@ -159,7 +160,7 @@ function drawSnake(){
     // loop through snake and draw additional body
     for(let i=0; i<snakeParts.length; i++){
         let part = snakeParts[i];
-        ctx.fillRect(part.x*tileCount, part.y*tileCount, tileSize, tileSize);
+        ctx.fillRect(part.x * gridSize, part.y * gridSize, tileSize, tileSize);
     }
 
     // add current position
@@ -171,13 +172,13 @@ function drawSnake(){
 
     // put the snake in the middle of the canvas
     ctx.fillStyle = 'white';
-    ctx.fillRect(headX*tileCount, headY*tileCount, tileSize, tileSize);
+    ctx.fillRect(headX * gridSize, headY * gridSize, tileSize, tileSize);
 
 }
 
 function drawApple(){
     ctx.fillStyle = 'red';
-    ctx.fillRect(appleX*tileCount, appleY*tileCount, tileSize, tileSize);
+    ctx.fillRect(appleX * gridSize, appleY * gridSize, tileSize, tileSize);
 }
 
 // check if snake is same tile as apple
@@ -209,28 +210,28 @@ document.body.addEventListener("keydown", keyDown);
 // function to listen to key pressed
 function keyDown(event){
     // up arrow pressed
-    if(event.keyCode == 38){
+    if(event.key === "ArrowUp"){
         // move up
-        yVelocity = -1;
+        inputXVelocity = 0;
         // stop horizontal movement
-        xVelocity = 0;
+        inputYVelocity = -1;
     }
     // down arrow pressed
-    if(event.keyCode == 40){
-        yVelocity = 1;
-        xVelocity = 0;
+    if(event.key === "ArrowDown"){
+        inputXVelocity = 0;
+        inputYVelocity = 1;
     }
     // left arrow pressed
-    if(event.keyCode == 37){
+    if(event.key === "ArrowLeft"){
         // stop vertical movement
-        yVelocity = 0;
+        inputXVelocity = -1;
         // move left
-        xVelocity = -1;
+        inputYVelocity = 0;
     }
     // right arrow pressed
-     if(event.keyCode == 39){
-        yVelocity = 0;
-        xVelocity = 1;
+     if(event.key === "ArrowRight"){
+        inputXVelocity = 1;
+        inputYVelocity = 0;
     }
 
 }

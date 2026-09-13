@@ -590,7 +590,7 @@ document.querySelector("#btn-new-game-2").addEventListener("click", () => {
 });
 
 // delete button
-document.querySelector("#btn-delte").addEventListener("click", () => {
+document.querySelector("#btn-delete").addEventListener("click", () => {
     // clear game cell content
     cells[selected_cell].innerHTML = "";
     // revert to empty game cell
