@@ -13,7 +13,8 @@ function submitTopic(){
     document.getElementById("topicSection").style.display = "none";
     document.getElementById("appContent").style.display = "block";
     // show the title entered by user
-    document.getElementById("topicTitle").style.display = topic;
+    document.getElementById("topicTitle").textContent = topic;
+    document.getElementById("topicTitle").style.display = "block";
 }
 
 // function to add new item
@@ -54,8 +55,8 @@ function renderItem(text, type){
 // function to update score 
 function updateScore(){
     // count items inside each list
-    const proCount = document.getElementById("prosList").children.length();
-    const conCount = document.getElementById("consList").children.length();
+    const proCount = document.getElementById("prosList").children.length;
+    const conCount = document.getElementById("consList").children.length;
     const scoreboard = document.getElementById("scoreboard");
 
     // default verdict
@@ -67,5 +68,5 @@ function updateScore(){
     else if (proCount === conCount) verdict = "It's a tie!";
 
     // dispaly score and verdict
-    scoreboard.innerHTML = `Pros: ${prosCount}| Cons: ${consCount}<br> ${verdict}`
+    scoreboard.innerHTML = `Pros: ${proCount} | Cons: ${conCount}<br> ${verdict}`
 }
