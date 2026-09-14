@@ -97,8 +97,16 @@ function createNextBlock(){
 function gameLoop(){
     // check game no longer in progress
     if (!gameRunning) return;
+    // move the game block
+    currentBlock.x += speed * direction;
+    currentBlock.element.style.left = currentBlock.x + "px";
     // update block position
-    moveBlock();
+    if(currentBlock.x + currentBlock.width >= gameWidth){
+        direction = -1;
+    }
+    if(currentBlock.x <= 0){
+        direction = 1;
+    }
     // game loop animation
     animationId = requestAnimationFrame(gameLoop);
 }
@@ -173,3 +181,35 @@ function dropBlock(){
     createNextBlock();
 }
 
+function moveStack(){
+    for(const block of stack){
+        block.y += blockHeight;
+        block.element.style.top = block.y + "px";
+    }
+    currentBlock.y += blockHeight;
+    currentBlock.element.style.top = currentBlock.y + "px";
+}
+
+function endGame(){
+    gameRunning = false;
+    cancelAnimationFrame(animationId);
+    finalScore.textContent = score;
+    message.style.display = "flex";
+}
+
+function restartGame(){
+    startGame();
+}
+
+document.addEventListener("keydown", event => {
+    if (event.code === "Space"){
+        event.preventDefault();
+        dropBlock();
+    }
+});
+
+game.addEventListener("click", () => {
+    dropBlock();
+});
+
+startGame();
