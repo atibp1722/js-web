@@ -27,3 +27,6 @@ classic game where user click on cells to reveal mine or number until all cells 
 
 # cocktails
 get info (ingredients, instructions) on your favorite cocktails from cocktailDB
+
+# stack-master
+create overlapping block on top of one another if the fixed base block overlap position with a moving block when it is hovering
