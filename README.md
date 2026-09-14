@@ -24,3 +24,6 @@ sudoku game using backtracking algorithm allow user to set game difficulty level
 
 # minesweeper
 classic game where user click on cells to reveal mine or number until all cells are cleared
+
+# cocktails
+get info (ingredients, instructions) on your favorite cocktails from cocktailDB
