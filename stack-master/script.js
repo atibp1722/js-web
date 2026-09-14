@@ -48,12 +48,18 @@ function createBlock(x, width, y){
 
 // function to start a new game
 function startGame(){
+    // cancel previous game animation
+    if (animationId){
+        cancelAnimationFrame(animationId);
+    }
     // clear game screen when starting
     game.querySelectorAll(".block").forEach(block => {
         block.remove();
     });
 
     stack = [];
+    currentBlock = null;
+    animationId = null;
     score = 0;
     speed = startSpeed;
     direction = 1;
