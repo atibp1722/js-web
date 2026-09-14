@@ -40,7 +40,7 @@ function createBlock(x, width, y){
 
     game.appendChild(element);
 
-    // reurn object of coordinates of speed and dimension
+    // return object of coordinates of speed and dimension
     return{
         x, y, width, element
     };
@@ -82,6 +82,24 @@ function gameHeight(){
     return 600 - blockHeight;
 }
 
+// create a new game block
 function createNextBlock(){
-
+    // get block on top
+    const top = stack[stack.length - 1];
+    // create new block above previous one
+    currentBlock = createBlock (0, top.width, top.y - blockHeight);
+    // move its position to the left of game screen
+    currentBlock.x = 0;
+    currentBlock.element.style.left = "0px";
 }
+
+// continuous running game loop
+function gameLoop(){
+    // check game no longer in progress
+    if (!gameRunning) return;
+    // update block position
+    moveBlock();
+    // game loop animation
+    animationId = requestAnimationFrame(gameLoop);
+}
+
