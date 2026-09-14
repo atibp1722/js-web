@@ -36,7 +36,7 @@ function createBlock(x, width, y){
     element.style.top = y + "px";
     element.style.width = width + "px";
     // generate dynamic color
-    element.style.background = `hsl(${score *25 % 360}, 70%, 55%)`;
+    element.style.background = `hsl(${score * 25 % 360}, 70%, 55%)`;
 
     game.appendChild(element);
 
@@ -87,7 +87,7 @@ function createNextBlock(){
     // get block on top
     const top = stack[stack.length - 1];
     // create new block above previous one
-    currentBlock = createBlock (0, top.width, top.y - blockHeight);
+    currentBlock = createBlock(0, top.width, top.y - blockHeight);
     // move its position to the left of game screen
     currentBlock.x = 0;
     currentBlock.element.style.left = "0px";
@@ -98,15 +98,7 @@ function gameLoop(){
     // check game no longer in progress
     if (!gameRunning) return;
     // move the game block
-    currentBlock.x += speed * direction;
-    currentBlock.element.style.left = currentBlock.x + "px";
-    // update block position
-    if(currentBlock.x + currentBlock.width >= gameWidth){
-        direction = -1;
-    }
-    if(currentBlock.x <= 0){
-        direction = 1;
-    }
+    moveBlock();
     // game loop animation
     animationId = requestAnimationFrame(gameLoop);
 }
@@ -125,7 +117,7 @@ function moveBlock(){
     // then move right
     if (currentBlock.x <= 0){
         currentBlock.x = 0;
-        direction = -1;
+        direction = 1;
     }
     // update the coordinate
     currentBlock.element.style.left = currentBlock.x + "px";
@@ -141,12 +133,12 @@ function dropBlock(){
 
     // coordinates of current and previous game blocks
     const currentLeft = currentBlock.x;
-    const currentRight = previous.x + previous.width;
+    const currentRight = currentBlock.x + currentBlock.width;
 
     const previousLeft = previous.x;
     const previousRight = previous.x + previous.width;
 
-    // calculate when game block overlap whien dropped
+    // calculate when game block overlap when dropped
     const overlapLeft = Math.max(currentLeft, previousLeft);
     const overlapRight = Math.min(currentRight, previousRight);
     const overlapWidth = overlapRight - overlapLeft;
@@ -170,9 +162,8 @@ function dropBlock(){
     // update the score
     // increase game difficulty
     score++;
-    scoreElement.textCont
-    ent = score;
-    speed += 0.25
+    scoreElement.textContent = score;
+    speed += 0.25;
     // not allow stack to become too tall
     if (stack.length > 12){
         moveStack();
@@ -182,14 +173,20 @@ function dropBlock(){
 }
 
 function moveStack(){
+    // iterate all stack blocks
     for(const block of stack){
+        // increase block height to move it downward
         block.y += blockHeight;
+        // show change on screen
         block.element.style.top = block.y + "px";
     }
+    // move current block position
     currentBlock.y += blockHeight;
+    // show change on screen
     currentBlock.element.style.top = currentBlock.y + "px";
 }
 
+// end the game
 function endGame(){
     gameRunning = false;
     cancelAnimationFrame(animationId);
@@ -201,6 +198,7 @@ function restartGame(){
     startGame();
 }
 
+// prvent default behavior while playing game
 document.addEventListener("keydown", event => {
     if (event.code === "Space"){
         event.preventDefault();
@@ -208,6 +206,7 @@ document.addEventListener("keydown", event => {
     }
 });
 
+// check for click within game screen
 game.addEventListener("click", () => {
     dropBlock();
 });
