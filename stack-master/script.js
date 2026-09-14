@@ -103,3 +103,73 @@ function gameLoop(){
     animationId = requestAnimationFrame(gameLoop);
 }
 
+// control block movement
+function moveBlock(){
+    // move block horizontally
+    currentBlock.x += speed * direction;
+    // check if block goes beyond the game wall on right side
+    // then move left
+    if (currentBlock.x + currentBlock.width >= gameWidth){
+        currentBlock.x = gameWidth - currentBlock.width;
+        direction = -1;
+    }
+    // check if block goes beyond the game wall on left side
+    // then move right
+    if (currentBlock.x <= 0){
+        currentBlock.x = 0;
+        direction = -1;
+    }
+    // update the coordinate
+    currentBlock.element.style.left = currentBlock.x + "px";
+}
+
+// drop block on the block stack below it
+function dropBlock(){
+    // game currently in progress
+    if (!gameRunning) return;
+
+    // use top block as the reference
+    const previous = stack[stack.length - 1];
+
+    // coordinates of current and previous game blocks
+    const currentLeft = currentBlock.x;
+    const currentRight = previous.x + previous.width;
+
+    const previousLeft = previous.x;
+    const previousRight = previous.x + previous.width;
+
+    // calculate when game block overlap whien dropped
+    const overlapLeft = Math.max(currentLeft, previousLeft);
+    const overlapRight = Math.min(currentRight, previousRight);
+    const overlapWidth = overlapRight - overlapLeft;
+
+    // no overlap means end game
+    if (overlapWidth <= 0){
+        endGame();
+        return;
+    }
+
+    // trim block to match with only overlapped portion
+    currentBlock.x = overlapLeft;
+    currentBlock.width = overlapWidth;
+
+    currentBlock.element.style.left = overlapLeft + "px";
+    currentBlock.element.style.width = overlapWidth + "px";
+
+    // push the block on game stack
+    stack.push(currentBlock);
+
+    // update the score
+    // increase game difficulty
+    score++;
+    scoreElement.textCont
+    ent = score;
+    speed += 0.25
+    // not allow stack to become too tall
+    if (stack.length > 12){
+        moveStack();
+    }
+    // next game block
+    createNextBlock();
+}
+
