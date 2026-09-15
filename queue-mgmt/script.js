@@ -5,6 +5,9 @@ class Queue{
     }
     // add element at start of array
     enqueue(customer){
+        this.items.push(customer);
+    }
+    enqueuePriority(customer){
         this.items.unshift(customer);
     }
     dequeue(){
@@ -14,6 +17,15 @@ class Queue{
         }
         // remove oldest element from the array
         return this.items.shift();
+    }
+    // see the last element in the array
+    peek(){
+        // empty array
+        if (this.isEmpty()){
+            return null;
+        }
+        // element to be removed next
+        return this.items[this.items.length - 1];
     }
     // true/false on whether array empty or not
     isEmpty(){
@@ -28,3 +40,4 @@ class Queue{
         this.items = [];
     }
 }
+
