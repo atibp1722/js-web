@@ -26,7 +26,8 @@ class Queue{
             return null;
         }
         // element to be removed next
-        return this.items[this.items.length - 1];
+        //return this.items[this.items.length - 1];
+        return this.items[0];
     }
     // true/false on whether array empty or not
     isEmpty(){
@@ -67,6 +68,8 @@ function addCustomer(){
     queue.enqueue(customer);
     // reset to blank for next entry
     nameInput.value = "";
+    // get rid of clear message
+    document.getElementById("served").textContent = "";
     // show updated queue on page
     displayQueue();
 }
