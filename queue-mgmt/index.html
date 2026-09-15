@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet"/>
+    <link rel="stylesheet" href="./style.css">
+    <title>Queue Mgmt. System</title>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Queue Management System</h1>
+        <div class="control">
+            <input type="text" id="name" placeholder="Enter your name here...">
+            <br/>
+            <hr>
+            <button class="normal-btn" onclick="addCustomer()">Add Customer</button>
+            <button class="priority-btn" onclick="addPriorityCustomer()">Add Priority</button>
+            <button class="serve-btn" onclick="serveCustomer()">Serve Customer</button>
+            <button class="clear-btn" onclick="clearQueue()">Clear Queue</button>
+            <hr>
+        </div>
+
+        <div class="info">
+            <p id="next">Next Customer: None</p>
+            <p id="queueSize">Queue Size: 0</p>
+            <p id="served">No customer to serve.</p>
+        </div>
+
+        <h2>Currently in Queue</h2>
+        <ul id="queueList"></ul>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
