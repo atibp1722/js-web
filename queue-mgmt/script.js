@@ -42,3 +42,56 @@ class Queue{
     }
 }
 
+// instance of class
+const queue = new Queue();
+// unique number to be assigned to each customer
+let tokenNumber = 1;
+
+// add regular customer
+function addCustomer(){
+    // get reference to html element
+    const nameInput = document.getElementById("name");
+    const name = nameInput.value.trim();
+    // validate name field
+    if (name === ""){
+        alert("Sorry, name cannot be empty.");
+        return;
+    }
+    // customer object with repsective field assignments
+    const customer = {
+        token: tokenNumber++,
+        name: name,
+        priority: false
+    };
+    // add customer to queue
+    queue.enqueue(customer);
+    // reset to blank for next entry
+    nameInput.value = "";
+    // show updated queue on page
+    displayQueue();
+}
+
+// add priority customer (at front of queue)
+function addPriorityCustomer(){
+    const nameInput = document.getElementById("name");
+    const name = nameInput.value.trim();
+
+    if (name === ""){
+        alert("Sorry, name cannot be empty.");
+        return;
+    }
+    // customer object with priority true
+    const customer = {
+        token: tokenNumber++,
+        name: name,
+        priority: true
+    };
+    // add customer at front of queue
+    queue.enqueuePriority(customer);
+    nameInput.value = "";
+    displayQueue();
+}
+
+function serveCustomer(){
+    
+}
