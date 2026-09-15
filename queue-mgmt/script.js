@@ -7,6 +7,7 @@ class Queue{
     enqueue(customer){
         this.items.push(customer);
     }
+    // element added to start (priority)
     enqueuePriority(customer){
         this.items.unshift(customer);
     }
