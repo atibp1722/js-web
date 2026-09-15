@@ -26,7 +26,8 @@ class Queue{
             return null;
         }
         // element to be removed next
-        //return this.items[this.items.length - 1];
+        // not put priority as next to get served
+        // return this.items[this.items.length - 1];
         return this.items[0];
     }
     // true/false on whether array empty or not
