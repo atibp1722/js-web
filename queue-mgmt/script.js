@@ -135,4 +135,22 @@ function displayQueue(){
         // append it to DOM
         queueList.appendChild(li);
     });
+    // number of customers in queue
+    document.getElementById("queueSize").textContent = `Queue Size: ${queue.size()}`;
+    // look at next customer without removing it
+    const nextCustomer = queue.peek();
+    // if customer is in queue
+    if (nextCustomer !== null){
+        // if the person has priority
+        if (nextCustomer.priority){
+            document.getElementById("next").textContent = `Next Customer: 🚨 ${nextCustomer.name} (Priority)`;
+        } else{
+            document.getElementById("next").textContent = `Next Customer: ${nextCustomer.name}`;
+        }
+    } else{
+        // queue is empty
+        document.getElementById("next").textContent = "Next Customer: NONE";
+    }
 }
+
+displayQueue();
