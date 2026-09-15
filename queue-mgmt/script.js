@@ -92,6 +92,47 @@ function addPriorityCustomer(){
     displayQueue();
 }
 
+// process and remove customer from queue
 function serveCustomer(){
-    
+    // get customer front of queue
+    const customer = queue.dequeue();
+    // check if no customer in queue
+    if (customer === null){
+        alert("No one to serve, empty queue!!");
+        return;
+    }
+    // show which customer was just served
+    document.getElementById("served").textContent = `Served: ${customer.name} (Token ${customer.token})`;
+    displayQueue();
+}
+
+// clear the queue
+function clearQueue(){
+    // clear all items from queue
+    queue.clear();
+    displayQueue();
+    // update the page 
+    document.getElementById("served").textContent = "Queue now clear!!";
+}
+
+function displayQueue(){
+    // get reference to the html element
+    const queueList = document.getElementById("queueList");
+    queueList.innerHTML = "";
+    // iterate every customer in array
+    queue.items.forEach(function(customer, index){
+        // new <li> element for customer
+        const li = document.createElement("li");
+        // check if customer is priority
+        if(customer.priority){
+            // custom style for priority
+            li.classList.add("priority");
+            li.textContent = `🚨 Priority | Position ${index + 1} | Token ${customer.token} | ${customer.name}`;
+        } else{
+            // normal customer
+            li.textContent = `Position ${index + 1} | Token ${customer.token} | ${customer.name}`
+        }
+        // append it to DOM
+        queueList.appendChild(li);
+    });
 }
