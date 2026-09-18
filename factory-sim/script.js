@@ -112,6 +112,9 @@ function processProduct(){
                 `✅ Product #${product.id} completed ` + 
                 `(+रु${product.value})`
             );
+            if (isEmpty()){
+                log("🏁 Finished processing all elements!!")
+            }
             render();
         }
     }, 250);
@@ -172,7 +175,7 @@ function render(){
         }
         // add index and append it to UI
         const label = document.createElement("small");
-        label.textContent = `Slot ${i}`;
+        // label.textContent = `Slot ${i}`;
         slot.appendChild(label);
         queueElement.appendChild(slot);
     }
