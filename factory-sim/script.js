@@ -132,7 +132,6 @@ function autoProcess(){
         }
     }, 1500);
 }
-
 // auto production sim stop
 function stopAuto(){
     // clear timer
@@ -141,3 +140,55 @@ function stopAuto(){
     autoTimer = null;
     log("⏹️ Auto production stopped!!")
 }
+
+// reflect changes made on UI
+function render(){
+    // get reference to html elements
+    // update the content
+    document.getElementById("money").textContent = money;
+    document.getElementById("produced").textContent = produced;
+    document.getElementById("count").textContent = count;
+    // clear queue before staring again
+    const queueElement = document.getElementById("queue");
+    queueElement.innerHTML = "";
+    // iterate all indices based on capacity
+    for(let i=0; i<capacity; i++){
+        const slot = document.createElement("div");
+        slot.className = "slot";
+        // current index has element
+        if (queue[i]){
+            slot.classList.add("filled");
+            // add highlight to element at front
+            if (i === front){
+                slot.classList.add("front");
+            // highlight rear index element
+            }if (i === rear && !isFull()){
+                slot.classList.add("rear");
+            }
+            slot.innerHTML = `📦 #${queue[i].id}`;
+        } else{
+            slot.innerHTML = "EMPTY";
+        }
+        // add index and append it to UI
+        const label = document.createElement("small");
+        label.textContent = `Slot ${i}`;
+        slot.appendChild(label);
+        queueElement.appendChild(slot);
+    }
+    // fallback measure for correct class
+    if (!isFull() && queueElement.children[rear]){
+        queueElement.children[rear].classList.add("rear");
+    }
+}
+
+// add and display log messages 
+function log(message){
+    const logElement = document.getElementById("log");
+    const line = document.createElement("div");
+    line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    logElement.prepend(line);
+}
+
+render();
+log("🛠️ Production started!!")
+log("📝 Add products to the queue!!")
