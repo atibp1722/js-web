@@ -95,7 +95,7 @@ function processProduct(){
     let progress = 0;
     const interval = setInterval(() => {
         progress += 20;
-        document.getElementById("progress").textContent = `Progress: ${progress}`;
+        document.getElementById("progress").textContent = `Progress: ${progress}%`;
         // simulate progress reached 100%
         if (progress >= 100){
             clearInterval(interval);
@@ -110,7 +110,7 @@ function processProduct(){
             document.getElementById("progress").textContent = `+ रु${product.value}`;
             log(
                 `✅ Product #${product.id} completed ` + 
-                `(+${product.value}रु)`
+                `(+रु${product.value})`
             );
             render();
         }
@@ -156,18 +156,19 @@ function render(){
         const slot = document.createElement("div");
         slot.className = "slot";
         // current index has element
-        if (queue[i]){
+        if (queue[i] !== undefined){
             slot.classList.add("filled");
-            // add highlight to element at front
-            if (i === front){
-                slot.classList.add("front");
-            // highlight rear index element
-            }if (i === rear && !isFull()){
-                slot.classList.add("rear");
-            }
             slot.innerHTML = `📦 #${queue[i].id}`;
         } else{
             slot.innerHTML = "EMPTY";
+        }
+        // add highlight to element at front
+        if (i === front && !isEmpty()){
+            slot.classList.add("front");
+        }
+        // highlight rear index element
+        if (i === rear){
+            slot.classList.add("rear");
         }
         // add index and append it to UI
         const label = document.createElement("small");
