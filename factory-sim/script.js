@@ -118,3 +118,26 @@ function processProduct(){
     // update webpage when processing function begins
     render();
 }
+
+// auto production sim start
+function autoProcess(){
+    // prevent duplicate interval
+    if (autoTimer) return;
+    log("▶️ Auto production started!!");
+    // set interval every 1.5s
+    autoTimer = setInterval(() => {
+        // verify if processing and elements in queue are valid
+        if (!processing && !isEmpty()){
+            processProduct();
+        }
+    }, 1500);
+}
+
+// auto production sim stop
+function stopAuto(){
+    // clear timer
+    clearInterval(autoTimer);
+    // reset variable
+    autoTimer = null;
+    log("⏹️ Auto production stopped!!")
+}
