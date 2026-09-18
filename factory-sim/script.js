@@ -35,3 +35,20 @@ function enqueue(product){
     count++;
     return true;
 }
+// remove element from queue
+function dequeue(){
+    // check queue underflow
+    if (isEmpty()){
+        return null;
+    }
+    // get element at front of queue
+    const product = queue[front];
+    // clear any reference to the position
+    queue[front] = undefined;
+    // sue modulus to circle back to 0 when capacity limit reached 
+    front = (front + 1) % capacity;
+    // decrease counter
+    count--;
+    return product;
+}
+
