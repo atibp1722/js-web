@@ -9,7 +9,7 @@ let money = 100;
 let produced = 0;
 let productId = 1;
 let autoTimer = null;
-let processng = false;
+let processing = false;
 
 // check if queue in maximum capacity
 function isFull(){
@@ -52,3 +52,69 @@ function dequeue(){
     return product;
 }
 
+// add new element to the queue
+function addProduct(){
+    // define object with its key value pairings
+    const product = {
+        id: productId++,
+        time: Date.now(),
+        value: Math.floor(Math.random() * 45) + 15
+    };
+    // add element to the queue
+    if (enqueue(product)){
+        // simulate cost deduction
+        money -= 5;
+        // log info regarding element
+        log(
+            `📦 Product #${product.id} at slot ` + 
+            `${(rear - 1 + capacity) % capacity}`
+        );
+        // refresh webpage for changes to take ffect
+        render();
+    }
+}
+
+// take element from queue and processing simulation
+// updated every 250ms
+function processProduct(){
+    // check busy or not
+    if (processing){
+        log("⚠️ Machine is already working.");
+        return;
+    }
+    // get next element from queue
+    const product = dequeue();
+    if (!product){
+        log("🚨 No products in queue.");
+        return;
+    }
+    // change status and show message
+    processing = true;
+    document.getElementById("machineStatus").textContent = `Processing Product #${product.id}`;
+    // simulate timer based process
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 20;
+        document.getElementById("progress").textContent = `Progress: ${progress}`;
+        // simulate progress reached 100%
+        if (progress >= 100){
+            clearInterval(interval);
+            // free processor
+            processing = false;
+            // increment counter
+            produced++;
+            // increment amount
+            money += product.value;
+            // details regarding above completion
+            document.getElementById("machineStatus").textContent = `Finished Product #${product.id}`;
+            document.getElementById("progress").textContent = `+ रु${product.value}`;
+            log(
+                `✅ Product #${product.id} completed ` + 
+                `(+${product.value}रु)`
+            );
+            render();
+        }
+    }, 250);
+    // update webpage when processing function begins
+    render();
+}
