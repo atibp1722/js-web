@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet"/>
+    <link rel="stylesheet" href="./style.css">
+    <title>Factory Simulator</title>
+</head>
+<body>
+    
+    <div id="factory">
+        <h1>Factory Simulator</h1>
+        <div class="stats">
+            <p>Amount: रु<span id="money">100</span></p>
+            <p>Produced: <span id="produced">0</span></p>
+            <p>Queue: <span id="count">0</span><span id="capacity">8</span></p>
+        </div>
+        <div>
+            <button onclick="addProduct()">✚ Add Product</button>
+            <button onclick="processProduct()">⚙️ Process Product</button>
+            <button onclick="autoProcess()">▶︎ Auto Production</button>
+            <button onclick="stopProcess()">◼ Stop Production</button>
+        </div>
+        <h2>Production Queue</h2>
+        <div id="queue"></div>
+        <div id="machine">
+            <h2>🔩 Machine</h2>
+            <p id="machineStatus">Waiting...</p>
+            <div id="progress"></div>
+        </div>
+        <h2>Production Log</h2>
+        <div id="log"></div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
