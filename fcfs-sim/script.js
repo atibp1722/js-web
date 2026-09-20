@@ -117,7 +117,7 @@ function displayProcess(){
     let currentNode = processList.head;
     // iterate and add row to table
     while (currentNode !== null){
-        table.innerHTML = `
+        table.innerHTML += `
             <tr>
                 <td>${currentNode.pid}</td>
                 <td>${currentNode.arrivalTime}</td>
@@ -166,17 +166,80 @@ function runFCFS(){
         // time which process execute
         const startTime = currentTime;
         currentTime = currentTime + process.burstTime;
+        // scheduling time calculations
         process.completionTime = currentTime;
+        // total time taken
         process.turnAroundTime = process.completionTime - process.arrivalTime;
+        // total waiting time
         process.waitTime = process.turnAroundTime - process.burstTime;
-
+        // visualizing time details
         gantt.push({
             pid: process.pid,
             start: startTime,
             end: currentTime
         });
     });
+    displayGantt(gantt);
+    displayResult(processes);
+}
 
-    displayGantt();
-    displayResult();
+// display process gantt chart
+function displayGantt(gantt){
+    const container = document.getElementById("gantt");
+    container.innerHTML = "";
+    // iterate every process
+    gantt.forEach(function(block){
+        // create and add styling to div element
+        const div = document.createElement("div");
+        div.className = "process";
+        // display process detail
+        div.innerHTML += `<strong>${block.pid}</strong>
+                        <div class="time">
+                            ${block.start} -> ${block.end}
+                        </div>`;
+        // add newly created process
+        container.appendChild(div);
+    });
+}
+
+// function to show process result
+function displayResult(processes){
+    const table = document.getElementById("resultTable");
+    table.innerHTML = "";
+    // variables for time calculation
+    let totalWT = 0;
+    let totalTAT = 0;
+    // iterate every process
+    processes.forEach(function(process){
+        // add time
+        totalWT += process.waitTime;
+        totalTAT += process.turnAroundTime;
+        // create new row with the results
+        table.innerHTML += `
+                        <tr>
+                            <td>${process.pid}</td>
+                            <td>${process.arrivalTime}</td>
+                            <td>${process.burstTime}</td>
+                            <td>${process.completionTime}</td>
+                            <td>${process.turnAroundTime}</td>
+                            <td>${process.waitTime}</td>
+                        </tr>`;
+    });
+    // average time variables
+    const averageWT = totalWT / processes.length;
+    const averageTAT = totalTAT / processes.length;
+    // display average time variables
+    document.getElementById("average").innerHTML += `Average Wait Time: ${averageWT.toFixed(3)}
+                                                    <br/> Average Turn-Around Time : ${averageTAT.toFixed(3)}`;
+}
+
+// function to clear all process
+function clearAll(){
+    // clear the list
+    processList.clear();
+    // clear all the content
+    document.getElementById("processTable").innerHTML = "";
+    document.getElementById("resultTable").innerHTML = "";
+    document.getElementById("gantt").innerHTML = "";
+    document.getElementById("average").innerHTML = "";
 }
