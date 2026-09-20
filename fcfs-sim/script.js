@@ -229,7 +229,7 @@ function displayResult(processes){
     const averageWT = totalWT / processes.length;
     const averageTAT = totalTAT / processes.length;
     // display average time variables
-    document.getElementById("average").innerHTML += `Average Wait Time: ${averageWT.toFixed(3)}
+    document.getElementById("average").innerHTML = `Average Wait Time: ${averageWT.toFixed(3)}
                                                     <br/> Average Turn-Around Time : ${averageTAT.toFixed(3)}`;
 }
 
