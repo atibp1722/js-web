@@ -228,24 +228,21 @@ const getRandomWord = () =>
 
 // checker to handle input and backspace
 const checker = async(e) => {
-    // value typed into box and then disable the box
-    let value = e.target.value.toUpperCase();
-    updateDivConfig(e.target, true);
-    // check if 1 character
-    if (value.length == 1){
-        // not more than 5 words and backspace not pressed
-        if (inputCount <=4 && e.key != "Backspace"){
-            finalWord += value;
-            // if not so enable the next input box
-            if (inputCount <4 ){
-                updateDivConfig(e.target.nextElementSibling, false);
-            }
-        }
-        inputCount += 1;
-        updateDivConfig(e.target, true);
+    let currentInputs = inputRow[tryCount].querySelectorAll(".input-box");
+
     // empty input and backspace pressed
-    } else if (e.key == "Backspace" || e.inputType === "deleteContentBackward"){
+    if (e.key == "Backspace" || e.inputType === "deleteContentBackward"){
         if (inputCount > 0){
+            // event handling to clear previous boxes and shift cursor
+            if (e.target.value === "" && e.target.previousElementSibling){
+                updateDivConfig(e.target, true);
+                inputCount -= 1;
+                let prev = e.target.previousElementSibling;
+                prev.value = "";
+                updateDivConfig(prev, false);
+                finalWord = finalWord.substring(0, finalWord.length - 1);
+                return false;
+            }
             // remove last chracter from the word
             finalWord = finalWord.substring(0, finalWord.length-1);
             updateDivConfig(e.target, true);
@@ -259,7 +256,24 @@ const checker = async(e) => {
         } else{
             updateDivConfig(e.target, false);
         }
-            
+        return false;
+    }
+
+    // value typed into box and then disable the box
+    let value = e.target.value.toUpperCase();
+    
+    // check if 1 character
+    if (value.length == 1){
+        // not more than 5 words and backspace not pressed
+        if (inputCount <=4 && e.key != "Backspace"){
+            finalWord += value;
+            updateDivConfig(e.target, true);
+            inputCount += 1;
+            // if not so enable the next input box
+            if (inputCount < 5 && e.target.nextElementSibling){
+                updateDivConfig(e.target.nextElementSibling, false);
+            }
+        }
     }
 };
 
@@ -268,9 +282,22 @@ const validateWord = async() => {
     if (isTouchDevice()){
         submitBtn.classList.add("hide");
     }
-    let failed = false;
     // get the row currently in play
     let currentInputs = inputRow[tryCount].querySelectorAll(".input-box");
+
+    // FIXED: Rebuild finalWord from current input boxes to prevent sync mismatches or corruption
+    finalWord = "";
+    currentInputs.forEach(box => finalWord += box.value.toUpperCase());
+
+    if (finalWord.length < 5) {
+        alert("Word must be 5 letters!!");
+        if (isTouchDevice()) {
+            submitBtn.classList.remove("hide");
+        }
+        return false;
+    }
+
+    let failed = false;
     // word exists check
     await fetch(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${finalWord.toLowerCase()}`
@@ -283,6 +310,7 @@ const validateWord = async() => {
     });
     // terminate if not exist
     if (failed) {
+        // restore submit button visibility on touch devices if validation fails
         if (isTouchDevice()) {
             submitBtn.classList.remove("hide");
         }
