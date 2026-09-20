@@ -80,6 +80,7 @@ class ProcessList{
     }
 }
 
+// store all individual process
 const processList = new ProcessList();
 
 function addProcess(){
@@ -87,24 +88,95 @@ function addProcess(){
     const pid = document.getElementById("id").value.trim();
     const arrival = document.getElementById("arrival").value;
     const burst = document.getElementById("burst").value;
-
+    // fundamental user input validation
     if (pid === "" || arrival < 0 || burst <= 0){
         alert("Sorry, cannot process the process!!");
         return;
     }
-
+    // convert to array 
     const processes = processList.toArray();
-
+    // handle duplicate process
     if (processes.some(p => p.pid === pid)){
         alert("Sorry, duplicate process not allowed!!");
         return;
     }
-
+    // create new process node and add to list
     const process = new ProcessNode(pid, arrival, burst);
     processList.add(process);
     displayProcess();
-
+    // clear fields for new input
     document.getElementById("id").value = "";
     document.getElementById("arrival").value = "";
     document.getElementById("burst").value = "";
+}
+
+// show the process on the webpage
+function displayProcess(){
+    const table = document.getElementById("processTable");
+    table.innerHTML = "";
+    let currentNode = processList.head;
+    // iterate and add row to table
+    while (currentNode !== null){
+        table.innerHTML = `
+            <tr>
+                <td>${currentNode.pid}</td>
+                <td>${currentNode.arrivalTime}</td>
+                <td>${currentNode.burstTime}</td>
+                <td>
+                    <button onclick="deleteProcess('${currentNode.pid}')"></button>
+                </td>
+            </tr>`;
+    }
+    currentNode = currentNode.next;
+}
+
+// delete process using id reference
+function deleteProcess(pid){
+    processList.remove(pid);
+    displayProcess();
+}
+
+// first come first serve (FCFS) implementation
+function runFCFS(){
+    let processes = processList.toArray();
+    // process are in list
+    if (processes.length === 0){
+        alert("Sorry, no process to run!!");
+        return;
+    }
+    // sort using time
+    // which ever is earliest gets serve first
+    processes.sort(function(a, b){
+        return a.arrivalTime - b.arrivalTime
+    });
+    let currentTime = 0;
+    // store time values
+    let gantt = [];
+    // iterate sorted items
+    processes.forEach(function(process){
+        // waiting for next process to arrive
+        if (currentTime < process.arrivalTime){
+            gantt.push({
+                pid: "Idle",
+                start: currentTime,
+                end: process.arrivalTime
+            });
+            currentTime = process.arrivalTime;
+        }
+        // time which process execute
+        const startTime = currentTime;
+        currentTime = currentTime + process.burstTime;
+        process.completionTime = currentTime;
+        process.turnAroundTime = process.completionTime - process.arrivalTime;
+        process.waitTime = process.turnAroundTime - process.burstTime;
+
+        gantt.push({
+            pid: process.pid,
+            start: startTime,
+            end: currentTime
+        });
+    });
+
+    displayGantt();
+    displayResult();
 }
