@@ -94,7 +94,7 @@ const processList = new ProcessList();
 
 function addProcess(){
     // get reference to the html elements
-    const pid = document.getElementById("id").value.trim();
+    const pid = document.getElementById("pid").value.trim();
     const arrival = Number(document.getElementById("arrival").value);
     const burst = Number(document.getElementById("burst").value);
     // fundamental user input validation
