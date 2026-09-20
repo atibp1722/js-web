@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet"/>
+    <link rel="stylesheet" href="./style.css">
+    <title>FCFS Scheduler Simulator</title>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>FCFS Simulator</h1>
+        <h3>Add Process</h3>
+        <input type="text" id="pid" placeholder="Process ID"/>
+        <input type="number" id="arrival" placeholder="Arrival Time"/>
+        <input type="number" id="burst" placeholder="Burst Time"/>
+        <button onclick="addProcess()" id="add">Add Process</button>
+        <button onclick="clearAll()" id="clear">Clear All</button>
+
+        <h3>Process List</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Process ID</th>
+                    <th>Arrival Time</th>
+                    <th>Burst Time</th>
+                    <th>Action Taken</th>
+                </tr>
+            </thead>
+            <tbody id="processTable"></tbody>
+        </table>
+        <br/>
+
+        <button onclick="runFCFS()" id="sim-btn">Sim FCFS</button>
+
+        <h3>GANTT Chart</h3>
+        <div id="gantt"></div>
+
+        <h3>Results (Time)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Process</th>
+                    <th>Arrival</th>
+                    <th>Burst</th>
+                    <th>Completion</th>
+                    <th>Turn-Around</th>
+                    <th>Waiting</th>
+                </tr>
+            </thead>
+            <tbody class="result" id="average"></tbody>
+        </table>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
