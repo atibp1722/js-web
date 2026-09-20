@@ -28,8 +28,12 @@ classic game where user click on cells to reveal mine or number until all cells 
 # cocktails
 get info (ingredients, instructions) on your favorite cocktails from cocktailDB
 
+
 # stack-master
 create tower if the fixed base block overlap position with a moving block when it is moving across
 
 # queue-mgmt
 queue manager to add and process customers assign priority so customer can be in first place
+
+# factory-sim
+factory conveyer belt simulator to add products on the line and auto execution in orderly manner
