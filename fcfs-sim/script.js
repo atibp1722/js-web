@@ -126,8 +126,8 @@ function displayProcess(){
                     <button onclick="deleteProcess('${currentNode.pid}')"></button>
                 </td>
             </tr>`;
+        currentNode = currentNode.next;
     }
-    currentNode = currentNode.next;
 }
 
 // delete process using id reference
