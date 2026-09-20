@@ -161,6 +161,14 @@ let inputCount, inputRow, tryCount;
 let backSpaceCount = 0;
 let randWord, finalWord;
 
+submitBtn.addEventListener("click", () => {
+    if (inputCount === 5){
+        validateWord();
+    } else{
+        alert("Word must be 5 letters!!")
+    }
+});
+
 // detect whether touch device being used
 const isTouchDevice = () => {
     try{
@@ -236,21 +244,22 @@ const checker = async(e) => {
         inputCount += 1;
         updateDivConfig(e.target, true);
     // empty input and backspace pressed
-    }else if (value.length == 0 && e.key == "Backspace"){
-        // remove last chracter from the word
-        finalWord = finalWord.substring(0, finalWord.length-1);
-        // if already on first box then enable it
-        if (inputCount == 0){
+    } else if (e.key == "Backspace" || e.inputType === "deleteContentBackward"){
+        if (inputCount > 0){
+            // remove last chracter from the word
+            finalWord = finalWord.substring(0, finalWord.length-1);
+            updateDivConfig(e.target, true);
+            e.target.value = "";
+            inputCount -= 1;
+            // if already on first box then enable it
+            if (e.target.previousElementSibling){
+                updateDivConfig(e.target.previousElementSibling, false);
+                return false;
+            }
+        } else{
             updateDivConfig(e.target, false);
-            return false;
         }
-        // disable current box
-        updateDivConfig(e.target, true);
-        e.target.previousElementSibling.value = "";
-        // enable previous input box
-        updateDivConfig(e.target.previousElementSibling, false);
-        // move back 1 position
-        inputCount -= 1;
+            
     }
 };
 
@@ -264,11 +273,11 @@ const validateWord = async() => {
     let currentInputs = inputRow[tryCount].querySelectorAll(".input-box");
     // word exists check
     await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${finalWord}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${finalWord.toLowerCase()}`
     ).then ((response) => {
         if (response.status == "404"){
             console.clear();
-            alert("Soory, the word does not exist.");
+            alert("Sory, the word does not exist.");
             failed = true;
         }
     });
