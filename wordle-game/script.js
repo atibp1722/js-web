@@ -285,7 +285,7 @@ const validateWord = async() => {
     // get the row currently in play
     let currentInputs = inputRow[tryCount].querySelectorAll(".input-box");
 
-    // FIXED: Rebuild finalWord from current input boxes to prevent sync mismatches or corruption
+    // final word from current input box to prevent mismatche
     finalWord = "";
     currentInputs.forEach(box => finalWord += box.value.toUpperCase());
 
@@ -345,8 +345,7 @@ const validateWord = async() => {
             winScreen.classList.remove("hide");
             // display number of guesses
             winScreen.innerHTML = `<span>Total guesses: ${tryCount}</span>
-                                   <button onclick="startGame()">New Game</button>
-                                  `;
+                                   <button onclick="startGame()">New Game</button>`;
         }, 1000);
     // reset counter for next row    
     } else {
