@@ -37,13 +37,17 @@ class ProcessList{
     }
     // remove a particular process
     remove(pid){
+        // start from beginning
         let currentNode = this.head;
         let previousNode = null;
-
+        // iterate until end of list reached
         while(currentNode !== null){
+            // check id match
             if (currentNode.pid === pid){
+                // node to delete is head
                 if (previousNode === null){
                     // remove head node
+                    // head points to next node
                     this.head = currentNode.next;
                 }
                 else{
@@ -53,6 +57,11 @@ class ProcessList{
                 // update tail pointer if node deleted was last
                 if (currentNode === this.tail){
                     this.tail = previousNode;
+                }
+                // if removing the node make list empty
+                // tail pointer become null
+                if (this.head === null){
+                    this.tail = null;
                 }
                 return;
             }
@@ -86,8 +95,8 @@ const processList = new ProcessList();
 function addProcess(){
     // get reference to the html elements
     const pid = document.getElementById("id").value.trim();
-    const arrival = document.getElementById("arrival").value;
-    const burst = document.getElementById("burst").value;
+    const arrival = Number(document.getElementById("arrival").value);
+    const burst = Number(document.getElementById("burst").value);
     // fundamental user input validation
     if (pid === "" || arrival < 0 || burst <= 0){
         alert("Sorry, cannot process the process!!");
@@ -123,7 +132,7 @@ function displayProcess(){
                 <td>${currentNode.arrivalTime}</td>
                 <td>${currentNode.burstTime}</td>
                 <td>
-                    <button onclick="deleteProcess('${currentNode.pid}')"></button>
+                    <button onclick="deleteProcess('${currentNode.pid}')">Delete</button>
                 </td>
             </tr>`;
         currentNode = currentNode.next;
@@ -215,7 +224,7 @@ function displayResult(processes){
         totalWT += process.waitTime;
         totalTAT += process.turnAroundTime;
         // create new row with the results
-        table.innerHTML = `
+        table.innerHTML += `
                         <tr>
                             <td>${process.pid}</td>
                             <td>${process.arrivalTime}</td>
