@@ -215,7 +215,7 @@ function displayResult(processes){
         totalWT += process.waitTime;
         totalTAT += process.turnAroundTime;
         // create new row with the results
-        table.innerHTML += `
+        table.innerHTML = `
                         <tr>
                             <td>${process.pid}</td>
                             <td>${process.arrivalTime}</td>
