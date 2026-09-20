@@ -80,3 +80,31 @@ class ProcessList{
     }
 }
 
+const processList = new ProcessList();
+
+function addProcess(){
+    // get reference to the html elements
+    const pid = document.getElementById("id").value.trim();
+    const arrival = document.getElementById("arrival").value;
+    const burst = document.getElementById("burst").value;
+
+    if (pid === "" || arrival < 0 || burst <= 0){
+        alert("Sorry, cannot process the process!!");
+        return;
+    }
+
+    const processes = processList.toArray();
+
+    if (processes.some(p => p.pid === pid)){
+        alert("Sorry, duplicate process not allowed!!");
+        return;
+    }
+
+    const process = new ProcessNode(pid, arrival, burst);
+    processList.add(process);
+    displayProcess();
+
+    document.getElementById("id").value = "";
+    document.getElementById("arrival").value = "";
+    document.getElementById("burst").value = "";
+}
