@@ -179,3 +179,36 @@ function roundRobin(){
         render();
     }
 }
+
+function logActiviyt(message){
+    activityLog.push({
+        time: clock,
+        message: message
+    });
+    if (activityLog.length > 100){
+        activityLog.shift();
+    }
+    renderActivityLog();
+}
+
+function renderActivityLog(){
+    const element = document.getElementById("activityLog");
+    element.innerHTML = activityLog.map(entry => {
+        let className = "";
+        if (entry.message.includes("completed")){
+            className = "complete";
+        }
+        if (entry.message.includes("quantum expired")){
+            className = "warning";
+        }
+        return `
+                <div class="log-entry ${className}">
+                    <span class="time">
+                        [T = ${entry.time}]
+                    </span>
+                    ${entry.message}
+                </div>`;
+    }).join("");
+
+    element.scrollTop = element.scrollHeight;
+}
