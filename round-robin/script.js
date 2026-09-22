@@ -288,12 +288,15 @@ function renderQueue(){
                                         `).join("");
 }
 
+// function for render all completed jobs in table
 function renderComplete(){
-    const element = documen/getElementById("completed");
+    const element = document.getElementById("completed");
+    // placeholder when final array empty
     if (completed.length === 0){
         element.innerHTML = `<div class="empty">No completed jobs to show.</div>`;
         return;
     }
+    // dynamic table to show details of job
     element.innerHTML = `
                         <table>
                             <tr>
@@ -323,20 +326,25 @@ function renderComplete(){
                         </table>`;
 }
 
+// function for render job statistics on webpage
 function renderStats(){
     const element = document.getElementById("stats");
     let totalWait = 0;
     let totalTurnaround = 0;
     completed.forEach(job => {
+        // iterate all complete jobs for total time
         const turnaround = job.finish - job.arrival;
         const waiting = turnaround - job.burst;
         totalTurnaround += turnaround;
         totalWait += waiting;
     });
+    // calculcate average waiting and turnaround time
     const count = completed.length;
     const avgWaiting = count > 0 ? totalWait / count : 0;
     const avgTurnaround = count > 0 ? totalTurnaround / count : 0;
+    // machines with active jobs assigned
     const activeMachines = machines.filter(machine => machine.job).length;
+    // fill stats on the webpage
     element.innerHTML = `
                         <div class="stat">
                             Time: <strong>${clock}</strong>
@@ -358,6 +366,7 @@ function renderStats(){
                         </div>`;
 }
 
+// function for all events
 function render(){
     renderFactory();
     renderQueue();
@@ -365,3 +374,13 @@ function render(){
     renderStats();
     renderActivityLog();
 }
+
+initializeMachines();
+
+for (let i=0; i<6; i++){
+    const burst = Math.floor(Math.random() * 15) + 5;
+    const job = createJob("Job "+jobNumber, burst);
+    queue.push();
+}
+logActivity("Processing started with 6 jobs");
+render();
