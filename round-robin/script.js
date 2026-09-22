@@ -96,7 +96,7 @@ function stopProcess(){
 function resetProcess(){
     // clear time reference and chnage state
     clearInterval(timer);
-    timer = false;
+    timer = null;
     running = false;
     // clear all variable values
     machines = [];
@@ -119,7 +119,7 @@ function roundRobin(){
         // machine free and no jobs in queue
         if (machine.job === null && queue.length > 0){
             // shift to next job 
-            machine.job = queue.shift;
+            machine.job = queue.shift();
             // reset counter
             machine.quantUsed = 0;
             // job being processed for first time
@@ -318,8 +318,8 @@ function renderComplete(){
                                             <td>${job.arrival}</td>
                                             <td>${job.start}</td>
                                             <td>${job.finish}</td>
-                                            <td>${job.turnaround}</td>
-                                            <td>${job.waiting}</td>
+                                            <td>${turnaround}</td>
+                                            <td>${waiting}</td>
                                         </tr>`;
                             }).join("")
                         }
@@ -375,12 +375,13 @@ function render(){
     renderActivityLog();
 }
 
+// initiate machine with jobs
 initializeMachines();
-
+// create a job batch
 for (let i=0; i<6; i++){
     const burst = Math.floor(Math.random() * 15) + 5;
     const job = createJob("Job "+jobNumber, burst);
-    queue.push();
+    queue.push(job);
 }
 logActivity("Processing started with 6 jobs");
 render();
