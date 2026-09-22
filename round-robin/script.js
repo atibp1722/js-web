@@ -180,27 +180,34 @@ function roundRobin(){
     }
 }
 
-function logActiviyt(message){
+// function log log activities
+function logActivity(message){
+    // push new object to log
     activityLog.push({
         time: clock,
         message: message
     });
+    // remove old logs
     if (activityLog.length > 100){
         activityLog.shift();
     }
     renderActivityLog();
 }
-
+// function for activity log UI
 function renderActivityLog(){
+    // get reference to html element
     const element = document.getElementById("activityLog");
+    // map entry to html block
     element.innerHTML = activityLog.map(entry => {
         let className = "";
+        // assign new css class for each activity phase
         if (entry.message.includes("completed")){
             className = "complete";
         }
-        if (entry.message.includes("quantum expired")){
+        if (entry.message.includes("time expired")){
             className = "warning";
         }
+        // html for individual entry
         return `
                 <div class="log-entry ${className}">
                     <span class="time">
@@ -208,7 +215,76 @@ function renderActivityLog(){
                     </span>
                     ${entry.message}
                 </div>`;
+    // join all mapped html blocks
     }).join("");
-
+    // scroll down to show latest entry
     element.scrollTop = element.scrollHeight;
 }
+
+// function for render machines in UI 
+function renderFactory(){
+    // get html reference to the element
+    const factory = document.getElementById("factory");
+    factory.innerHTML = "";
+    // iterate each object in array
+    machines.forEach(machine => {
+        // create and assign new css class
+        const div = document.createElement("div");
+        div.className = "machine";
+        // active job assigned
+        if (machine.job){
+            div.classList.add("running");
+        }
+        // job to determine display in webpage
+        if (machine.job){
+            // dynamically render card with details
+            const job = machine.job;
+            div.innerHTML = `
+                            <h3>Machine ${machine.id}</h3>
+                            <div>
+                                <strong>${job.name}</strong>
+                            </div>
+                            <hr>
+                            <div>
+                                Time Remaining: ${job.remaining}
+                            </div>
+                            <div>
+                                Time Quantum: ${job.quantUsed}
+                            </div>
+                            <div>
+                                Burst Time: ${job.burst}
+                            </div>`;
+        // if no job display idle message
+        } else{
+            div.innerHTML = `
+                            <h3>Machine ${machine.id}</h3>
+                            <div>
+                                ⏳Idle
+                            </div>`;
+        }
+        // add div to parent container
+        factory.appendChild(div);
+    });
+}
+
+// function for render jobs in queue UI
+function renderQueue(){
+    // get reference to the html element
+    const element = document.getElementById("queue");
+    // check queue empty
+    if (queue.length === 0){
+        element.innerHTML = `<div class="empty">Queue currently empty.</div>`;
+        return;
+    }
+    // map each object in array to its individual html block and join
+    element.innerHTML = queue.map(job => `
+                                        <div class="job">
+                                            <strong>${job.name}</strong>
+                                            |
+                                            Time Remaining: ${job.remaining}
+                                            |
+                                            Burst Time: ${job.burst}
+                                        </div>
+                                        `).join("");
+}
+
