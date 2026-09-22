@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet"/>
+    <link rel="stylesheet" href="./style.css">
+    <title>Round Robin Scheduling Simulator</title>
+</head>
+<body>
+    
+    <h1>Round Robin Simulator</h1>
+    <div class="box">
+        <div class="controls">
+            <label>Time: 
+                <input id="quant" type="number" value="3" min="1">
+            </label>
+            <button onclick="addJob()">Add Job</button>
+            <button onclick="addMultipleJobs()">Add Multiple Jobs</button>
+            <button onclick="startProcess()" id="play">▷ Start Process</button>
+            <button onclick="stopProcess()" id="stop">⏸Stop Process</button>
+            <button onclick="resetProcess()" id="reset">⭮ Reset Process</button>
+        </div>
+    </div>
+    <div class="box">
+        <h2>💼Process</h2>
+        <div id="factory"></div>
+    </div>
+    <div class="box">
+        <h2>📝Ready</h2>
+        <div id="queue" class="queue"></div>
+    </div>
+    <div class="box">
+        <h2>✅Complete</h2>
+        <div id="completed"></div>
+    </div>
+    <div class="box">
+        <h2>📶Stats</h2>
+        <div id="stats"></div>
+    </div>
+    <div class="box">
+        <h2>🧾Log</h2>
+        <div id="activityLog"></div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
