@@ -197,6 +197,8 @@ function logActivity(message){
 function renderActivityLog(){
     // get reference to html element
     const element = document.getElementById("activityLog");
+    // prevent error if html element not found in webpage
+    if (!element) return;
     // map entry to html block
     element.innerHTML = activityLog.map(entry => {
         let className = "";
@@ -225,6 +227,8 @@ function renderActivityLog(){
 function renderFactory(){
     // get html reference to the element
     const factory = document.getElementById("factory");
+    // prevent error if html element not found in webpage
+    if (!factory) return;
     factory.innerHTML = "";
     // iterate each object in array
     machines.forEach(machine => {
@@ -271,6 +275,8 @@ function renderFactory(){
 function renderQueue(){
     // get reference to the html element
     const element = document.getElementById("queue");
+    // prevent error if html element not found in webpage
+    if (!element) return;
     // check queue empty
     if (queue.length === 0){
         element.innerHTML = `<div class="empty">Queue currently empty.</div>`;
@@ -291,6 +297,8 @@ function renderQueue(){
 // function for render all completed jobs in table
 function renderComplete(){
     const element = document.getElementById("completed");
+    // prevent error if html element not found in webpage
+    if (!element) return;
     // placeholder when final array empty
     if (completed.length === 0){
         element.innerHTML = `<div class="empty">No completed jobs to show.</div>`;
@@ -329,6 +337,8 @@ function renderComplete(){
 // function for render job statistics on webpage
 function renderStats(){
     const element = document.getElementById("stats");
+    // prevent error if html element not found in webpage
+    if (!element) return;
     let totalWait = 0;
     let totalTurnaround = 0;
     completed.forEach(job => {
