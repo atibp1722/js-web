@@ -34,6 +34,7 @@ function addJob(){
     // add job to queue
     queue.push(job);
     logActivity(`${job.name} created with burst time ${burst}`);
+    // refresh the webpage
     render();
 }
 // multiple jobs at once
@@ -48,3 +49,62 @@ function addMultipleJobs(){
     render();
 }
 
+// function to initialize machines
+// clear machine array
+function initializeMachines(){
+    machines = [];
+    // create objects for processing
+    for (let i=0; i<COUNT; i++){
+        machines.push({
+            id: i + 1,
+            job: null,
+            quantUsed: 0
+        });
+    }
+}
+
+// function to start processing process
+function startProcess(){
+    // if already started
+    if (running){
+        return;
+    }
+    // change the state
+    running = true;
+    logActivity("Processing has been started.");
+    // main function trigger
+    timer = setInterval(roundRobin, SPEED);
+    render();
+}
+
+// function to stop processing
+function stopProcess(){
+    // if already stopped
+    if (!running){
+        return;
+    }
+    // change the state
+    running = false;
+    // clear time reference variables
+    clearInterval(timer);
+    timer = null;
+    logActivity("Processing now stopped.");
+    render();
+}
+
+// function to reset processing
+function resetProcess(){
+    // clear time reference and chnage state
+    clearInterval(timer);
+    timer = false;
+    running = false;
+    // clear all variable values
+    machines = [];
+    queue = [];
+    completed = [];
+    activityLog = [];
+    clock = 0;
+    jobNumber = 1;
+    logActivity("All processing now reset.");
+    render();
+}
