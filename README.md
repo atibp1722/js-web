@@ -37,3 +37,6 @@ queue manager to add and process customers assign priority so customer can be in
 
 # factory-sim
 factory conveyer belt simulator to add products on the line and auto execution in orderly manner
+
+# fcfs-sim
+first come first serve implementation to add process to list, track processing order and display time results
