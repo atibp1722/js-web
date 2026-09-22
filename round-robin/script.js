@@ -288,3 +288,80 @@ function renderQueue(){
                                         `).join("");
 }
 
+function renderComplete(){
+    const element = documen/getElementById("completed");
+    if (completed.length === 0){
+        element.innerHTML = `<div class="empty">No completed jobs to show.</div>`;
+        return;
+    }
+    element.innerHTML = `
+                        <table>
+                            <tr>
+                                <th>Job</th>
+                                <th>Burst</th>
+                                <th>Arrival</th>
+                                <th>Start</th>
+                                <th>Finish</th>
+                                <th>Turnaround</th>
+                                <th>Waiting</th>
+                            </tr>
+                            ${completed.map(job => {
+                                const turnaround = job.finish - job.arrival;
+                                const waiting = turnaround - job.burst;
+                                return `
+                                        <tr>
+                                            <td>${job.name}</td>
+                                            <td>${job.burst}</td>
+                                            <td>${job.arrival}</td>
+                                            <td>${job.start}</td>
+                                            <td>${job.finish}</td>
+                                            <td>${job.turnaround}</td>
+                                            <td>${job.waiting}</td>
+                                        </tr>`;
+                            }).join("")
+                        }
+                        </table>`;
+}
+
+function renderStats(){
+    const element = document.getElementById("stats");
+    let totalWait = 0;
+    let totalTurnaround = 0;
+    completed.forEach(job => {
+        const turnaround = job.finish - job.arrival;
+        const waiting = turnaround - job.burst;
+        totalTurnaround += turnaround;
+        totalWait += waiting;
+    });
+    const count = completed.length;
+    const avgWaiting = count > 0 ? totalWait / count : 0;
+    const avgTurnaround = count > 0 ? totalTurnaround / count : 0;
+    const activeMachines = machines.filter(machine => machine.job).length;
+    element.innerHTML = `
+                        <div class="stat">
+                            Time: <strong>${clock}</strong>
+                        </div>
+                        <div class="stat">
+                            Queue Size: ${queue.length}
+                        </div>
+                        <div class="stat">
+                            Active Machines: <strong>${activeMachines} / ${COUNT}</strong>
+                        </div>
+                        <div class="stat">
+                            Jobs Completed: ${count}
+                        </div>
+                        <div class="stat">
+                            Avg. Wait Time: <strong>${avgWaiting.toFixed(2)}</strong>
+                        </div>
+                        <div class="stat">
+                            Avg. Turnaround Time: <strong>${avgTurnaround.toFixed(2)}</strong>
+                        </div>`;
+}
+
+function render(){
+    renderFactory();
+    renderQueue();
+    renderComplete();
+    renderStats();
+    renderActivityLog();
+}
