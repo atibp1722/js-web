@@ -108,3 +108,74 @@ function resetProcess(){
     logActivity("All processing now reset.");
     render();
 }
+
+// function for round robin implementation
+function roundRobin(){
+    clock++;
+    // time quantum must be atleast 1 to remain valid
+    const quantum = Math.max(1, parseInt(document.getElementById("quantum").value) || 1);
+    // assign jobs to idle machines
+    for (const machine of machines){
+        // machine free and no jobs in queue
+        if (machine.job === null && queue.length > 0){
+            // shift to next job 
+            machine.job = queue.shift;
+            // reset counter
+            machine.quantUsed = 0;
+            // job being processed for first time
+            const job = machine.job
+            if (job.start === null){
+                // store job time
+                job.start = clock;
+                logActivity(`${job.name} started on machine ${machine.id}`);
+            } else{
+                // resume normally if not first
+                logActivity(`${job.name} resumed on machine ${machine.id}`);
+            }
+        }
+    }
+    // jobs running on machines
+    for (const machine of machines){
+        // skip if machine idle
+        if (machine.job === null){
+            continue;
+        }
+        const job = machine.job;
+        // decrease time remaining 
+        job.remaining--;
+        // increment time taken by current machine
+        machine.quantUsed++;
+        // job finished processing
+        if (job.remaining <= 0){
+            // store completion time
+            job.finish = clock;
+            // move finished job to final array
+            completed.push(job);
+            logActivity(`${job.name} completed on machine ${machine.id}`);
+            // new machine for new job
+            machine.job = null;
+            machine.quantUsed = 0;
+            continue;
+        }
+        // job has exceeded allocated time
+        if (machine.quantUsed >= quantum){
+            // push it to end of queue
+            queue.push(job);
+            logActivity(`${job.name} time expired on machine ${machine.id} -> returned to queue`);
+            // free the machineand reset counte
+            machine.job = null;
+            machine.quantUsed = 0;
+        }
+    }
+    render();
+    // check queue empty and all processing finished
+    if (queue.length === 0 && machines.every(machine => machine.job === null)){
+        // change status
+        running = false;
+        // clear time references
+        clearInterval(timer);
+        timer = null;
+        logActivity("All process finished, no job in queue.");
+        render();
+    }
+}
