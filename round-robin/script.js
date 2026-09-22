@@ -253,7 +253,7 @@ function renderFactory(){
                                 Time Remaining: ${job.remaining}
                             </div>
                             <div>
-                                Time Quantum: ${job.quantUsed}
+                                Time Quantum: ${machine.quantUsed}
                             </div>
                             <div>
                                 Burst Time: ${job.burst}
@@ -393,5 +393,5 @@ for (let i=0; i<6; i++){
     const job = createJob("Job "+jobNumber, burst);
     queue.push(job);
 }
-logActivity("Processing started with 6 jobs");
+logActivity("Initiated with 6 jobs.");
 render();
