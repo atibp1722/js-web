@@ -13,7 +13,7 @@ body{
 h1{
     margin-top: 0;
     text-align: center;
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 600;
 }
 
@@ -45,8 +45,30 @@ button{
     cursor: pointer;
 }
 
-button:hover{
-    background: lightgreen;
+#play{
+    background-color: darkgreen;
+    color: white;
+}
+#play:hover{
+    background: mediumseagreen;
+    transition: ease-in-out 0.5s;
+}
+
+#stop{
+    background-color: darkorange;
+    color: white;
+}
+#stop:hover{
+    background: orange;
+    transition: ease-in-out 0.5s;
+}
+
+#reset{
+    background-color: darkred;
+    color: white;
+}
+#reset:hover{
+    background: red;
     transition: ease-in-out 0.5s;
 }
 
@@ -84,4 +106,69 @@ button:hover{
 
 .queue{
     min-height: 40px;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td{
+    border: 1px solid lightgrey;
+    padding: 7px;
+    text-align: center;
+}
+
+th{
+    background: white;
+}
+
+#stats{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+}
+
+.stat{
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.stat:strong{
+    display: block;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+#activityLog{
+    height: 200px;
+    overflow-y: auto;
+    background: black;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+}
+
+.log-entry{
+    margin-bottom: 5px;
+}
+
+.time{
+    color: lightskyblue;
+}
+
+.complete{
+    color: green;
+}
+
+.warning{
+    color: orange;
+}
+
+.empty{
+    color: grey;
+    padding: 8px;
 }
