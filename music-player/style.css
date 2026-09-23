@@ -1,0 +1,62 @@
+body{
+    margin: 0;
+    font-family: 'Times New Roman', Times, serif;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.player{
+    width: 320px;
+    padding: 25px;
+    background: green;
+    border-radius: 10px;
+    text-align: center;
+}
+
+h2{
+    margin-bottom: 5px;
+}
+
+#artist{
+    margin-top: 0;
+}
+
+button{
+    border: none;
+    background: transparent;
+    color: white;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+button:hover{
+    background: lightgreen;
+    transition: ease-in-out 0.3s;
+}
+
+#progress{
+    width: 100%;
+    margin-top: 20px;
+}
+
+#songs li{
+    list-style: none;
+    padding: 10px;
+    border-bottom: 1px solid grey;
+    cursor: pointer;
+}
+
+#songs li:hover{
+    background: lightslategrey;
+}
+
+.active{
+    color: darkgreen;
+}
