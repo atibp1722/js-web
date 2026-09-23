@@ -94,7 +94,7 @@ let title = document.getElementById("title");
 let artist = document.getElementById("artist");
 let playBtn = document.getElementById("playBtn");
 let progress = document.getElementById("progress");
-let time = document.getElementById("times");
+let time = document.getElementById("time");
 let songList = document.getElementById("songs");
 
 // currently active song data to webpage
@@ -169,7 +169,7 @@ function showPlaylist(){
         // create new element
         let li = document.createElement("li");
         // add song info
-        li.innerText = node.song.title + "-" + node.song.artist;
+        li.innerText = node.song.title + " - " + node.song.artist;
         // check node is currently active song
         if (node === playlist.current){
             // css highlight
