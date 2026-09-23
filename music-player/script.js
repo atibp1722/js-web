@@ -133,3 +133,53 @@ function prevSong(){
 }
 // trigger next song function as soon as music finish 
 audio.addEventListener("ended", nextSong);
+
+// sync progress bar with music time
+audio.addEventListener("timeupdate", function(){
+    if (audio.duration){
+        // percent of song completed
+        let percent = (audio.currentTime / audio.duration) * 100;
+        progress.value = percent;
+        // update time label
+        time.innerText = formatTime(audio.currentTime) + "/" + formatTime(audio.duration);
+    }
+});
+
+// seek feature in progress bar
+progress.addEventListener("input", function(){
+    if (audio.duration){
+        // jump to current time based on progress bar 
+        audio.currentTime = (progress.value / 100) * audio.duration;
+    }
+});
+
+// function for time format
+function formatTime(secs){
+    let mins = Math.floor(secs / 60);
+    let secsLeft = Math.floor(secs % 60);
+    return mins + ":" + secsLeft.toString().padStart(2, "0");
+}
+
+// function for render playlist on webpage
+function showPlaylist(){
+    songList.innerHTML = "";
+    // begin from playlist head
+    let node = playlist.head;
+    while (node !== null){
+        // create new element
+        let li = document.createElement("li");
+        // add song info
+        li.innerText = node.song.title + "-" + node.song.artist;
+        // check node is currently active song
+        if (node === playlist.current){
+            // css highlight
+            li.classList.add("active");
+        }
+        // add it to webpage container
+        songList.appendChild(li);
+        // move to next nsong in list
+        node = node.next;
+    }
+}
+
+loadSong();
