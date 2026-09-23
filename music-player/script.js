@@ -58,3 +58,78 @@ class DoublyLinkedList{
         return this.current.song;
     }
 }
+
+// new playlist instance create
+let playlist = new DoublyLinkedList();
+// add tracks to the playlist
+playlist.add({
+    title: "Testtify",
+    artist: "Rage Against The Machine",
+    src: "song/music.mp3"
+});
+playlist.add({
+    title: "Up The Mountain",
+    artist: "Vince Di Cola",
+    src: "song/music.mp3"
+});
+playlist.add({
+    title: "Gimme Sheler",
+    artist: "The Rolling Stones",
+    src: "song/music.mp3"
+});
+playlist.add({
+    title: "Marathon",
+    artist: "Rush",
+    src: "song/music.mp3"
+});
+playlist.add({
+    title: "Sabotage",
+    artist: "Beastie Boys",
+    src: "song/music.mp3"
+});
+
+// get refrence to the html elements
+let audio = document.getElementById("audio");
+let title = document.getElementById("title");
+let artist = document.getElementById("artist");
+let playBtn = document.getElementById("playBtn");
+let progress = document.getElementById("progress");
+let time = document.getElementById("times");
+let songList = document.getElementById("songs");
+
+// currently active song data to webpage
+function loadSong(){
+    let song = playlist.current.song;
+    title.innerText = song.title;
+    artist.innerText = song.artist;
+    audio.src = song.src;
+    showPlaylist();
+}
+
+// change status and show by changing icons
+function playPause(){
+    if (audio.paused){
+        audio.play();
+        playBtn.innerText = "⏸️";
+    } else{
+        audio.pause();
+        playBtn.innerText = "▶️";
+    }
+}
+
+// move pointer forward to next song
+function nextSong(){
+    playlist.next();
+    loadSong();
+    audio.play();
+    playBtn.innerText = "⏸️";
+}
+// move pointer backward to previous song
+function prevSong(){
+    playlist.previous();
+    loadSong();
+    audio.play();
+    playBtn.innerText = "⏸️";
+}
+// trigger next song function as soon as music finish 
+audio.addEventListener("ended", nextSong);
