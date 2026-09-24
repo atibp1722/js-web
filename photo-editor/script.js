@@ -53,17 +53,11 @@ function draw(){
     context.save();
     // move to center for easy rotation
     context.translate(canvas.width / 2, canvas.height / 2);
-    context.rotate(angle);
     // horizontal and vertical transformation
     context.scale(flipX, flipY);
+    context.rotate(angle);
     // apply filter
-    context.filter = `
-                    brightness(${brightness.value}%)
-                    contrast(${contrast.value}%)
-                    saturate(${saturation.value}%)
-                    blur(${blur.value}px)
-                    grayscale(${greyscale.value}%)
-                    sepia(${sepia.value}%)`;
+    context.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%) blur(${blur.value}px) grayscale(${greyscale.value}%) sepia(${sepia.value}%)`;
     // draw image around (0, 0) coordinates
     context.drawImage(img, -img.width / 2, -img.height / 2);
     // canvas restore to state before
@@ -107,7 +101,7 @@ document.getElementById("flipY").onclick = () => {
 function resetEditor(){
     brightness.value = 100;
     contrast.value = 100;
-    saturation.value = 10;
+    saturation.value = 100;
     blur.value = 0;
     greyscale.value = 0;
     sepia.value = 0;
@@ -120,7 +114,7 @@ function resetEditor(){
 }
 
 // wait for click event before firing
-document.getElementById("reset").onclick = resetEditor;
+document.getElementById("resetBtn").onclick = resetEditor;
 
 // event listener for download button
 document.getElementById("download").onclick = () => {
