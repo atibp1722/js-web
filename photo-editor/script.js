@@ -69,3 +69,36 @@ function draw(){
     // canvas restore to state before
     context.restore();
 }
+
+// iterate all elements
+[
+    brightness, contrast, saturation, blur, greyscale, sepia
+].forEach(control => {
+    // listen as long as user grags slider
+    control.addEventListener("input", draw);
+});
+
+// event button to rotate image left
+document.getElementById("rotateLeft").onclick = () => {
+    // decrease angle 90 degree to rate anti-clockwise
+    rotation -= 90;
+    draw();
+}
+// event button to rotate image right
+document.getElementById("rotateRight").onclick = () => {
+    // increase angle 90 degree to rate lockwise
+    rotation += 90;
+    draw();
+}
+// event button to flip image horizontally
+document.getElementById("flipX").onclick = () => {
+    // scaling factor from [1, -1 and -1, 1]
+    flipX *= -1;
+    draw();
+}
+// event button to flip image vertically
+document.getElementById("flipY").onclick = () => {
+    // scaling factor from [1, -1 and -1, 1]
+    flipY *= -1;
+    draw();
+}
