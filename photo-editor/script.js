@@ -74,7 +74,7 @@ function draw(){
 [
     brightness, contrast, saturation, blur, greyscale, sepia
 ].forEach(control => {
-    // listen as long as user grags slider
+    // listen as long as user drags slider
     control.addEventListener("input", draw);
 });
 
@@ -102,3 +102,38 @@ document.getElementById("flipY").onclick = () => {
     flipY *= -1;
     draw();
 }
+
+// reset all to default values
+function resetEditor(){
+    brightness.value = 100;
+    contrast.value = 100;
+    saturation.value = 10;
+    blur.value = 0;
+    greyscale.value = 0;
+    sepia.value = 0;
+    // default image states
+    rotation = 0;
+    flipX = 1;
+    flipY = 1;
+    // canvas with default settings
+    draw();
+}
+
+// wait for click event before firing
+document.getElementById("reset").onclick = resetEditor;
+
+// event listener for download button
+document.getElementById("download").onclick = () => {
+    if (!img.src){
+        alert("Please upload image to download it.");
+        return;
+    }
+    // temp element 
+    const link = document.createElement("a");
+    // default file name
+    link.download = "altered-image.png";
+    // convert canvas image to data url
+    link.href = canvas.toDataURL("image/png");
+    // download from browser using the href link
+    link.click();
+};
