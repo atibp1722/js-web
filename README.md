@@ -40,3 +40,9 @@ factory conveyer belt simulator to add products on the line and auto execution i
 
 # fcfs-sim
 first come first serve implementation to add process to list, track processing order and display time results
+
+# round-robin
+round robin algorithm to simulate scheduling by processing multiple jobs at once with time and order of processing
+
+# music-player
+doubly linked list implementation to simulate a playlist that wraps around to begin based on nodes in list
