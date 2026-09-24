@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Photo Editor</title>
+</head>
+<body>
+    
+    <h1>PHOTO EDITOR</h1>
+    <div class="editor">
+        <input type="file" id="upload" accept="image/*">
+        <br>
+        <canvas id="canvas"></canvas>
+        <div class="controls">
+            <div class="control">
+                Brightness <input type="range" id="brightness" min="0" max="100" value="0">
+            </div>
+            <div class="control">
+                Contrast <input type="range" id="contrast" min="0" max="100" value="0">
+            </div>
+            <div class="control">
+                Saturation <input type="range" id="saturation" min="0" max="100" value="0">
+            </div>
+            <div class="control">
+                Blur <input type="range" id="blur" min="0" max="10" value="0">
+            </div>
+            <div class="control">
+                Greyscale <input type="range" id="greyscale" min="0" max="100" value="0">
+            </div>
+            <div class="control">
+                Sepia <input type="range" id="sepia" min="0" max="100" value="0">
+            </div>
+        </div>
+        <hr>
+        <div class="actions">
+            <button id="rotateLeft">↩️Rotate Left</button>
+            <button id="rotateRight">↪️Rotate Right</button>
+            <button id="rotateRight">↔️Flip-X</button>
+            <button id="rotateRight">↕️Flip-Y</button>
+            <button id="rotateRight">🔄Reset</button>
+            <button id="rotateRight">📥Download</button>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
