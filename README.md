@@ -1,5 +1,5 @@
 
-Compilation works and applications built using JavaScript, also used are HTML and CSS. Works are neatly arranged in their own folders and are independent of each other. 
+Compilation applications built using JavaScript, also used are HTML and CSS. Works are neatly arranged in their own folders and are independent of each other. 
 
 # bookmark
 a manager that allows for quick and easy organization of frequented websites
@@ -40,6 +40,9 @@ factory conveyer belt simulator to add products on the line and auto execution i
 
 # fcfs-sim
 first come first serve implementation to add process to list, track processing order and display time results
+
+# photo-editor
+photo editor allowing user to rotate, flip images along with adjust brightness, contrast, saturation etc.
 
 # round-robin
 round robin algorithm to simulate scheduling by processing multiple jobs at once with time and order of processing
