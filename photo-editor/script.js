@@ -21,6 +21,9 @@ let img = new Image();
 let rotation = 0;
 let flipX = 1;
 let flipY = 1;
+// image skew variables
+let skewX = 0;
+let skewY = 0;
 
 // trigger when file uploaded
 upload.addEventListener("change", function(){
@@ -48,7 +51,7 @@ function draw(){
     // rotation degree to radian for canvas
     const angle = rotation * Math.PI / 180;
     // image rorated by 90 or 270 degree
-    const rotated = rotation % 180 !== 0;
+    const rotated = Math.abs(rotation) % 180 !== 0;
     // zoom value based on slider value
     const zoomValue = zoom.value / 100;
     // new convas dimensions to prevent clipping
@@ -63,6 +66,12 @@ function draw(){
     // horizontal and vertical transformation
     context.scale(flipX, flipY);
     context.rotate(angle);
+    // skew transformation
+    context.transform(1, 
+        Math.tan(skewY * Math.PI / 180),
+        Math.tan(skewX * Math.PI / 180),
+        1, 0, 0
+    );
     // add new filter elements
     context.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%) blur(${blur.value}px) grayscale(${greyscale.value}%) sepia(${sepia.value}%) hue-rotate(${hue.value}deg) invert(${invert.value}%)`;
     context.globalAlpha = opacity.value / 100
@@ -110,6 +119,30 @@ document.getElementById("flipY").onclick = () => {
     flipY *= -1;
     draw();
 }
+// event button to skew image to left
+document.getElementById("skewLeft").onclick = () => {
+    // skew image to left by 10 degree
+    skewX -= 10;
+    draw();
+}
+// event button to skew image to right
+document.getElementById("skewRight").onclick = () => {
+    // skew image to right by 10 degree
+    skewX += 10;
+    draw();
+}
+// event button to skew image up
+document.getElementById("skewUp").onclick = () => {
+    // decrease up skew by 10 degree
+    skewY -= 10;
+    draw();
+}
+// event button to skew image down
+document.getElementById("skewDown").onclick = () => {
+    // increase up skew by 10 degree
+    skewY += 10;
+    draw();
+}
 
 // reset all to default values
 function resetEditor(){
@@ -128,6 +161,9 @@ function resetEditor(){
     rotation = 0;
     flipX = 1;
     flipY = 1;
+    // default skew states
+    skewX = 0;
+    skewY = 0;
     // canvas with default settings
     draw();
 }
