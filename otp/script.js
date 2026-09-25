@@ -111,3 +111,83 @@ function updateTimer(){
     const secs = Math.ceil(timeRemaining / 1000);
     timer.textContent = `Expires in ${secs} seconds${secs === 1 ? "" : "s"}`;
 }
+
+// function for validate user input based on scenarios
+function validateInput(input){
+    if (!STATE.otp){
+        // check otp generated
+        showStatus("Please generate an OTP first.", "error");
+        return false;
+    }
+    // otp already used
+    if (STATE.used){
+        showStatus("OTP already used.", "error");
+        return false;
+    }
+    // otp enter time expired
+    if (Date.now() >= STATE.expireAt){
+        showStatus("OTP expired.", "error");
+        verifyBtn.disabled = true;
+        return false;
+    }
+    // all attempts used
+    if (STATE.attempts <= 0){
+        showStatus("No more attempts remaining.", "error");
+        verifyBtn.disabled = true;
+        return false;
+    }
+    // check empty input
+    if (!input){
+        showStatus("Please enter an OTP.", "error");
+        return false;
+    }
+    const expectedLength = STATE.otp.length;
+    // check input consist of only digits
+    if (!/^\d+$/.test(input)){
+        showStatus("OTP can be numbers only.", "error");
+        return false;
+    }
+    // check length match beyween input and generated
+    if (input.length !== expectedLength){
+        showStatus(`OTP must contain ${expectedLength} digits`, "error");
+        return false;
+    }
+    // everything ok
+    return true;
+}
+
+// function for otp verify
+function verifyOtp(){
+    clearStatus();
+    const input = otpInput.value.trim();
+    // check validation success or not
+    // update attempt value on webpage
+    if (!validateInput(input)) return;
+    STATE.attempts--;
+    attemptText.textContent = STATE.attempts;
+    // string comparison and get difference using XOR
+    let difference = input.length ^ STATE.otp.length;
+    // iterate all characters and get difference values
+    for(let i=0; i<STATE.otp.length; i++){
+        difference |= input.charCodeAt(i) ^ STATE.otp.charCodeAt(i);
+    }
+    // 0 means user input and generated at matching
+    if (difference === 0){
+        // ensure otp cannot be used again
+        STATE.used = true;
+        clearInterval(STATE.timer);
+        verifyBtn.disabled = true;
+        timer.textContent = "OTP verified!";
+        otpDisplay.textContent = "✔️";
+        showStatus("OTP successfully verfied.", "success");
+        return;
+    }
+    // all attempts used so disable verify button
+    if (STATE.attempts <= 0){
+        verifyBtn.disabled = true;
+        showStatus("No attempts remaining.", "error");
+        return;
+    }
+    // incorrect otp but attempts remain
+    showStatus(`Incorrect OTP. ${STATE.attempts} attempts${STATE.attempts === 1 ? "" : "s"} remain.`, "error");
+}
