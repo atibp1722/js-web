@@ -66,7 +66,8 @@ function draw(){
     // horizontal and vertical transformation
     context.scale(flipX, flipY);
     context.rotate(angle);
-    // skew transformation
+    // skew transformation using a matrix 
+    // matrix muliply by tan value
     context.transform(1, 
         Math.tan(skewY * Math.PI / 180),
         Math.tan(skewX * Math.PI / 180),
