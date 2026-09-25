@@ -191,3 +191,34 @@ function verifyOtp(){
     // incorrect otp but attempts remain
     showStatus(`Incorrect OTP. ${STATE.attempts} attempts${STATE.attempts === 1 ? "" : "s"} remain.`, "error");
 }
+
+// listen for when user type otp
+otpInput.addEventListener("input", () => {
+    // strictly enforce numbers only
+    otpInput.value = otpInput.value.replace(/\D/g, "");
+    // length based on user selection
+    const maxLength = Number(lengthSelect.value);
+    // trim when user enter excess characters
+    if (otpInput.value.length > maxLength){
+        otpInput.value = otpInput.value.slice(0, maxLength);
+    }
+});
+
+// listen for when new otp to be generated
+generateBtn.addEventListener("click", generateNewOtp);
+// listen to when user attempt to verify entered otp
+verifyBtn.addEventListener("click", verifyOtp);
+// listen for when user press key
+otpInput.addEventListener("keydown", event => {
+    // when user press enter call verify function
+    if (event.key === "Enter"){
+        verifyOtp();
+    }
+});
+
+// reset webpage when code length chnaged
+lengthSelect.addEventListener("change", resetStatus);
+// reset webpage when time limit chnaged
+expireSelect.addEventListener("change", resetStatus);
+// return webpage with default values
+resetStatus();
