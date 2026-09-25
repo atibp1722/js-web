@@ -10,6 +10,11 @@ const saturation = document.getElementById("saturation");
 const blur = document.getElementById("blur");
 const greyscale = document.getElementById("greyscale");
 const sepia = document.getElementById("sepia");
+// new feature variables
+const opacity = document.getElementById("opacity");
+const hue = document.getElementById("hue");
+const invert = document.getElementById("invert");
+const zoom = document.getElementById("zoom");
 // object for new image
 let img = new Image();
 // image transformation variables
@@ -44,9 +49,11 @@ function draw(){
     const angle = rotation * Math.PI / 180;
     // image rorated by 90 or 270 degree
     const rotated = rotation % 180 !== 0;
-    // swap height and width to prevent clipping
-    canvas.width = rotated ? img.height : img.width;
-    canvas.height = rotated ? img.width : img.height;
+    // zoom value based on slider value
+    const zoomValue = zoom.value / 100;
+    // new convas dimensions to prevent clipping
+    canvas.width = rotated ? img.height * zoomValue : img.width * zoomValue;
+    canvas.height = rotated ? img.width * zoomValue : img.height * zoomValue;
     // clear canvas 
     context.clearRect(0, 0, canvas.width, canvas.height);
     // save current canvas before transformation
@@ -56,17 +63,24 @@ function draw(){
     // horizontal and vertical transformation
     context.scale(flipX, flipY);
     context.rotate(angle);
-    // apply filter
-    context.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%) blur(${blur.value}px) grayscale(${greyscale.value}%) sepia(${sepia.value}%)`;
+    // add new filter elements
+    context.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%) blur(${blur.value}px) grayscale(${greyscale.value}%) sepia(${sepia.value}%) hue-rotate(${hue.value}deg) invert(${invert.value}%)`;
+    context.globalAlpha = opacity.value / 100
     // draw image around (0, 0) coordinates
-    context.drawImage(img, -img.width / 2, -img.height / 2);
+    // adjust to new values to prevent misalignmnet of image 
+    context.drawImage(img, 
+        (-img.width * zoomValue) / 2,
+        (-img.height * zoomValue) / 2,
+        img.width * zoomValue,
+        img.height * zoomValue
+    );
     // canvas restore to state before
     context.restore();
 }
 
 // iterate all elements
 [
-    brightness, contrast, saturation, blur, greyscale, sepia
+    brightness, contrast, saturation, blur, greyscale, sepia, opacity, hue, invert, zoom
 ].forEach(control => {
     // listen as long as user drags slider
     control.addEventListener("input", draw);
@@ -105,6 +119,11 @@ function resetEditor(){
     blur.value = 0;
     greyscale.value = 0;
     sepia.value = 0;
+    // reset new variables
+    opacity.value = 100;
+    hue.value = 0;
+    invert.value = 0;
+    zoom.value = 100;
     // default image states
     rotation = 0;
     flipX = 1;
