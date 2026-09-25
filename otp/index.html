@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="./style.css">
+    <title>One Time Password (OTP) App</title>
+</head>
+<body>
+     <main class="app">
+        <h1>OTP APP</h1>
+        <label>OTP Length</label>
+        <select id="length">
+            <option value="4">4 DIGIT</option>
+            <option value="6" selected>6 DIGIT</option>
+            <option value="8">8 DIGIT</option>
+        </select>
+        <label>Expiration</label>
+        <select id="expiry">
+            <option value="30">30 SECS</option>
+            <option value="60" selected>60 SECS</option>
+            <option value="120">2 MINS</option>
+            <option value="300">5 MINS</option>
+        </select>
+        <button id="generate">Generate OTP</button>
+        <div id="optDisplay" class="otp">-----------------</div>
+        <div id="timer" class="info">
+            No OTP currently active.
+        </div>
+        <hr>
+        <label>Enter OTP</label>
+        <input id="optInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter OTP">
+        <button id="verify">Verify OTP</button>
+        <div id="status" class="status"></div>
+        <div class="info">
+            Max attempts: <span id="attemptText">3</span>
+        </div>
+     </main>
+
+    <script src="./script.js"></script>
+</body>
+</html>

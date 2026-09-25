@@ -1,0 +1,102 @@
+*{
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+body{
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #0d1321;
+    color: white;
+}
+h1{
+    text-align: center;
+    font-size: 32px;
+    margin-top: 0;
+}
+
+.app{
+    width: min(420px, 92%);
+    padding: 25px;
+    border-radius: 10px;
+    background: #000814;
+    box-shadow: 0 20px 50px #0006;
+}
+
+input, select, button{
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 18px;
+    text-align: center;
+}
+
+input, select{
+    background: #1d3557;
+    color: white;
+    outline: none;
+}
+
+button{
+    background: #006400;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover{
+    background: #008000;
+    transition: ease-in-out 0.3s;
+}
+
+button:disabled{
+    background: #4a4e69;
+    cursor: not-allowed;
+    color: #000000;
+}
+
+.otp{
+    margin: 20px 0;
+    padding: 15px;
+    text-align: center;
+    font-size: 32px;
+    letter-spacing: 8px;
+    font-weight: bold;
+    background: #0f172a;
+    border-radius: 8px;
+}
+
+.status{
+    margin: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    display: none;
+}
+
+.success{
+    display: block;
+    background: #008000;
+}
+
+.error{
+    display: block;
+    background: #da2c38;
+}
+
+.info{
+    margin-top: 12px;
+    text-align: center;
+    color: #ffc300;
+    font: 14px;
+}
+
+hr{
+    border: 0;
+    border-top: 1px solid #4a4e69;
+    margin: 25px 0;
+}
