@@ -47,5 +47,8 @@ round robin algorithm to simulate scheduling by processing multiple jobs at once
 # music-player
 doubly linked list implementation to simulate a playlist that wraps around to begin based on nodes in list
 
+# otp-app
+generate, validate and verify one time password(otp) with customizable length and expiry time
+
 # photo-editor
 photo editor allowing user to rotate, flip images along with adjust brightness, contrast, saturation etc.
