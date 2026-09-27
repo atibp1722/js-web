@@ -216,8 +216,7 @@ async function findMeals(){
             meal, 
             match: calculateMatch(meal)
         }))
-        .sort((a, b) => 
-            b.match(percent) - a.match(percent));
+        .sort((a, b) => b.match.percent - a.match.percent);
         // render the potential sorted meals on webpage
         renderMeals();
     } catch (err){
@@ -248,7 +247,7 @@ function renderMeals(){
         const card = document.createElement("article");
         card.className = "meal";
         // user rating for meal
-        const rating = STATE.ratings[meal,idMeal] || 0;
+        const rating = STATE.ratings[meal.idMeal] || 0;
         // create custom html layout for each meal
         card.innerHTML = `<img 
                         src="${escapeHTML(meal.strMealThumb)}"
@@ -268,7 +267,7 @@ function renderMeals(){
                                 User Rating: ${"★".repeat(rating)}
                                 ${"☆".repeat(5 - rating)}
                             </div>
-                            <button class="view-btn" type="button" data-id="${meal.idMeal}>View Recipe</button>
+                            <button class="view-btn" type="button" data-id="${meal.idMeal}">View Recipe</button>
                         </div>`;
         // listener to view recipe for meal               
         card 
@@ -328,7 +327,7 @@ function openRecipe(meal){
     document
         .getElementById("closeDialog")
         .addEventListener("click", () => 
-            dialog.closest()
+            dialog.close()
         );
     // listener for rating meal 
     recipeContent
@@ -376,7 +375,7 @@ document
     .getElementById("addIngredient")
     .addEventListener("click", addIngredient);
 
-    // listener to find meals with button click
+// listener to find meals with button click
 document
     .getElementById("findMeals")
     .addEventListener("click", findMeals);
