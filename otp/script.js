@@ -9,16 +9,54 @@ const STATE = {
 };
 // select dom elements using id
 const $ = id => document.getElementById(id);
-// get reference to dom elements
-const lengthSelect = $("length");
-const expireSelect = $("expiry");
-const generateBtn = $("generate");
-const verifyBtn = $("verify");
-const otpInput = $("otpInput");
-const otpDisplay = $("otpDisplay");
-const timer = $("timer");
-const status = $("status");
-const attemptText = $("attemptText");
+
+// variables for dom elements reference
+let lengthSelect, expireSelect, generateBtn, verifyBtn, otpInput, otpDisplay, timer, status, attemptText;
+
+// wait for full load before getting reference
+document.addEventListener("DOMContentLoaded", () => {
+    // reference to all dom elements with html counterpart
+    lengthSelect = $("length");
+    expireSelect = $("expiry");
+    generateBtn = $("generate");
+    verifyBtn = $("verify");
+    otpInput = $("otpInput");
+    otpDisplay = $("otpDisplay");
+    timer = $("timer");
+    status = $("status");
+    attemptText = $("attemptText");
+
+    // listen for when user type otp
+    otpInput.addEventListener("input", () => {
+        // strictly enforce numbers only
+        otpInput.value = otpInput.value.replace(/\D/g, "");
+        // length based on user selection
+        const maxLength = Number(lengthSelect.value);
+        // trim when user enter excess characters
+        if (otpInput.value.length > maxLength){
+            otpInput.value = otpInput.value.slice(0, maxLength);
+        }
+    });
+
+    // listen for when new otp to be generated
+    generateBtn.addEventListener("click", generateNewOtp);
+    // listen to when user attempt to verify entered otp
+    verifyBtn.addEventListener("click", verifyOtp);
+    // listen for when user press key
+    otpInput.addEventListener("keydown", event => {
+        // when user press enter call verify function
+        if (event.key === "Enter"){
+        verifyOtp();
+        }
+    });
+
+    // reset webpage when code length chnaged
+    lengthSelect.addEventListener("change", resetStatus);
+    // reset webpage when time limit chnaged
+    expireSelect.addEventListener("change", resetStatus);
+    // return webpage with default values
+    resetStatus();
+});
 
 // function for generate secure random number
 function secureRandom(max){
@@ -163,8 +201,6 @@ function verifyOtp(){
     // check validation success or not
     // update attempt value on webpage
     if (!validateInput(input)) return;
-    STATE.attempts--;
-    attemptText.textContent = STATE.attempts;
     // string comparison and get difference using XOR
     let difference = input.length ^ STATE.otp.length;
     // iterate all characters and get difference values
@@ -182,6 +218,9 @@ function verifyOtp(){
         showStatus("OTP successfully verified.", "success");
         return;
     }
+    // decrease attempt after unsuccessful attempt
+    STATE.attempts--;
+    attemptText.textContent = STATE.attempts;
     // all attempts used so disable verify button
     if (STATE.attempts <= 0){
         verifyBtn.disabled = true;
@@ -191,34 +230,3 @@ function verifyOtp(){
     // incorrect otp but attempts remain
     showStatus(`Incorrect OTP. ${STATE.attempts} attempts${STATE.attempts === 1 ? "" : "s"} remain.`, "error");
 }
-
-// listen for when user type otp
-otpInput.addEventListener("input", () => {
-    // strictly enforce numbers only
-    otpInput.value = otpInput.value.replace(/\D/g, "");
-    // length based on user selection
-    const maxLength = Number(lengthSelect.value);
-    // trim when user enter excess characters
-    if (otpInput.value.length > maxLength){
-        otpInput.value = otpInput.value.slice(0, maxLength);
-    }
-});
-
-// listen for when new otp to be generated
-generateBtn.addEventListener("click", generateNewOtp);
-// listen to when user attempt to verify entered otp
-verifyBtn.addEventListener("click", verifyOtp);
-// listen for when user press key
-otpInput.addEventListener("keydown", event => {
-    // when user press enter call verify function
-    if (event.key === "Enter"){
-        verifyOtp();
-    }
-});
-
-// reset webpage when code length chnaged
-lengthSelect.addEventListener("change", resetStatus);
-// reset webpage when time limit chnaged
-expireSelect.addEventListener("change", resetStatus);
-// return webpage with default values
-resetStatus();

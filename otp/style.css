@@ -56,7 +56,7 @@ button:hover{
 button:disabled{
     background: #4a4e69;
     cursor: not-allowed;
-    color: #000000;
+    color: white;
 }
 
 .otp{
