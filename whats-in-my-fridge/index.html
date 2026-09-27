@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>What's In My Fridge?</title>
+</head>
+<body>
+
+    <header>
+        <h1>What's In My Fridge?</h1>
+        <p>Tell us what you have and we will make you a delicious meal out of it!!</p>
+    </header>
+    <main>
+        <section class="search-box">
+            <div class="ingredient-input">
+                <input id="ingredientInput" type="text" autocomplete="off" placeholder="Enter ingredient..." 
+                           maxlength="20">
+                <button class="add-btn" id="addIngredient">Add Ingredient</button>
+            </div>
+            <div class="error" id="error"></div>
+            <div class="ingredients" id="ingredientsList"></div>
+            <button class="find-btn" id="findMeals">Find Meals</button>
+        </section>
+        <div class="status" id="status"></div>
+        <section class="results" id="results">
+            <div class="empty">
+                Add ingredients to find recipies.
+            </div>
+        </section>
+    </main>
+    <dialog id="recipeDialog">
+        <article class="recipe" id="recipeContent"></article>
+    </dialog>
+
+    <script src="./script.js"></script>
+</body>
+</html>
