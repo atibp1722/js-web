@@ -41,7 +41,7 @@ function generateOtp(length){
 // function for success or error status message
 function showStatus(message, type){
     status.textContent = message;
-    status.className = `status${type}`;
+    status.className = `status-${type}`;
 }
 // function for clear the status message
 function clearStatus(){
@@ -179,7 +179,7 @@ function verifyOtp(){
         verifyBtn.disabled = true;
         timer.textContent = "OTP verified!";
         otpDisplay.textContent = "✔️";
-        showStatus("OTP successfully verfied.", "success");
+        showStatus("OTP successfully verified.", "success");
         return;
     }
     // all attempts used so disable verify button
