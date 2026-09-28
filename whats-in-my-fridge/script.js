@@ -13,7 +13,7 @@ const ingredientList = document.getElementById("ingredientList");
 const error = document.getElementById("error");
 const results = document.getElementById("results");
 const status = document.getElementById("status");
-const dialog = document.getElementById("dialog");
+const dialog = document.getElementById("recipeDialog");
 const recipeContent = document.getElementById("recipeContent");
 
 // normalize user input remove whitespace and convert all to lowercase
@@ -157,11 +157,12 @@ function calculateMatch(meal){
         )
     );
     // metrics for calculation of percentage
+    const total = STATE.ingredients.length;
     return {
         count: matched.length,
-        total: STATE.ingredients.length,
+        total: total,
         // prevent divide by 0 error
-        percent: total > 0 ? Math.round(matched.length / STATE.ingredients.length * 100) : 0, matched 
+        percent: total > 0 ? Math.round(matched.length / total * 100) : 0, matched 
     };
 }
 
@@ -202,7 +203,7 @@ async function findMeals(){
         // ingredient dont match with potential meals
         if (!potentials.length){
             status.textContent = "";
-            results.innerHTML = `<div class="empty>
+            results.innerHTML = `<div class="empty">
                                     Sorry, no meals for such ingredients, please try another.
                                 </div>`;
             return;
@@ -224,7 +225,7 @@ async function findMeals(){
         console.error(err);
         status.textContent = "";
         results.innerHTML = `<div class="empty">
-                                Sorry, meal can't be fetched from MealDB, please try again.
+                                Sorry, meal can't be fetched from MealDB. Please try again.
                             </div>`;
     }
 }
@@ -251,9 +252,9 @@ function renderMeals(){
         // create custom html layout for each meal
         card.innerHTML = `<img 
                         src="${escapeHTML(meal.strMealThumb)}"
-                        alt=>"${escapeHTML(meal.strMeal)}"
+                        alt="${escapeHTML(meal.strMeal)}"
                         loading="lazy">
-                        <div class="meal-content>
+                        <div class="meal-content">
                             <h2>${escapeHTML(meal.strMeal)}</h2>
                             <div class="meta">
                                 ${escapeHTML(meal.strCategory || "Meal")}
@@ -296,7 +297,7 @@ function openRecipe(meal){
                                     </div> 
                                     <button class="close" type="button" id="closeDialog">X</button>
                             </div>
-                            <img src="${escapeHTML(meal.strMealThumb)}
+                            <img src="${escapeHTML(meal.strMealThumb)}"
                             alt="${escapeHTML(meal.strMeal)}">
                             <h3>Ingredients</h3>
                             <ul>
@@ -319,7 +320,7 @@ function openRecipe(meal){
                                         ★
                                         </button>`).join("")}
                                 </div>
-                                <p id="ratingMessage>
+                                <p id="ratingMessage">
                                     ${rating ? `This is ${rating} / 5. stars`: "This is not rated"}
                                 </p>
                             </section>`;
