@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>PERSONAL ASSISTANT APP</title>
+</head>
+<body>
+    
+    <div class="app">
+            <header>
+                <div>
+                    <h1>YOUR VERY OWN PERSONAL ASSISTANT</h1>
+                    <p class="subtitle">
+                        NEWS |--| STOCKS |--| WEATHER
+                    </p>
+                </div>
+                <div class="clock" id="clock"></div>
+            </header>
+            <div class="panel">
+                <h2>ASSISTANT</h2>
+                <div id="chat" class="chat">
+                    <div class="message-assistant">
+                    Ask me anything related to news, weather or stocks.
+                    </div>
+                </div>
+            <div class="chat-input">
+                <input id="question" placeholder="eg. How's the weather in Kathmandu?">
+                <button onclick="askAssistant()">Ask Me</button>
+                <button class="secondary" onclick="voiceInput()" title="Speak to Ask">🗣️</button>
+            </div>
+        </div>
+        <div class="grid">
+            <section class="panel">
+                <h2>🌦️Weather</h2>
+                <div class="controls">
+                    <input id="weatherCity" placeholder="Kathmandu"></input>
+                    <button onclick="loadWeather()">Get Info</button>
+                </div>
+                <div id="weatherResult">
+                    Search for any city and get the weather info.
+                </div>
+            </section>
+            <section class="panel">
+                <h2>📰News</h2>
+                <div class="controls">
+                    <input id="newsQuery" placeholder="Search latest news..."></input>
+                    <select id="newsCategory">
+                        <option value="general">General</option>
+                        <option value="world" selected>World</option>
+                        <option value="business">Business</option>
+                        <option value="technology">Technology</option>
+                        <option value="sports">Sports</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="science">Science</option>
+                        <option value="health">Health</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <select id="newsCountry">
+                        <option value="np" selected>Nepal</option>
+                        <option value="us">USA</option>
+                        <option value="gb">UK</option>
+                        <option value="in">India</option>
+                        <option value="fr">France</option>
+                        <option value="de">Germaay</option>
+                        <option value="jp">Japan</option>
+                    </select>
+                    <select id="newsLanguage">
+                        <option value="en" selected>English</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="es">Spanish</option>
+                        <option value="it">Italian</option>
+                    </select>
+                    <button onclick="loadNews">Get News</button>
+                </div>
+                <div id="newsResult">
+                    Get all the latest news.
+                </div>
+            </section>
+            <section class="panel-full">
+                <h2>📈Stocks</h2>
+                <div class="controls">
+                    <input id="stockSymbol" placeholder="eg. AAPL for Apple">
+                    <button onclick="loadStock()">Get Stock</button>
+                    <button class="secondary" onclick="searchCompany()">Search</button>
+                </div>
+                <div id="companyResults"></div>
+                <div id="stockResults"></div>
+                <h3>Watchlist</h3>
+                <div id="watchlist" class="watchlist"></div>
+            </section>
+            <section class="panel-full">
+                <h2>⚙️API Setting</h2>
+                <p class="subtitle">Save your key locally.</p>
+                <div class="controls">
+                    <input id="newsKey" type="password" placeholder="News API Key">
+                    <input id="weatherKey" type="password" placeholder="Weather API Key">
+                    <input id="stockKey" type="password" placeholder="Stocks API Key">
+                    <button onclick="saveKeys()">Save</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
