@@ -13,13 +13,12 @@
                 <div>
                     <h1>YOUR VERY OWN PERSONAL ASSISTANT</h1>
                     <p class="subtitle">
-                        NEWS |--| STOCKS |--| WEATHER
                     </p>
                 </div>
                 <div class="clock" id="clock"></div>
             </header>
             <div class="panel">
-                <h2>ASSISTANT</h2>
+                <h2>Chatbot v1.0</h2>
                 <div id="chat" class="chat">
                     <div class="message-assistant">
                     Ask me anything related to news, weather or stocks.
@@ -28,7 +27,7 @@
             <div class="chat-input">
                 <input id="question" placeholder="eg. How's the weather in Kathmandu?">
                 <button onclick="askAssistant()">Ask Me</button>
-                <button class="secondary" onclick="voiceInput()" title="Speak to Ask">🗣️</button>
+                <button class="secondary" onclick="voiceInput()" title="Speak to Ask">🔊</button>
             </div>
         </div>
         <div class="grid">
@@ -39,7 +38,7 @@
                     <button onclick="loadWeather()">Get Info</button>
                 </div>
                 <div id="weatherResult">
-                    Search for any city and get the weather info.
+                    
                 </div>
             </section>
             <section class="panel">
@@ -74,10 +73,10 @@
                         <option value="es">Spanish</option>
                         <option value="it">Italian</option>
                     </select>
-                    <button onclick="loadNews">Get News</button>
+                    <button onclick="loadNews" id="newsBtn">Get News</button>
                 </div>
                 <div id="newsResult">
-                    Get all the latest news.
+                    
                 </div>
             </section>
             <section class="panel-full">
@@ -94,7 +93,7 @@
             </section>
             <section class="panel-full">
                 <h2>⚙️API Setting</h2>
-                <p class="subtitle">Save your key locally.</p>
+                <p class="subtitle"></p>
                 <div class="controls">
                     <input id="newsKey" type="password" placeholder="News API Key">
                     <input id="weatherKey" type="password" placeholder="Weather API Key">
