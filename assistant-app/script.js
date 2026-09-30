@@ -169,3 +169,67 @@ function renderWeather(location, data){
     document.getElementById("weatherResult").innerHTML = html;
 }
 
+// function to get news article based on user selected options
+async function loadNews(queryOverride = null){
+    const key = localStorage.getItem("gNewsKey");
+    // api key entered check
+    if (!key){
+        document.getElementById("newsResult").innerHTML = "<p>Add news API first.</p>";
+        return;
+    }
+    // override param for search query
+    const query = queryOverride || document.getElementById("newsQuery").value.trim();
+    // get reference to html elements
+    const category = document.getElementById("newsCategory").value;
+    const country = document.getElementById("newsCountry").value;
+    const language = document.getElementById("newsLanguage").value;
+    // map with params from news api
+    const params = new URLSearchParams({
+        lang: language,
+        country, 
+        category, 
+        max: 10, 
+        apikey: key
+    });
+    if (query)
+        params.set("q", query);
+    const container = document.getElementById("newsResult");
+    container.innerHTML = `<p class="loading">Loading News...</p>`;
+    try{
+        // send request to news api
+        const response = await fetch(`${API.news}/top-headlines?${params}`);
+        // check successful or not
+        if (!response.ok){
+            throw new Error("Failed, to get news, API error.");
+        }
+        // parse response to json
+        const data = await response.json();
+        renderNews(data.articles || []);
+    } catch(error){
+        container.innerHTML = `<p>${escapeHTML(error.message)}</p>`;
+    }
+}
+
+// function to render news article on webpage
+function renderNews(articles){
+    const container = document.getElementById("newsResult");
+    // check number of article returned
+    if (!articles.length){
+        container.innerHTML = "<p>No articles found.</p>";
+        return;
+    }
+    // map article to create indiviudal card for each
+    container.innerHTML = articles.map(article => 
+            `<div class="card-article">
+                <img src="${safeURL(article.image)}"
+                alt="" onerror="this.style.display='none'">
+                <div>
+                    <h3>${escapeHTML(article.title || "")}</h3>
+                    <p>${escapeHTML(article.description || "")}</p>
+                    <small>${escapeHTML(article.source?.name || "")}</small><br/>
+                    <a href="${safeURL(article.url)}" target="_blank" rel="noopener noreferrer">Read More-></a>
+                </div>
+            </div>`
+    // combine all to form single html string        
+    ).join("");
+}
