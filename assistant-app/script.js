@@ -233,3 +233,101 @@ function renderNews(articles){
     // combine all to form single html string        
     ).join("");
 }
+
+// function to get stock data using symbol
+async function getStock(symbol){
+    const key = localStorage.getItem("gStockKey");
+    if (!key){
+        throw new Error("Please enter API first.");
+    }
+    // stock api connection using params
+    const url = `${API.stocks}/quote` + `?symbol=${encodeURIComponent(symbol)}` + `&token=${encodeURIComponent(key)}`;
+    const response = await fetch(url);
+    if (!response.ok){
+        throw new Error("Failed to process request.");
+    }
+    // parse to json
+    const data = await response.json();
+    // return current stock price
+    if (!data.c){
+        throw new Error("Cannot process the request for the stock.")
+    }
+    return data;
+}
+
+// function to display stock info on webpage 
+async function loadStock(symbolOverride = null){
+    // overrirde param for search
+    const symbol = (symbolOverride || document.getElementById("stockSymbol").value.trim().toUpperCase());
+    if (!symbol){
+        return;
+    }
+    document.getElementById("stockResults").innerHTML = `<p class="loading">Loading Stocks...</p>`;
+    try{
+        // wait for stock fetch
+        const data = await getStock(symbol);
+        // variables for closing and percent change
+        const change = Number(data.d || 0);
+        const percent = Number(data.dp || 0);
+        // css class for display
+        const color = change >= 0 ? "positive" : "negative";
+        // custom html for stock card
+        document.getElementById("stockResults").innerHTML = `<div class="card">
+                                                                <h3>${symbol}</h3>
+                                                                <div class="big-number">
+                                                                    $${Number(data.c).toFixed(2)}
+                                                                </div>
+                                                                <p class="${color}">
+                                                                    ${change >= 0 ? "+" : ""}
+                                                                    ${change.toFixed(2)}
+                                                                    ${percent >= 0 ? "+" : ""}
+                                                                    ${percent.toFixed(2)}
+                                                                </p>
+                                                                <div class="weather-current">
+                                                                    <div class="weather-stat">
+                                                                        Previous Close: $${Number(data.pc).toFixed(2)}
+                                                                    </div>
+                                                                    <div class="weather-stat">
+                                                                        High: $${Number(data.h).toFixed(2)}
+                                                                    </div>
+                                                                    <div class="weather-stat">
+                                                                        Low: $${Number(data.l).toFixed(2)}
+                                                                    </div>
+                                                                    <div class="weather-stat">
+                                                                        Open: $${Number(data.o).toFixed(2)}
+                                                                    </div>
+                                                                </div>
+                                                                <br/>
+                                                                <button onclick="addToWatchlist('${symbol}')">🔍Add</button>
+                                                            </div>`;
+    } catch{
+        document.getElementById("stockResults").innerHTML = `<p>${escapeHTML(error.message)}</p>`;
+    }
+}
+
+// function to search for company based on user query
+async function searchCompany(){
+    const query = document.getElementById("stockSymbol").value.trim();
+    const key = localStorage.getItem("gStockKey");
+    if (!key){
+        document.getElementById("companyResults").innerHTML = "<p>Please enter API first.</p>";
+        return;
+    }
+    if (!query) return;
+    try{
+        // request to stock api
+        const response = await fetch(`${API.stocks}/search?q=${encodeURIComponent(query)}&token=${encodeURIComponent(key)}`);
+        const data = await response.json();
+        // show search sugeestions
+        const results = (data.result || []).filter(x => x.type === "Common stock").slice(0, 5);
+        // map info into clickable cards 
+        document.getElementById("companyResults").innerHTML = results.map(company => 
+            `<div class="card">
+                <strong>${escapeHTML(company.symbol)}</strong> - ${escapeHTML(company.description)}
+                <button style="float:right" onclick="loadStock('${escapeHTML(company.symbol)}')">View</button>
+            </div>`
+        ).join("");
+    } catch(error){
+        document.getElementById("companyResults").innerHTML = `<p>${escapeHTML(error.message)}</p>`;
+    }
+}
