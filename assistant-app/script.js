@@ -331,3 +331,37 @@ async function searchCompany(){
         document.getElementById("companyResults").innerHTML = `<p>${escapeHTML(error.message)}</p>`;
     }
 }
+
+// function get stock watchlist
+function getWatchList(){
+    return JSON.parse(localStorage.getItem("watchlist") || "[]");
+}
+
+// function to save stock watchlist
+function saveWatchlist(list){
+    localStorage.setItem("watchlist", JSON.stringify(list));
+    renderWatchlist();
+}
+
+// function to add a stock to watchlist
+function addToWatchlist(symbol){
+    // get current watchlist
+    const list = getWatchList();
+    if (!list.includes(symbol)){
+        // add to watchlist if not already there
+        list.push(symbol);
+    }
+    saveWatchlist(list);
+}
+
+// fucnton to remove stock from wathclist
+function removeFromWatchlist(symbol){
+    // filter matching symbol
+    const list = getWatchList().filter(x => x !== symbol);
+    saveWatchlist(list);
+}
+
+// function to display watchlist on webpage
+async function renderWatchlist(symbol){
+
+}
