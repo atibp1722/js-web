@@ -54,3 +54,5 @@ photo-editor:
 
 whats-in-my-fridge:
  app where user enters ingredients they have and potential recipes along with cooking instructions based on match shown to user
+
+assistant-app: assistant which provides current weather related information and forecasts, latest news from across the world in various languages and latest stock price of listed companies
