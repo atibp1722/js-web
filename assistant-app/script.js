@@ -541,3 +541,40 @@ function addMessage(text, type){
     // scroll to latest message
     chat.scrollTop = chat.scrollHeight;
 }
+
+// event listener for key press on ask assistant question
+document.getElementById("question").addEventListener("keydown", event => {
+    // when enter pressed trigger asistant function
+    if (event.key === "Enter"){
+        askAssistant();
+    }
+});
+
+// event listener for key press on stock symbol
+document.getElementById("stockSymbol").addEventListener("keydown", event => {
+    if (event.key === "Enter"){
+        // trigger load stock for specified symbol
+        loadStock();
+    }
+});
+
+// event listener for key press on weather
+document.getElementById("weatherCity").addEventListener("keydown", event => {
+    if (event.key === "Enter"){
+        // trigger load weather for specified city
+        loadWeather();
+    }
+});
+
+// event listener for key press on news
+document.getElementById("newsQuery").addEventListener("keydown", event => {
+    if (event.key === "Enter"){
+        // trigger load news on specified inputs
+        loadNews();
+    }
+});
+
+// load saved api keys
+loadKeys();
+// render previous watchlist
+renderWatchlist();
