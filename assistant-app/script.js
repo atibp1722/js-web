@@ -67,14 +67,14 @@ async function loadWeather(cityOverride = null){
                 "temperature_2m," + 
                 "relative_humidity_2m," +
                 "apparent_temperature," +
-                "percipitation," +
+                "precipitation," +
                 "weather_code," +
                 "wind_speed_10m",
             daily:
                 "weather_code" +
                 "temperature_2m_max," +
                 "temperature_2m_min," +
-                "percipitation_probability_max," +
+                "precipitation_probability_max," +
                 "sunrise," +
                 "sunset",
             timezone: "auto",
@@ -138,7 +138,7 @@ function renderWeather(location, data){
                     <p>${weatherDescription(c.weather_code)}</p>
                     <div class="weather-current">
                         <div class="weather-stat">
-                            🌡️Feels Like: ${c.apparent_temperature_2m}°C
+                            🌡️Feels Like: ${c.apparent_temperature}°C
                         </div>
                         <div class="weather-stat">
                             💧Humidity: ${c.relative_humidity_2m}%
@@ -147,7 +147,7 @@ function renderWeather(location, data){
                             🍃Wind: ${c.wind_speed_10m}km/h
                         </div>
                         <div class="weather-stat">
-                            🌧️Rainfall: ${c.wind_speed_10m}mm
+                            🌧️Rainfall: ${c.precipitation}mm
                         </div>
                     </div>
                 </div>
@@ -159,7 +159,7 @@ function renderWeather(location, data){
                         <strong>${formatDate(date)}</strong>
                         <p>${weatherDescription(d.weather_code[i])}</p>
                         <strong>${d.temperature_2m_max[i]}</strong> / ${d.temperature_2m_min[i]}°C
-                        <p>🌧️${d.percipitation_probability_max[i]}</p>
+                        <p>🌧️${d.precipitation_probability_max[i]}</p>
                         <small>🌄${formatTime(d.sunrise[i])}</small><br/>
                         <small>🌇${formatTime(d.sunset[i])}</small>
                    </div>`;
@@ -300,7 +300,7 @@ async function loadStock(symbolOverride = null){
                                                                 <br/>
                                                                 <button onclick="addToWatchlist('${symbol}')">🔍Add</button>
                                                             </div>`;
-    } catch{
+    } catch(error){
         document.getElementById("stockResults").innerHTML = `<p>${escapeHTML(error.message)}</p>`;
     }
 }
@@ -400,7 +400,7 @@ async function askAssistant(){
                 document.getElementById("weatherCity").value = city;
                 await loadWeather(city);
                 // confirmation along with information
-                addMessage(`Weather information for ${city} is loaded.`);
+                addMessage(`Weather information for ${city} is loaded.`, "assistant");
                 return;
             }
         // queries related to news
@@ -452,7 +452,7 @@ function extractAfter(text, words){
 // function to extract stock ticker from user query
 function findTicker(text){
     // match for stock ticker structure (5 letters all capitalized)
-    const matches = text.match(/\b[A-Z]{1, 5}\b/g);
+    const matches = text.match(/\b[A-Z]{1,5}\b/g);
     if (matches){
         // words that can be ignored
         const ignored = ["WHAT", "STOCK", "PRICE", "QUOTE", "TODAY", "THE", "FOR", "AND", "IS"];
@@ -472,7 +472,7 @@ function voiceInput(){
         return;
     }
     // initiate a new recognition object
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecog();
     // set the input language
     recognition.lang = "en-US";
     // start microphone
