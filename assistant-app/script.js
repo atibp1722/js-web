@@ -71,7 +71,7 @@ async function loadWeather(cityOverride = null){
                 "weather_code," +
                 "wind_speed_10m",
             daily:
-                "weather_code" +
+                "weather_code," +
                 "temperature_2m_max," +
                 "temperature_2m_min," +
                 "precipitation_probability_max," +
@@ -188,7 +188,7 @@ async function loadNews(queryOverride = null){
         lang: language,
         country, 
         category, 
-        max: 10, 
+        max: 3, 
         apikey: key
     });
     if (query)
@@ -222,12 +222,12 @@ function renderNews(articles){
     container.innerHTML = articles.map(article => 
             `<div class="card-article">
                 <img src="${safeURL(article.image)}"
-                alt="" onerror="this.style.display='none'">
+                alt="" style="width: 200px; height: 120px; border-radius: 5px;" onerror="this.style.display='none'">
                 <div>
                     <h3>${escapeHTML(article.title || "")}</h3>
                     <p>${escapeHTML(article.description || "")}</p>
                     <small>${escapeHTML(article.source?.name || "")}</small><br/>
-                    <a href="${safeURL(article.url)}" target="_blank" rel="noopener noreferrer">Read More-></a>
+                    <a href="${safeURL(article.url)}" target="_blank" rel="noopener noreferrer" style="color: white;">Read More-></a>
                 </div>
             </div>`
     // combine all to form single html string        
@@ -319,7 +319,7 @@ async function searchCompany(){
         const response = await fetch(`${API.stocks}/search?q=${encodeURIComponent(query)}&token=${encodeURIComponent(key)}`);
         const data = await response.json();
         // show search sugeestions
-        const results = (data.result || []).filter(x => x.type === "Common stock").slice(0, 5);
+        const results = (data.result || []).filter(x => x.type === "Common Stock").slice(0, 5);
         // map info into clickable cards 
         document.getElementById("companyResults").innerHTML = results.map(company => 
             `<div class="card">
@@ -409,7 +409,7 @@ async function askAssistant(){
                 const topic = extractAfter(text, ["about", "on", "for"]);
                 document.getElementById("newsQuery").value = topic || "";
                 await loadNews(topic);
-                addMessage(topic ? `Loaded latest news about ${topic}` : "Latest news loaded.");
+                addMessage(topic ? `Loaded latest news about ${topic}` : "Latest news loaded.", "assistant");
                 return;
             }
         // queries related to stocks
