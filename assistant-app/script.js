@@ -324,7 +324,7 @@ async function searchCompany(){
         document.getElementById("companyResults").innerHTML = results.map(company => 
             `<div class="card">
                 <strong>${escapeHTML(company.symbol)}</strong> - ${escapeHTML(company.description)}
-                <button style="float:right" onclick="loadStock('${escapeHTML(company.symbol)}')">View</button>
+                <button style="float:right" onclick="loadStock('${escapeHTML(company.symbol)}')">View</button> 
             </div>`
         ).join("");
     } catch(error){
