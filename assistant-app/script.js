@@ -419,12 +419,12 @@ async function askAssistant(){
                 // extract stock symbol
                 const symbol = findTicker(text);
                 if (!symbol){
-                    addMessage("Please enter stock symbol eg. MSFT for Microsoft.");
+                    addMessage("Please enter stock symbol eg. MSFT for Microsoft.", "assistant");
                     return;
                 }
                 document.getElementById("stockSymbol").value = symbol;
                 await loadStock(symbol);
-                addMessage(`Latest quote for ${symbol} loaded.`);
+                addMessage(`Latest quote for ${symbol} loaded.`, "assistant");
                 return;
             }
         // fallback message
@@ -516,7 +516,7 @@ function escapeHTML(value){
 
 // function for url validation
 function safeURL(value){
-    if (!value) return;
+    if (!value) return "";
     // initialize new object
     try{
         const url = new URL(value);
@@ -525,7 +525,7 @@ function safeURL(value){
             return url.href;
         }
     } catch{}
-    return;
+    return "";
 }
 
 // function to add message on chatbox
