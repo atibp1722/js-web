@@ -354,14 +354,111 @@ function addToWatchlist(symbol){
     saveWatchlist(list);
 }
 
-// fucnton to remove stock from wathclist
+// function to remove stock from wathclist
 function removeFromWatchlist(symbol){
-    // filter matching symbol
+    // filter out matching symbol
     const list = getWatchList().filter(x => x !== symbol);
     saveWatchlist(list);
 }
 
 // function to display watchlist on webpage
-async function renderWatchlist(symbol){
+async function renderWatchlist(){
+    const list = getWatchList();
+    const container = document.getElementById("watchlist");
+    if (!list.length){
+        container.innerHTML = "<span class='subtitle'>No stocks to show.</span>";
+        return;
+    }
+    // map individual stock symbols
+    // join as single html string
+    container.innerHTML = list.map(symbol => 
+                        `<span class="ticker">
+                            <span onclick="loadStock('${symbol}')" style="cursor: pointer">${symbol}</span>
+                            <button onclick="removeFromWatchlist('${symbol}')">X</button>
+                        </span>`
+    ).join(""); 
+}
 
+// function for user query processing
+async function askAssistant(){
+    const input = document.getElementById("question");
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(text, "user");
+    // make field empty after submit
+    // convert to lower case for standardization
+    input.value = "";
+    const lower = text.toLowerCase();
+    try{
+        // queries related to weather
+        if (
+            lower.includes("weather") || lower.includes("temperature") ||
+            lower.includes("forecast") || lower.includes("rain"))
+            {
+                // extract keyword after words in list
+                const city = extractAfter(text, ["in", "at", "for"]) || "Kathmandu";
+                document.getElementById("weatherCity").value = city;
+                await loadWeather(city);
+                // confirmation along with information
+                addMessage(`Weather information for ${city} is loaded.`);
+                return;
+            }
+        // queries related to news
+        if (lower.includes("news") || lower.includes("headline") || lower.includes("latest"))
+            {
+                const topic = extractAfter(text, ["about", "on", "for"]);
+                document.getElementById("newsQuery").value = topic || "";
+                await loadNews(topic);
+                addMessage(topic ? `Loaded latest news about ${topic}` : "Latest news loaded.");
+                return;
+            }
+        // queries related to stocks
+        if (lower.includes("stock") || lower.includes("share price") || 
+            lower.includes("quote") || lower.includes("trading"))
+            {
+                // extract stock symbol
+                const symbol = findTicker(text);
+                if (!symbol){
+                    addMessage("Please enter stock symbol eg. MSFT for Microsoft.");
+                    return;
+                }
+                document.getElementById("stockSymbol").value = symbol;
+                await loadStock(symbol);
+                addMessage(`Latest quote for ${symbol} loaded.`);
+                return;
+            }
+        // fallback message
+        addMessage(
+            "This 'Assistant' can retrieve weather, news and stock related information." +
+            "Ask question like \"Weather in Sydney\","+
+            "\"Latest sports news\", or \"Nvidia stock price\"."
+        );
+    } catch (error){
+        addMessage(`Sorry, something went wrong: ${error.message}`);
+    }
+}
+
+// function to extract keywords from user queries
+function extractAfter(text, words){
+    // regular expression array
+    const regex = new RegExp(`(?:${words.join("|")})\\s+(.+)$`, "i");
+    // use regex against user query
+    const match = text.match(regex);
+    if (!match) return null;
+    // remove whitespace and symbols from query
+    return match[1].replace(/[?.!]+$/, "").trim();
+}
+
+// function to extract stock ticker from user query
+function findTicker(text){
+    // match for stock ticker structure (5 letters all capitalized)
+    const matches = text.match(/\b[A-Z]{1, 5}\b/g);
+    if (matches){
+        // words that can be ignored
+        const ignored = ["WHAT", "STOCK", "PRICE", "QUOTE", "TODAY", "THE", "FOR", "AND", "IS"];
+        // first match not in ignored list
+        const ticker = matches.find(x => !ignored.includes(x));
+        if (ticker) return ticker;
+    }
+    return null;
 }
