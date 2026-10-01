@@ -462,3 +462,82 @@ function findTicker(text){
     }
     return null;
 }
+
+// function for user voice input
+function voiceInput(){
+    // browser speech recognition support
+    const speechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!speechRecog){
+        alert("Sorry, voice input not supported.");
+        return;
+    }
+    // initiate a new recognition object
+    const recognition = new SpeechRecognition();
+    // set the input language
+    recognition.lang = "en-US";
+    // start microphone
+    recognition.start();
+    // voice successfully captured and transcribed
+    recognition.onresult = event => {
+        // put into input fields
+        document.getElementById("question").value = event.results[0][0].transcript;
+        // process user voice query
+        askAssistant();
+    }
+}
+
+// function for short name for day
+function formatDate(date){
+    return new Date(date).toLocaleDateString(undefined, 
+    {
+        weekday: "short"
+    });
+}
+
+// function for time formatting in HH:MM format
+function formatTime(date){
+    return new Date(date).toLocaleTimeString(undefined, 
+    {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+// function for cross site scripting prevention
+function escapeHTML(value){
+    return String(value || "")
+        // special characters to be escaped
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;")
+}
+
+// function for url validation
+function safeURL(value){
+    if (!value) return;
+    // initialize new object
+    try{
+        const url = new URL(value);
+        // ensure safe protocols only
+        if (url.protocol === "https:" || url.protocol === "http:"){
+            return url.href;
+        }
+    } catch{}
+    return;
+}
+
+// function to add message on chatbox
+function addMessage(text, type){
+    // get reference to html element
+    const chat = document.getElementById("chat");
+    const div = document.createElement("div");
+    // assign css class
+    div.className = `message ${type}`;
+    div.textContent = text;
+    // add new div to chatbox
+    chat.appendChild(div);
+    // scroll to latest message
+    chat.scrollTop = chat.scrollHeight;
+}
