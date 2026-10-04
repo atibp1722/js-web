@@ -251,4 +251,211 @@ function showMessage(message, type){
     setTimeout(() => {
         box.style.display = "none";
     }, 3000);
-}   
+}
+
+// function to display registrations in table
+function displayRegistrations(){
+    // reference to html element
+    const container = document.getElementById("registrationTable");
+    const search = document.getElementById("search").value.tolLowerCase();
+    // get registration records
+    let registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    // filter by name or symbol number
+    registrations = registrations.filter(reg => 
+        reg.studentName.tolLowerCase().includes(search) || reg.symbolNo.tolLowerCase().includes(search)
+    );
+    // default message
+    if (registrations.length === 0){
+        container.innerHTML = "<p>No application to show.</p>";
+        return;
+    }
+    // dynamic table for records
+    let html = `<table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Symbol No.</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+               </table>`;
+    // iterate for individual row for each regisration rcord
+    registrations.forEach(reg => {
+        // css styling for status
+        const statusClass = reg.status === "Approved" ? "status-approved" : reg.status === "Rejected" ? "status-rejected" : "sattus-pending";
+        html += `<tr>
+                    <td>${escapeHTML(reg.studentName)}</td>
+                    <td>${escapeHTML(reg.symbolNo)}</td>
+                    <td>${escapeHTML(reg.program)}</td>
+                    <td>${escapeHTML(reg.semester)}</td>
+                    <td><span class="status ${statusClass}">${reg.status}</span></td>
+                    <td><button onclick="viewRegistration(${reg.id})">View</button>
+                        ${reg.status === "Approved" ? `<button class="success" onclick="showApprovedCard${reg.id}">
+                        Entrance Card</button>` : ""}
+                    </td>
+                </tr>`;
+    });
+    html += `</tbody>
+            </table>`;
+    // add table to the container
+    container.innerHTML = html;
+}
+
+// function to see registered records and load id card for approved
+function viewRegistration(id){
+    const registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    // each record has unique id
+    const reg = registrations.find(item => item.id === id);
+    if (!reg) return;
+    let message = `Student: ${reg.studentName}
+                   Symbol No: ${reg.symbolNo}
+                   Program: ${reg.program}
+                   Semester: ${reg.semester}
+                   Exam Type: ${reg.examType}
+                   Status: ${reg.status}
+                   Subjects: ${reg.subject.join("\n")}`;
+    if (reg.adminComment) {
+        message += `Admin Comment: ${reg.adminComment}`;
+    }
+    if (reg.status === "Approved"){
+        message += `Entrance Card: ${reg.entranceCardNo}
+                    Approved At: ${reg.approvedAt}`;
+    }
+    alert(message);
+    // smooth scroll action if entrance card is approved
+    if (reg.status === "Approved"){
+        generateEntranceCard(reg);
+        document.getElementById("entranceCard").scrollIntoView({behavior: "smooth"});
+    }
+                    
+}
+
+// function to validate admin credentials
+function adminLogin(){
+    // reference from html elements
+    const username = document.getElementById("adminUsername").value;
+    const password = document.getElementById("adminPassword").value;
+    // save login satte in session
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD){
+        // show panel
+        sessionStorage.setItem("adminLoggenIn", "true");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        // populate application list
+        displayAdminApplications();
+        showMessage("Successful admin login.", "success");
+    } else{
+        showMessage("Invalid login credentials.", "error");
+    }
+}
+
+// function logout admin
+function adminLogout(){
+    // clear data and hide panel
+    sessionStorage.removeItem("adminLoggedIn");
+    document.getElementById("adminPanel").classList.add("hidden");
+    document.getElementById("adminUsername").value="";
+    document.getElementById("adminPassword").value="";
+}
+
+// function to display admin panel with applications
+function displayAdminApplications(){
+    // check login
+    if (sessionStorage.getItem("adminLoggedIn") !== true){
+        return;
+    }
+    const container = document.getElementById("adminApplications");
+    let registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    const pending = registrations.filter(reg => reg.status === "Pending");
+    // update pending count
+    document.getElementById("pendingCount").textContent = pending.length;
+    if (registrations.length === 0){
+        container.innerHTML = "<p>No applications to show.</p>";
+        return;
+    }
+    let html = `<table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Symbol No.</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Documents</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                </table>`;
+    registrations.forEach(reg => {
+        const statusClass = reg.status === "Approved" ? "status-approved" : reg.status === "Rejected" ? "status-rejected" : "status-pending";
+        html += `<tr>
+                    <td>${escapeHTML(reg.studentName)}</td>
+                    <td>${escapeHTML(reg.symbolNo)}</td>
+                    <td>${escapeHTML(reg.program)}</td>
+                    <td>${escapeHTML(reg.semester)}</td>
+                    <td><button onclick="viewDocuments(${reg.id}">View Documents</button></td>
+                    <td><span class="status ${statusClass}">${reg.status}</span></td>
+                    <td>
+                        ${reg.status === "Pending" ? `<button class="status" onclick="approveApplication(${reg.id}">Approve</button>
+                        <button class="danger" onclick="rejectApplication(${reg.id}">Reject</button>` : 
+                        `<button onclick="adminViewApplication(${reg.id}">View</button>`}
+                    </td>
+                </tr>`;
+    })
+    html += `</tbody>
+            </table>`;
+    container.innerHTML = html;
+}
+
+// function for admin to view applications
+function adminViewApplication(id){
+    const registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    const reg = registrations.find(item => item.id === id);
+    if (!reg) return;
+    alert(`Student: ${reg.studentName}
+           Symbol No: ${reg.symbolNo}
+           Program: ${reg.program}
+           Semester: ${reg.semester}
+           Exam Type: ${reg.examType}
+           Status: ${reg.status}
+           Admin Comment: ${reg.adminComment || "None"}
+           Entrance Card: ${reg.entranceCardNo || "None"}`);
+}
+
+// function for admin to view uploaded documents
+function viewDocuments(id){
+    const registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    const reg = registrations.find(item => item.id === id);
+    if (!reg || !reg.documents){
+        alert("No documents uploaded.");
+        return;
+    }
+    const content = document.getElementById("adminApplications");
+    let html = `<div class="document-box">
+                    <h3>Documents: ${escapeHTML(reg.studentName)}</h3>`;
+    // iterate each document type object
+    Object.entries(reg.documents.forEach(([type, file]) => {
+        if (!file) return;
+        html += `<div class="document-box>
+                    <strong>${formatDocumentName(type)}</strong>
+                    <p>File: ${escapeHTML(file.name)}</p>
+                    <p>Size: ${escapeHTML(file.size)}</p>
+                    <div class="document-actions">
+                        <a href="${file.data}" action="_blank"><button>View</button></a>
+                    </div>`;
+        // add previews if type is image
+        if (file.type.startsWith("image/")){
+            html += `<img src="${file.data}" alt="${escapeHTML(file.name)}">`;
+        }
+        html += `</div>`;
+                
+    }));
+    html += `<button class="secondary" onclick="displayAdminApplications()">Close</button>
+        </div>`;
+    // put the view box at top of container
+    content.insertAdjacentElement("afterbegin", html)
+}
