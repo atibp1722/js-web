@@ -676,3 +676,57 @@ function printEntranceCard(){
     // trigger print window
     window.print();
 }
+
+// function to reset form content
+function resetForm(){
+    // clear content from html
+    document.getElementById("subjectList").innerHTML = "";
+    // reset field values to 0
+    document.getElementById("subjectCount").textContent = 0;
+    document.getElementById("examFee").textContent = 0;
+    document.getElementById("lateFee").textContent = 0;
+    document.getElementById("totalFee").textContent = 0;
+    // hide message box
+    document.getElementById("message").style.display = "none";
+}
+
+// function to make file size readable
+function formatFileSize(bytes){
+    // toggle "B" and "Kb" based on file size
+    if (bytes < 1024){
+        return bytes + " B";
+    }
+    return((bytes / 1024).toFixed(1) + " Kb.");
+}
+
+// function to make uploaded file more readable
+function formatDocumentName(name){
+    // key value pair for document titles
+    const names = {
+        photo: "Passport Size Photo",
+        citizenship: "Citizenship/NID",
+        gradesheet: "Previous Gradesheet",
+        character: "Character Certificate"
+    };
+    // return empty if no match found
+    return(names[name] || name);
+}
+
+// function to prevent cross scripting attack
+function escapeHTML(value){
+    // values to escape from
+    return String(value).replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;")
+}
+
+// display existing registrations
+displayRegistrations();
+
+// check admin login cuurently active
+if (sessionStorage.getItem("adminLoggedIn") === "true"){
+    document.getElementById("adminPanel").classList.remove("hidden");
+    displayAdminApplications();
+}
