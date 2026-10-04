@@ -514,3 +514,165 @@ function rejectApplication(id){
     displayAdminApplications();
     displayRegistrations();
 }
+
+// function to generate exam entrance card
+function generateEntranceCard(reg){
+    // check status is approved
+    if (reg.status !== "Approved"){
+        return;
+    }
+    // gre reference to html element
+    const card = document.getElementById("entranceCard");
+    const content = document.getElementById("entranceCardContent");
+    // default when no photo uploaded
+    let photoHTML = `<div class="student-photo">
+                        <div class="photo-placeholder">Photo</div>
+                    </div>`;
+    // when photo attached convert to base64
+    if (reg.documents && reg.documents.photo && reg.documents.photo.data){
+        photoHTML += `<div class="student-photo">
+                        <img src="${reg.documents.photo.data}" alt="Student Photo">
+                      </div>`;
+    }
+    // dynamic student exam entrance card
+    content.innerHTML = `<div class="entrance-card">
+                            <div class="card-header">
+                                <h1>Annapurna Institute of Technology & Management</h1>
+                                <p>Kathmandu, Nepal</p>
+                                <h2>Student Entrance Card</h2>
+                                <p>Academic Year: 2026/27</p>
+                            </div>
+                            <div class="approval-stamp">Approved</div>
+                            <div class="student-info">
+                                <table class="table-info">
+                                    <tr>
+                                        <td>
+                                            <strong>Examination ID</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${reg.entranceCardNo}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Registration ID</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${reg.id}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Student Name</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${escapeHTML(reg.studentName)}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Symbol No.</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${escapeHTML(reg.symbolNo)}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Course</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${escapeHTML(reg.program)}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Semester</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${escapeHTML(reg.semester)}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Exam Type</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${escapeHTML(reg.examType)}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strongApproved At</strong>
+                                        </td>
+                                        <td>
+                                            <strong>${escapeHTML(reg.approvedAt)}</strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            ${photoHTML}
+                        </div>
+                        <h3 class="card-title">Subjects</h3>
+                        <table class="info-table">
+                            <thead>
+                                <tr>
+                                    <th>SNo.</th>
+                                    <th>Subjects</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${reg.SUBJECTS.map((subject, index) => `
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td>${escapeHTML(subject)}</td>
+                                        </tr>`).join("")}
+                            </tbody>
+                        </table>
+                        <h3 class="card-title">Examination Rules & Regulations</h3>
+                        <ol>
+                            <li>Students must bring the original entrance card for the duration of the examination.</li>
+                            <li>Students must carry valid college identification during the examination.</li>
+                            <li>Mobile phones and electronic devices are not permitted, if found student will be expelled from examination.</li>
+                            <li>Students must enter examination hall 15 minutes before examination starts.</li>
+                            <li>All examination rules must be followed by students, failure to comply will result in strict actions.</li>
+                        </ol>
+                        <div class="signature-area">
+                            <div class="signature">Student Signature</div>
+                            <div class="signature">Authorized Officer</div>
+                            <div class="signature">Campus Chief</div>
+                        </div>
+                        <p class="center" style="margin-top: 35px;">
+                            <strong>This card is valid for the current examination only.</strong>
+                        </p>
+                    </div>`;
+    // show card on webpage                
+    card.classList.remove("hidden");    
+}
+
+// function to show approved cards
+function showApprovedCard(id){
+    const registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    const reg = registrations.find(item => item.id === id);
+    if (!reg) return;
+    // not allow card with status pending
+    if (reg.status !== "Approved"){
+        alert("Entrance card will be avaiable only after approval.");
+        return;
+    }
+    // gnerate card and scroll to its position
+    generateEntranceCard(reg);
+    document.getElementById("entranceCard").scrollIntoView({behavior: "smooth"});
+}
+
+// function to allow print entrance card
+function printEntranceCard(){
+    const card = document.getElementById("entranceCard");
+    // check container hidden or not
+    if (card.classList.contains("hidden")){
+        alert("No card to print");
+        return;
+    }
+    // trigger print window
+    window.print();
+}
