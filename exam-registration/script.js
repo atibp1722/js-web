@@ -459,3 +459,58 @@ function viewDocuments(id){
     // put the view box at top of container
     content.insertAdjacentElement("afterbegin", html)
 }
+
+// function to approve student application
+function approveApplication(id){
+    // check admin login
+    if (sessionStorage.getItem("adminLoggedIn") !== true){
+        alert("Admin login is needed.");
+        return;
+    }
+    // get all registrations
+    let registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    const registration = registrations.find(reg => reg.id === id);
+    // exit if none found or not in pending status
+    if (!registration) return;
+    if (registration.status !== "Pending") return;
+    // prompt admin for approve confirmation
+    const cofirmApproval = confirm(`Approve registration for ${registration.studentName}?`);
+    if (!cofirmApproval) return;
+    // update the fields
+    registration.status = "Approved";
+    registration.approvedAt = new Date().toLocaleString("en-NP");
+    registration.adminComment = "Application approved.";
+    // create new entrace card
+    registration.entranceCardNo = "EC" + new Date().getFullYear() + "-" + String(registration.id).slice(-6);
+    // save apporved registration
+    localStorage.setItem("registrations", JSON.stringify(registrations));
+    alert(`${registration.studentName}'s application is appovied.`);
+    // refresh admin panel and applications
+    displayAdminApplications();
+    displayRegistrations();
+    generateEntranceCard(registration);
+    // view new entrance id card
+    document.getElementById("entranceCard").scrollIntoView({behavior: "smooth"});
+}
+
+// function to reject student application
+function rejectApplication(id){
+    if (sessionStorage.getItem("adminLoggedIn") !== true){
+        alert("Admin login is needed.");
+        return;
+    }
+    // prompt admin for rejection reason
+    const reason = prompt("Enter reason for rejection: ");
+    if (!reason) return;
+    let registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    const registration = registrations.find(reg => reg.id === id);
+    if (!registration) return;
+    // update with reason given by admin
+    registration.status = "Rejected";
+    registration.adminComment = reason;
+    localStorage.setItem("registrations", JSON.stringify(registrations));
+    alert("Application rejected.");
+    // refresh admin panel and registration
+    displayAdminApplications();
+    displayRegistrations();
+}
