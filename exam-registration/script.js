@@ -14,7 +14,7 @@ const SUBJECTS = {
            "Digital Logic", "Computer Fundamentals"],
     "BBA": ["Principles of Mgmt", "Professional Accouting", 
            "Economics", "English", "Computer Fundamentals"],
-    "BS CSIT": ["English", "Physics", "Mathematics", 
+    "BSC CSIT": ["English", "Physics", "Mathematics", 
                "C Programming", "Digital Logic"],
     "BBS": ["Accouting", "Business English", "Macroeconomics", 
            "Business Mathematics", "Management Principles"],
@@ -30,6 +30,7 @@ function loadSubjects(){
     // get reference to html element
     const program = document.getElementById("program").value;
     const subjectList = document.getElementById("subjectList");
+    if (!subjectList) return;
     subjectList.innerHTML = "";
     // check program selected
     if (!program){
@@ -45,7 +46,7 @@ function loadSubjects(){
         // add custom content inside created element
         div.innerHTML = `<label>
                             <input type="checkbox" value=${subject} onchange="calculateFee()">
-                            ${index + 1}.${subject}
+                            ${index + 1}. ${subject}
                         </label>`;
         // add new element to parent
         subjectList.appendChild(div);
@@ -116,6 +117,7 @@ function fileToBase64(file){
         reader.onerror = () => {
             reject("File cannot be read.");
         }; 
+        reader.readAsDataURL(file);
     });
 }
 
@@ -217,7 +219,7 @@ document.getElementById("examForm").addEventListener("submit", async function(ev
         registeredAt: new Date().toLocaleString("en-NP")
     };
     // get registrations from borwser storage else return empty array
-    let registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    let registrations = JSON.parse(localStorage.getItem("registrations") || "[]");
     registrations.push(registration);
     // save registrations to borwser storage
     try{
@@ -237,6 +239,7 @@ document.getElementById("examForm").addEventListener("submit", async function(ev
 // function for messages whether success or error
 function showMessage(message, type){
     const box = document.getElementById("message");
+    if (!box) return;
     box.style.display = "block";
     box.textContent = message;
     // css styling based on success or error
@@ -257,12 +260,12 @@ function showMessage(message, type){
 function displayRegistrations(){
     // reference to html element
     const container = document.getElementById("registrationTable");
-    const search = document.getElementById("search").value.tolLowerCase();
+    const search = document.getElementById("search").value.toLowerCase();
     // get registration records
     let registrations = JSON.parse(localStorage.getItem("registrations") || []);
     // filter by name or symbol number
     registrations = registrations.filter(reg => 
-        reg.studentName.tolLowerCase().includes(search) || reg.symbolNo.tolLowerCase().includes(search)
+        reg.studentName.toLowerCase().includes(search) || reg.symbolNo.toLowerCase().includes(search)
     );
     // default message
     if (registrations.length === 0){
@@ -286,7 +289,7 @@ function displayRegistrations(){
     // iterate for individual row for each regisration rcord
     registrations.forEach(reg => {
         // css styling for status
-        const statusClass = reg.status === "Approved" ? "status-approved" : reg.status === "Rejected" ? "status-rejected" : "sattus-pending";
+        const statusClass = reg.status === "Approved" ? "status-approved" : reg.status === "Rejected" ? "status-rejected" : "status-pending";
         html += `<tr>
                     <td>${escapeHTML(reg.studentName)}</td>
                     <td>${escapeHTML(reg.symbolNo)}</td>
@@ -294,7 +297,7 @@ function displayRegistrations(){
                     <td>${escapeHTML(reg.semester)}</td>
                     <td><span class="status ${statusClass}">${reg.status}</span></td>
                     <td><button onclick="viewRegistration(${reg.id})">View</button>
-                        ${reg.status === "Approved" ? `<button class="success" onclick="showApprovedCard${reg.id}">
+                        ${reg.status === "Approved" ? `<button class="success" onclick="showApprovedCard(${reg.id})">
                         Entrance Card</button>` : ""}
                     </td>
                 </tr>`;
@@ -317,7 +320,7 @@ function viewRegistration(id){
                    Semester: ${reg.semester}
                    Exam Type: ${reg.examType}
                    Status: ${reg.status}
-                   Subjects: ${reg.subject.join("\n")}`;
+                   Subjects: ${(reg.subjects || []).join("\n")}`;
     if (reg.adminComment) {
         message += `Admin Comment: ${reg.adminComment}`;
     }
@@ -342,7 +345,7 @@ function adminLogin(){
     // save login satte in session
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD){
         // show panel
-        sessionStorage.setItem("adminLoggenIn", "true");
+        sessionStorage.setItem("adminLoggedIn", "true");
         document.getElementById("adminPanel").classList.remove("hidden");
         // populate application list
         displayAdminApplications();
@@ -368,6 +371,7 @@ function displayAdminApplications(){
         return;
     }
     const container = document.getElementById("adminApplications");
+    if (!container) return;
     let registrations = JSON.parse(localStorage.getItem("registrations") || []);
     const pending = registrations.filter(reg => reg.status === "Pending");
     // update pending count
@@ -434,18 +438,18 @@ function viewDocuments(id){
         alert("No documents uploaded.");
         return;
     }
-    const content = document.getElementById("adminApplications");
+    const content = document.getElementById("adminApps");
     let html = `<div class="document-box">
                     <h3>Documents: ${escapeHTML(reg.studentName)}</h3>`;
     // iterate each document type object
-    Object.entries(reg.documents.forEach(([type, file]) => {
+    Object.entries(reg.documents).forEach(([type, file]) => {
         if (!file) return;
-        html += `<div class="document-box>
+        html += `<div class="document-box">
                     <strong>${formatDocumentName(type)}</strong>
                     <p>File: ${escapeHTML(file.name)}</p>
                     <p>Size: ${escapeHTML(file.size)}</p>
                     <div class="document-actions">
-                        <a href="${file.data}" action="_blank"><button>View</button></a>
+                        <a href="${file.data}" target="_blank"><button>View</button></a>
                     </div>`;
         // add previews if type is image
         if (file.type.startsWith("image/")){
@@ -453,7 +457,7 @@ function viewDocuments(id){
         }
         html += `</div>`;
                 
-    }));
+    });
     html += `<button class="secondary" onclick="displayAdminApplications()">Close</button>
         </div>`;
     // put the view box at top of container
@@ -603,7 +607,7 @@ function generateEntranceCard(reg){
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strongApproved At</strong>
+                                            <strong>Approved At</strong>
                                         </td>
                                         <td>
                                             <strong>${escapeHTML(reg.approvedAt)}</strong>
@@ -622,7 +626,7 @@ function generateEntranceCard(reg){
                                 </tr>
                             </thead>
                             <tbody>
-                                ${reg.SUBJECTS.map((subject, index) => `
+                                ${(reg.subjects || []).map((subject, index) => `
                                         <tr>
                                             <td>${index + 1}</td>
                                             <td>${escapeHTML(subject)}</td>
