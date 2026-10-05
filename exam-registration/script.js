@@ -12,11 +12,11 @@ const LATE_FEE = 500;
 const SUBJECTS = {
     "BCA": ["C Programming", "English", "Mathematics", 
            "Digital Logic", "Computer Fundamentals"],
-    "BBA": ["Principles of Mgmt", "Professional Accouting", 
+    "BBA": ["Principles of Mgmt", "Accounting", 
            "Economics", "English", "Computer Fundamentals"],
     "BSC CSIT": ["English", "Physics", "Mathematics", 
                "C Programming", "Digital Logic"],
-    "BBS": ["Accouting", "Business English", "Macroeconomics", 
+    "BBS": ["Accounting", "Business English", "Macroeconomics", 
            "Business Mathematics", "Management Principles"],
     "BIT": ["Introduction to Programming", "Mathematics", 
            "Computer Fundamentals", "Digital Logic", "Technical English"]
@@ -206,6 +206,7 @@ document.getElementById("examForm").addEventListener("submit", async function(ev
         symbolNo: document.getElementById("symbolNo").value.trim(),
         program: document.getElementById("program").value,
         dob: document.getElementById("dob").value,
+        semester: document.getElementById("semester").value,
         phone: document.getElementById("phone").value.trim(),
         email: document.getElementById("email").value.trim(),
         examType: document.getElementById("examType").value,
@@ -284,8 +285,7 @@ function displayRegistrations(){
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-               </table>`;
+                    <tbody>`;
     // iterate for individual row for each regisration rcord
     registrations.forEach(reg => {
         // css styling for status
