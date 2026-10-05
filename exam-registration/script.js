@@ -370,9 +370,9 @@ function displayAdminApplications(){
     if (sessionStorage.getItem("adminLoggedIn") !== true){
         return;
     }
-    const container = document.getElementById("adminApplications");
+    const container = document.getElementById("adminApps");
     if (!container) return;
-    let registrations = JSON.parse(localStorage.getItem("registrations") || []);
+    let registrations = JSON.parse(localStorage.getItem("registrations") || "[]");
     const pending = registrations.filter(reg => reg.status === "Pending");
     // update pending count
     document.getElementById("pendingCount").textContent = pending.length;
@@ -406,7 +406,7 @@ function displayAdminApplications(){
                     <td>
                         ${reg.status === "Pending" ? `<button class="status" onclick="approveApplication(${reg.id}">Approve</button>
                         <button class="danger" onclick="rejectApplication(${reg.id}">Reject</button>` : 
-                        `<button onclick="adminViewApplication(${reg.id}">View</button>`}
+                        `<button onclick="adminViewApplication(${reg.id})">View</button>`}
                     </td>
                 </tr>`;
     })
@@ -467,7 +467,7 @@ function viewDocuments(id){
 // function to approve student application
 function approveApplication(id){
     // check admin login
-    if (sessionStorage.getItem("adminLoggedIn") !== true){
+    if (sessionStorage.getItem("adminLoggedIn") !== "true"){
         alert("Admin login is needed.");
         return;
     }
@@ -499,7 +499,7 @@ function approveApplication(id){
 
 // function to reject student application
 function rejectApplication(id){
-    if (sessionStorage.getItem("adminLoggedIn") !== true){
+    if (sessionStorage.getItem("adminLoggedIn") !== "true"){
         alert("Admin login is needed.");
         return;
     }
