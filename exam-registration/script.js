@@ -344,8 +344,9 @@ function adminLogin(){
     const password = document.getElementById("adminPassword").value;
     // save login satte in session
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD){
-        // show panel
         sessionStorage.setItem("adminLoggedIn", "true");
+        // show/hide admin panel
+        document.getElementById("adminLoginCard").classList.add("hidden");
         document.getElementById("adminPanel").classList.remove("hidden");
         // populate application list
         displayAdminApplications();
@@ -359,6 +360,7 @@ function adminLogin(){
 function adminLogout(){
     // clear data and hide panel
     sessionStorage.removeItem("adminLoggedIn");
+    document.getElementById("adminLoginCard").classList.remove("hidden");
     document.getElementById("adminPanel").classList.add("hidden");
     document.getElementById("adminUsername").value="";
     document.getElementById("adminPassword").value="";
@@ -367,7 +369,7 @@ function adminLogout(){
 // function to display admin panel with applications
 function displayAdminApplications(){
     // check login
-    if (sessionStorage.getItem("adminLoggedIn") !== true){
+    if (sessionStorage.getItem("adminLoggedIn") !== "true"){
         return;
     }
     const container = document.getElementById("adminApps");
@@ -392,24 +394,27 @@ function displayAdminApplications(){
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                </table>`;
+                    <tbody>`;
     registrations.forEach(reg => {
+        const currentStatus = reg.status || "Pending";
         const statusClass = reg.status === "Approved" ? "status-approved" : reg.status === "Rejected" ? "status-rejected" : "status-pending";
         html += `<tr>
                     <td>${escapeHTML(reg.studentName)}</td>
                     <td>${escapeHTML(reg.symbolNo)}</td>
                     <td>${escapeHTML(reg.program)}</td>
                     <td>${escapeHTML(reg.semester)}</td>
-                    <td><button onclick="viewDocuments(${reg.id}">View Documents</button></td>
-                    <td><span class="status ${statusClass}">${reg.status}</span></td>
-                    <td>
-                        ${reg.status === "Pending" ? `<button class="status" onclick="approveApplication(${reg.id}">Approve</button>
-                        <button class="danger" onclick="rejectApplication(${reg.id}">Reject</button>` : 
-                        `<button onclick="adminViewApplication(${reg.id})">View</button>`}
-                    </td>
+                    <td><button onclick="viewDocuments(${reg.id})">View Documents</button></td>
+                    <td><span class="status ${statusClass}">${escapeHTML(currentStatus)}</span></td>
+                    <td>`;
+        if (reg.status === "Pending"){
+            html += `<button class="status" onclick="approveApplication(${reg.id})">Approve</button>
+                    <button class="danger" onclick="rejectApplication(${reg.id})">Reject</button>`;
+        } else{
+            html += `<button onclick="adminViewApplication(${reg.id})">View</button>`;
+        }
+        html += `</td>
                 </tr>`;
-    })
+    });
     html += `</tbody>
             </table>`;
     container.innerHTML = html;
@@ -460,8 +465,8 @@ function viewDocuments(id){
     });
     html += `<button class="secondary" onclick="displayAdminApplications()">Close</button>
         </div>`;
-    // put the view box at top of container
-    content.insertAdjacentElement("afterbegin", html)
+    // replace the content
+    content.innerHTML = html;
 }
 
 // function to approve student application
@@ -525,7 +530,7 @@ function generateEntranceCard(reg){
     if (reg.status !== "Approved"){
         return;
     }
-    // gre reference to html element
+    // get reference to html element
     const card = document.getElementById("entranceCard");
     const content = document.getElementById("entranceCardContent");
     // default when no photo uploaded
@@ -649,6 +654,9 @@ function generateEntranceCard(reg){
                         <p class="center" style="margin-top: 35px;">
                             <strong>This card is valid for the current examination only.</strong>
                         </p>
+                        <div class="center" style="margin-top: 20px;">
+                            <button onclick="printEntranceCard()" class="success">Print Card</button>
+                        </div>
                     </div>`;
     // show card on webpage                
     card.classList.remove("hidden");    
@@ -729,8 +737,17 @@ function escapeHTML(value){
 // display existing registrations
 displayRegistrations();
 
+// listener for search function
+const searchItem = document.getElementById("search");
+if (searchItem){
+    searchItem.addEventListener("input", displayRegistrations);
+}
+
 // check admin login cuurently active
 if (sessionStorage.getItem("adminLoggedIn") === "true"){
-    document.getElementById("adminPanel").classList.remove("hidden");
+    const loginCard = document.getElementById("adminLoginCard");
+    const adminPanel = document.getElementById("adminPanel");
+    if (loginCard) loginCard.classList.add("hidden");
+    if (adminPanel) adminPanel.classList.remove("hidden");
     displayAdminApplications();
 }
