@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Safa Kathmandu Waste Management</title>
+</head>
+<body>
+    
+    <header>
+        <nav>
+            <div class="logo">
+                सफा<span> काठमाडौँ</span>
+            </div>
+            <button class="menu-btn" id="menuBtn">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#booking">Schedule</a></li>
+                <li><a href="#pickups">My Pickups</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div>
+                <p>🚮 Kathmandu Based Online Waste Management</p>
+                <h1>Clean and healthy Kathmandu for all of us.</h1>
+                <p>Waste pickup services for resident and business, 
+                    flexible pricing with customizable pickup timing,
+                    progress tracking and analytics. 
+                </p>
+                <button class="btn" onclick="scrollToBooking()">Schedule Pickup</button>
+            </div>
+            <div class="hero-card">
+                <h3>Pickup rates starting from</h3>
+                <div class="hero-price">Rs. 499</div>
+                <p>Price based on location, waste quantity, timing and household type.</p>
+                <hr>
+                <p>✅ Door-to-Door Collection</p>
+                <p>✅ Capacity Based Scheduling</p>
+                <p>✅ Frequent Pickup Discounts</p>
+                <p>✅ Pikcup Progress Tracking</p>
+            </div>
+        </div>
+    </section>
+    <section id="quickStats">
+        <div class="stats">
+            <div class="stat">
+                <h3 data-count="3000">0+</h3>
+                <p>Customers</p>
+            </div>
+            <div class="stat">
+                <h3 data-count="10">0+</h3>
+                <p>Service Areas</p>
+            </div>
+            <div class="stat">
+                <h3 data-count="25">0+</h3>
+                <p>Corporate Customers</p>
+            </div>
+            <div class="stat">
+                <h3 data-count="95">0%</h3>
+                <p>Customer Satisfaction</p>
+            </div>
+        </div>
+    </section>
+    <section id="services">
+        <div class="section-title">
+            <h2>Our Services</h2>
+            <p>Flexible and custom waste management services across Kathmandu Valley.</p>
+        </div>
+        <div class="filter-buttons">
+            <button class="active" data-filter="all">All</button>
+            <button data-filter="home">Residential</button>
+            <button data-filter="business">Business</button>
+            <button data-filter="special">Special</button>
+        </div>
+        <div class="service-grid" id="serviceGrid">
+            <div class="service" data-category="home">
+                <div class="service-icon">🏡</div>
+                <h3>Residential Pickup</h3>
+                <p>Door-to-Door pickup for residential buildings and apartments.</p>
+            </div>
+            <div class="service" data-category="business">
+                <div class="service-icon">🏛️</div>
+                <h3>Business Pickup</h3>
+                <p>Waste collection service for office, restaurant, cafes and corporates.</p>
+            </div>
+            <div class="service" data-category="home">
+                <div class="service-icon">♻️</div>
+                <h3>Recycling Service</h3>
+                <p>Waste categorization for further processing and recycling.</p>
+            </div>
+            <div class="service" data-category="special">
+                <div class="service-icon">🎛️</div>
+                <h3>Electronic Waste</h3>
+                <p>Safe collection, processing and disposal of electronic waste.</p>
+            </div>
+            <div class="service" data-category="special">
+                <div class="service-icon">⚖️</div>
+                <h3>Bulk Waste</h3>
+                <p>Heavy items such as furniture, heavy equipment and appliances.</p>
+            </div>
+            <div class="service" data-category="business">
+                <div class="service-icon">🏗️</div>
+                <h3>Construction Waste</h3>
+                <p>Collection and transportation of waste from construction sites.</p>
+            </div>
+        </div>
+    </section>
+    <section id="pricing">
+        <div class="section-title">
+            <h2>Pickup Pricing Plans</h2>
+            <p>Choose your preferred plan and get exciting discounts.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>One Time</h3>
+                <div class="price">Rs. 499</div>
+                <p>One time waste collection.</p>
+                <ul>
+                    <li>🗓️ Customizable Scheduling</li>
+                    <li>🚪 Door-to-Door Pickup</li>
+                    <li>💵 Flexible Pricing</li>
+                </ul>
+                <button class="btn-secondary" onclick="selectPlan('one-time')">Select Plan</button>
+            </div>
+            <div class="price-card featured">
+                <h3>Weekly</h3>
+                <div class="price">15% OFF</div>
+                <p>Best for households and offices.</p>
+                <ul>
+                    <li>⏰ Recurring Pickups</li>
+                    <li>🚨 Route Priority</li>
+                    <li>🏷️ 15% Discount</li>
+                </ul>
+                <button class="btn-secondary" onclick="selectPlan('weekly')">Select Plan</button>
+            </div>
+            <div class="price-card featured">
+                <h3>Monthly</h3>
+                <div class="price">10% OFF</div>
+                <p>Best for less frequent collection.</p>
+                <ul>
+                    <li>⏰ Recurring Pickups</li>
+                    <li>🚨 Route Priority</li>
+                    <li>🏷️ 10% Discount</li>
+                </ul>
+                <button class="btn-secondary" onclick="selectPlan('monthly')">Select Plan</button>
+            </div>
+        </div>
+    </section>
+    <section id="booking">
+        <div class="section-title">
+            <h2>Schedule Pickup</h2>
+            <p>Pickup capacity and pricing are subject to change.</p>
+        </div>
+        <div class="booking">
+            <form id="bookingForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input id="name" type="text" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input id="phone" type="tel" maxlength="10" placeholder="98/7XXXXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="area">Pickup Location</label>
+                        <select id="area" required>
+                            <option value="" selected>Select Location</option>
+                            <option>Koteswore</option>
+                            <option>Baneswore</option>
+                            <option>Mid Baneswore</option>
+                            <option>Old Baneswore</option>
+                            <option>Kamaladi</option>
+                            <option>Maharajgunj</option>
+                            <option>Thamel</option>
+                            <option>Lainchaur</option>
+                            <option>Pulchowk</option>
+                            <option>Kalimati</option>
+                            <option>Balaju</option>
+                            <option>Bhaktapur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wasteType">Waste Type</label>
+                        <select id="wasteType" required>
+                            <option value="general" selected>General</option>
+                            <option value="recycle">Recyclable</option>
+                            <option value="electronic">Electronic</option>
+                            <option value="bulk">Heavy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Pickup Date</label>
+                        <input id="date" type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Preferred Time</label>
+                        <select id="time" required>
+                            <option value="" selected>Select Time</option>
+                            <option>7AM - 9AM</option>
+                            <option>9AM - 11AM</option>
+                            <option>11AM - 1PM</option>
+                            <option>2PM - 4PM</option>
+                            <option>4PM - 6PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="frequency">Pickup Frequency</label>
+                        <select id="frequency" required>
+                            <option value="one-time" selected>One Time</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bags">Total Bags</label>
+                        <input id="bags" type="number" min="1" max="25" value="2" required>
+                    </div>
+                    <div class="form-group full">
+                        <label for="address">Pickup Address</label>
+                        <textarea id="address" rows="3" placeholder="e.g. sastogadget.com, baneswore" required></textarea>
+                    </div>
+                </div>
+                <div id="capacityInfo" class="capacity-info">
+                    Please select your pickup location and date for capacity information
+                </div>
+                <div class="estimate">
+                    <p>Pickup Rates</p>
+                    <strong id="estimate">Rs. 499</strong>
+                    <small id="frequenctText">For one time pickup.</small>
+                    <div id="priceBreakdown" class="price-breakdown"></div>
+                </div>
+                <button class="btn" type="submit">Schedule Pickup</button>
+            </form>
+        </div>
+    </section>
+    <section id="myPickups">
+        <div class="section-title">
+            <h2>My Pickups</h2>
+            <p>Track progress of your waste collection.</p>
+        </div>
+        <div class="booking-tools">
+            <input id="bookingSearch" type="search" placeholder="Your search query">
+        </div>
+        <div id="pickupList">
+            <p id="pickupText">No pickups to show.</p>
+        </div>
+    </section>
+    <section id="analytics">
+        <div class="section-title">
+            <h2>My Analytics</h2>
+            <p>View pickup related statistics.</p>
+        </div>
+        <div class="dashboard-grid" id="dashboardStats">
+            <div class="dashboard-card">
+                <small>Total Bookings</small>
+                <h3 id="totalBookings">0</h3>
+            </div>
+            <div class="dashboard-card">
+                <small>Active Pickups</small>
+                <h3 id="activeBookings">0</h3>
+            </div>
+            <div class="dashboard-card">
+                <small>Recurring Pickups</small>
+                <h3 id="recurringBookings">0</h3>
+            </div>
+            <div class="dashboard-card">
+                <small>Top Route</small>
+                <h3 id="recurringBookings" style="font-size: 18px;">-</h3>
+            </div>
+        </div>
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <h3>🔝 Most Frequent Pickup Routes</h3>
+                <p style="color: #66736c; margin-top: 5px;">Most frequently requested pickup routes.</p>
+                <div id="topRoutes" style="margin-top: 15px;"></div>
+            </div>
+            <div class="analytics-card">
+                <h3>📶 Route Capacity</h3>
+                <p style="color: #66736c; margin-top: 5px;">Capacity of current route.</p>
+                <div id="capacityAnalytics" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </section>
+    <section id="contact">
+        <div class="contact-box">
+            <div>
+                <h2>A decade of keeping Kathmandu clean.</h2>
+                <p>Waste management for households, offices and corporates.</p>
+            </div>
+            <div>
+                <p>📍 Kathmandu, Nepal</p>
+                <p>☎️ +977 98510XXXXX</p>
+                <p>📩 info@safaktm.com.np</p>
+                <p>⌚ Sun-Fri: 9AM - 6PM</p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>©️<span id="year"></span>Safa Kathmandu. Towards a clean Kathmandu.</p>
+    </footer>
+    <div id="toast" class="toast"></div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
