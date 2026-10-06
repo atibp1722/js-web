@@ -270,3 +270,198 @@ nav{
 .service p{
     color: var(--grey);
 }
+
+.pricing-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.price-card{
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--light-grey);
+}
+
+.price-card.featured{
+    border: 2px solid var(--green);
+    transform: scale(1.03);
+}
+
+.price{
+    color: var(--green);
+    font-size: 35px;
+    font-weight: 800;
+    margin: 15px 0;
+}
+
+.price-card ul{
+    list-style: none;
+    margin: 20px 0;
+}
+
+.price-card li{
+    margin: 9px 0;
+}
+
+.booking{
+    background: var(--white);
+    border-radius: 15px;
+    padding: 35px;
+    box-shadow: var(--shadow);
+}
+
+.form-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.full{
+    grid-column: 1 / -1;;
+}
+
+label{
+    font-weight: 700;
+}
+
+input, select, textarea{
+    width: 100%;
+    padding: 13px;
+    border: 1px solid var(--light-grey);
+    border-radius: 8px;
+    outline: none;
+    background: var(--white);
+}
+
+input:focus, select:focus, textarea:focus{
+    border-color: var(--green);
+}
+
+.estimate{
+    background: var(--light-green);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 25px 0;
+}
+
+.estimate > strong{
+    display: block;
+    color: var(--green);
+    font-size: 30px;
+}
+
+.estimate small{
+    color: var(--grey);
+}
+
+.price-breakdown{
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid var(--light-green);
+}
+
+.price-row{
+    display: flex;
+    justify-content: space-between;
+    margin: 7px 0;
+    color: var(--grey);
+    font-size: 15px;
+}
+
+.price-row strong{
+    color: var(--dark);
+}
+
+.price-row.discount, .price-row.discount strong{
+    color: var(--green);
+}
+
+.price-row.total{
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--light-green);
+    font-size: 18px;
+    color: var(--dark);
+}
+
+.price-row.total strong{
+    color: var(--green);
+    font-size: 22px;
+}
+
+.capacity-info{
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: var(--light-blue);
+    color: var(--blue);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.capacity-info.warning{
+    background: var(--yellow);
+    color: var(--white);
+}
+
+.capacity-info.full{
+    background: var(--red);
+    color: var(--white);
+}
+
+.capacity-bar{
+    height: 8px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.capacity-bar div{
+    height: 100%;
+    background: var(--green);
+    transition: 0.3s;
+}
+
+.pickup-card{
+    background: var(--white);
+    border: 1px solid var(--light-grey);
+    border-left: 5px solid var(--green);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.pickup-header{
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.pickup-id{
+    background: var(--green);
+    color: var(--dark-green);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pickup-details{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    color: var(--grey);
+    margin-bottom: 20px;
+}
+
