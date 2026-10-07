@@ -417,7 +417,7 @@ function formatDate(date){
 }
 
 // function to filter bookings that are not cancelled 
-function updateUpcomingBookings(){
+function getUpcomingBookings(){
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     // check for cancelled bookings
@@ -431,4 +431,144 @@ function updateUpcomingBookings(){
         // sort nearest date
         return(new Date(a.pickup.date) - new Date(b.pickup.date));
     });
+}
+
+// function to get bookings that are not cancelled
+function getFilteredBookings(){
+    // get and trim user search query
+    const query = $("#bookingSearch").value.toLowerCase().trim();
+    if (!query) return getUpcomingBookings();
+    // bookings not cancelled which includes search query
+    return getUpcomingBookings().filter(booking => {
+        const waste = wasteTypes.get(booking.waste.type);
+        const searchable = [
+            booking.id,
+            booking.customer.name,
+            booking.pickup.area,
+            waste.name,
+            booking.status
+        ].join("").toLocaleLowerCase();
+        return searchable.includes(query);
+    });
+}
+
+// function to display filtered bookings on webpage
+function renderBookings(){
+    const container = $("#pickupList");
+    // get filtereed bookings list
+    const list = getFilteredBookings();
+    // default message
+    if (list.length === 0){
+        container.innerHTML = `<p style="text-align: center; color: #66736c; padding: 30px">
+                                    Sorry, no matching pickup found.
+                              </p>`;
+        return;
+    }
+    // returned array to render in container
+    container.innerHTML = list.map(booking => renderBooking(booking)).join("");
+}
+
+// function to display card for individual pickup on webpage
+function renderBooking(booking){
+    // get waste, frequency and collector detail
+    const waste = wasteTypes.get(booking.waste.type);
+    const frequency = frequencies.get(booking.pickup.frequency);
+    const collector = booking.collector;
+    // dynamic literal to create individual card
+    return `<div class="pickup-card">
+                <div class="pickup-header">
+                    <div>
+                        <h3>${waste.name}</h3>
+                        <span class="pickup-id">${booking.id}</span>
+                    </div>
+                    <span class="pickup-status">${booking.status}</span>
+                </div>
+                <div class="pickup-details">
+                    <div>📅 ${formatDate(booking.pickup.date)}</div>
+                    <div>🕐 ${booking.pickup.time}</div>
+                    <div>📍${booking.pickup.area}</div>
+                    <div>🗑 ${booking.waste.bags} bags</div>
+                    <div>🔝 ${frequency.name} bags</div>
+                    <div>💵 Rs. ${booking.pricing.total} bags</div>
+                    <div>👤 ${collector ? collector.name : "Unassigned"} bags</div>
+                    <div>🛵 ${collector ? collector.vehicle : "NA"} bags</div>
+                </div>
+                ${renderStatusTracker(booking)}
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    ${booking.status !== "Picked up" ? `<button class="btn-secondary" onclick=advanceBooking('${booking.id}')>Advance Pickup</button>` : ""}
+                    ${booking.status !== "Cancelled" && booking.status !== "Picked up" ? `<button class="btn-danger" onclick=cancelBooking('${booking.id}')>Cancel Pickup</button>` : ""}
+                </div>
+            </div>`;
+}
+
+// function to advance current status of pickup
+function advanceBooking(bookingId){
+    // get id of the booking
+    const booking = bookings.find(item => item.id === bookingId);
+    if (!booking) return;
+    // get index of current status then update to next
+    const currentIndex = bookingStatus.indexOf(booking.status);
+    const nextStatus = bookingStatus[currentIndex + 1];
+    if (!nextStatus) return;
+    // update the cuurent status to next 
+    updateBookingStatus(bookingId, nextStatus);
+    // success message
+    showToast(`Pickup status updated to "${nextStatus}".`);
+}
+
+function cancelBooking(bookingId){
+    // get id of the booking
+    const booking = bookings.find(item => item.id === bookingId);
+    if (!booking) return;
+    // prompt user with message
+    if (!confirm("Cancel this pickup?")) return;
+    // directly update status to cancelled
+    booking.status = "Cancelled"
+    // log cancellation details
+    booking.statusHistory.push({
+        status: "Cancelled",
+        timestamp: new Date().toISOString()
+    });
+    saveBookings();
+    // update bookings on the webpage
+    renderBookings();
+    renderCapacityAnalytics();
+    // successful message
+    showToast(`Pickup sucessfully cancelled.`);
+}
+
+// fucntion to get frequent routes and demand score for frequent routes
+function getRecurringRoutes(){
+    const routeMap = new Map();
+    // filter pickups that have been cancelled
+    bookings.filter(booking => booking.status !== "Cancelled").forEach(booking => {
+        const area = booking.pickup.area;
+        const time = booking.pickup.time;
+        const key = `${area}::${time}`;
+        // initialize a route
+        if (!routeMap.has(key)){
+            routeMap.set(
+                key, {
+                    area, time, totalBookings: 0, recurringBookings: 0, demandScore: 0
+                }
+            );
+        }
+        const route = routeMap.get(key);
+        route.totalBookings++;
+        // demand score based on frequency
+        // high, medium and default score for respective frequency
+        if (booking.pickup.frequency === "weekly"){
+            route.recurringBookings++;
+            route.demandScore += 3;
+        } else if(booking.pickup.frequency === "monthly"){
+            route.recurringBookings++;
+            route.demandScore += 2;
+        } else {
+            route.demandScore += 1;
+        }
+    });
+    // convert map to array and sort based on high demand score
+    return [...routeMap.values()].sort((a, b) => 
+        b.demandScore - a.demandScore
+    );
 }
