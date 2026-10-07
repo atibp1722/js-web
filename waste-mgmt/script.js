@@ -237,3 +237,198 @@ function hasCapacity(data){
     const capacity = getRouteCapacity(data.area, data.time, data.date);
     return capacity.remaining > 0;
 }
+
+// function to update capacity and display on webpage
+function renderCapacity(){
+    // get information
+    const area = $("#area").value;
+    const date = $("#date").value;
+    const time = $("#time").value;
+    const container = $("#capacityInfo");
+    // check whether any field empty
+    if (!area || !time || !date){
+        container.className = "capacity-info";
+        container.innerHTML = `Please select your area and time for route capacity`;
+        return;
+    }
+    const capacity = getRouteCapacity(area, time, date);
+    const percent = Math.round((capacity.used / capacity.maximum) * 100);
+    let stateClass = "";
+    // update css styling
+    if (capacity.remaining === 0){
+        stateClass = "full";
+    } else if (percent >= 75){
+        stateClass = "warning";
+    }
+    container.className = `capacity-info ${stateClass}`;
+    // upadte container with new details
+    container.innerHTML = `<strong>
+                                Pickup Capacity
+                           </strong>
+                           <span>
+                                ${capacity.remaining} of ${capacity.maximum} slots remaining.
+                           </span>
+                           <div class="capacity-bar">
+                                <div style="width: ${percent}%"></div>
+                           </div>
+                           <small>
+                                ${percent}% of route capacity is currently booked.
+                           </small>`;
+}
+
+// function to validate user input
+function validateBooking(data){
+    // check missing input field
+    if (!data.name || !data.phone || !data.area || !data.date || !data.time || !data.address){
+        return {
+            valid: false,
+            message: "Sorry, form fields cannot be empty."
+        };
+    }
+    // validate Nepal based phone number
+    const phone = data.phone.replace(/\s/g,"");
+    if (!/^(97|98)\d{8}$/.test(phone)){
+        return{
+            valid: false,
+            message: "Phone number is not valid."
+        };
+    }
+    // validate bag min and max limit
+    if (data.bags < 1 || data.bags > config.maxBags){
+        return{
+            valid: false,
+            message: `No. of bags must be between 1 and ${config.maxBags}`
+        };
+    }
+    // current date to string
+    const selectedDate = new Date(`${data.date}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // validate date so past date not allowed
+    if (selectedDate < today){
+        return{
+            valid: false,
+            message: "Pickup date cannot be past."
+        };
+    }
+    // check route has remaining capacity
+    if (!hasCapacity(data)){
+        return{
+            valid: false,
+            message: "Sorry, this time and route is fully booked."
+        };
+    }
+    return{
+        valid: true
+    };
+}
+
+// function to create booking object and assign collector
+function createBooking(data){
+    if (!hasCapacity(data)){
+        throw new Error("Sorry, route already full.");
+    }
+    const pricing = calculatePrice(data);
+    // assign collector at random
+    const collector = assignCollector(data.area);
+    // create new booking object
+    const booking = {
+        id: generateBookingID(),
+        customer: {
+            name: data.name,
+            phone: data.phone,
+            address: data.address
+        },
+        pickup: {
+            area: data.area,
+            date: data.date,
+            time: data.time,
+            frequency: data.frequency
+        },
+        waste: {
+            type: data.wasteType,
+            bags: data.bags
+        }, pricing, collector, status: "Scheduled",
+        statusHistory: [{
+            status: "Scheduled",
+            timestamp: new Date().toISOString()
+        }],
+        createAt: new Date().toISOString()
+    };
+    // add new booking object
+    bookings.push(booking);
+    saveBookings();
+    return booking;
+}
+
+// function to assing collector at random
+function assignCollector(area){
+    if (collectors.length === 0){
+        return null;
+    }
+    // pick random collector index
+    const index = Math.floor(Math.random() * collectors.length);
+    return collectors[index]
+}
+
+// fucntion to update status through pickup process
+function updateBookingStatus(bookingId, newStatus){
+    const booking = bookings.find(item => item.id === bookingId);
+    if (!booking) return;
+    if (!bookingStatuses.includes(newStatus)){
+        return;
+    }
+    // update with current status
+    // record time of change
+    booking.status = newStatus;
+    booking.statusHistory.push({
+        status: newStatus,
+        timestamp: new Date().toISOString()
+    });
+    // save and display changes in respective areas
+    saveBookings();
+    renderBookings();
+    updateAnalytics();
+}
+
+// function to visualize pickup status tracker
+function renderStatusTracker(booking){
+    // index booking's current status
+    const currentIndex = bookingStatus.indexOf(booking.status);
+    // dynamic render of tracker
+    return `<div class="status-tracker">
+                ${bookingStatus.map((status, index) => `<div class="status-step${index <= currentIndex ? "completed": ""}">
+                                                            <div class="status-dot">
+                                                                ${index <= currentIndex ? "✔️" : index+1}
+                                                            </div>
+                                                            <small>${status}</small>
+                                                        </div>`).join("")}
+            </div>`;
+
+}
+
+// function to convert date to readable string
+function formatDate(date){
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-NP",{
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+// function to filter bookings that are not cancelled 
+function updateUpcomingBookings(){
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // check for cancelled bookings
+    return bookings.filter(booking => {
+        if (booking.status === "Cancelled"){
+            return false;
+        }
+        // keep today date
+        return new Date(`${booking.pickup.date}T00:00:00`) >= today;
+    }).sort((a, b) => {
+        // sort nearest date
+        return(new Date(a.pickup.date) - new Date(b.pickup.date));
+    });
+}
