@@ -572,3 +572,37 @@ function getRecurringRoutes(){
         b.demandScore - a.demandScore
     );
 }
+
+function getTopRoutes(limit = 5){
+    return getRecurringRoutes().slice(0, limit);
+}
+
+function getDashboardStats(){
+    const active = bookings.filter(booking => booking.status !== "Cancelled");
+    const recurring = active.filter(booking => booking.pickup.frequency !== "one-time");
+    const routes = getTopRoutes();
+    return{
+        totalBookings: bookings.length,
+        activeBookings: active.length,
+        recurringBookings: recurring.length,
+        topRoute: routes.length ? routes[0] : null
+    }
+}
+
+function updateAnalytics(){
+    const stats = getDashboardStats();
+    $("#totalBookings").textContent = stats.totalBookings;
+    $("#activeBookings").textContent = stats.activeBookings;
+    $("#recurringBookings").textContent = stats.recurringBookings;
+    $("#topRoute").textContent = stats.topRoute ? stats.topRoute.area : "NA";
+    renderTopRoutes();
+    renderCapacityAnalytics();
+}
+
+function renderTopRoutes(){
+
+}
+
+function renderCapacityAnalytics(){
+    
+}
