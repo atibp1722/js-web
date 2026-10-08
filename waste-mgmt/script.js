@@ -704,11 +704,11 @@ function renderPriceBreakDown(price){
                                       }
                                       <div class="price-row discount">
                                         <span>Recurring Discount</span>
-                                        <strong> - Rs. ${price.discount}</strong>
+                                        <strong> - Rs.${price.discount}</strong>
                                       </div>
                                       <div class="price-row total">
                                         <span>Total Amount</span>
-                                        <strong>Rs. ${price.total}</strong>
+                                        <strong>Rs.${price.total}</strong>
                                       </div>`;
 }
 
@@ -729,3 +729,116 @@ function updatePrice(){
     renderPriceBreakDown(price);
     renderCapacity();
 }
+
+// function to select pickup plan
+function selectPickupPlan(frequency){
+    // assign frequency value
+    $("#frequency").value = frequency;
+    // update the price
+    updatePrice();
+    scrollToBooking();
+    // toast notification with frequency selection message
+    showToast(
+        frequency === "weekly" ? "Weekly plan selected." : 
+        frequency === "monthly" ? "Monthly plan selected." :
+        "One-time pickup selected."
+    );
+}
+
+// function to scroll smoohtly to booking element
+function scrollToBooking(){
+    $("#booking").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+// listener for submit form
+$("#bookingForm").addEventListener("submit", event => {
+    // prevent default action
+    event.preventDefault();
+    // get and validate user form data
+    const data = getFormData();
+    const validation = validateBooking(data);
+    // check validation fail
+    if (!validation.valid){
+        showToast(validation.message);
+        return;
+    }
+    try{
+        // create new booking object and assign data
+        const booking = createBooking(data);
+        // successful creation toask notification
+        showToast(`Pickup ID: ${booking.id} scheduled succesfully.`);
+        // reset to default
+        event.target.reset();
+        $("#bags").value = 2;
+        // call functions to refresh with latest booking
+        updatePrice();
+        renderBookings();
+        updateAnalytics();
+        renderCapacity();
+        $("#myPickups").scrollIntoView({
+            behavior: "smooth"
+        });
+    } catch (error){
+        // catch any errors
+        showToast(error.message);
+    }
+});
+
+// function for toast notification
+let toastTimer;
+function showToast(message){
+    const toast = $("#toast");
+    toast.textContent = message;
+    // add show css class
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    // 3 second timer to remove show css class
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
+}
+
+// iterate all form elements and attach listener for change and input events 
+["wasteType", "bags", "area", "time", "frequency", "date"].forEach(id => {
+    $(`#${id}`).addEventListener("change", updatePrice);
+    $(`#${id}`).addEventListener("input", updatePrice);
+});
+
+// display booking list with user search query
+$("#bookingSearch").addEventListener("input", renderBookings);
+
+// toggle the various service provided in home page
+$$(".filter-buttons button").forEach(button => {
+    button.addEventListener("click", () => {
+            // remove active css class
+            $$(".filter-buttons button").forEach(btn => 
+                btn.classList.remove("active")
+            );
+            // add active class to selected button
+            button.classList.add("active");
+            // get target category using filter
+            const filter = button.dataset.filter;
+            // iterate and toggle visibilty baed on category filter
+            $$("#service-card").forEach(service => {
+                const category = service.dataset.category;
+                service.style.display = filter === "all" || category === filter ? "block" : "none";
+            });
+        }
+    );
+});
+
+// menu for mobile
+$("#menuBtn").addEventListener("click", () => {
+    $("#navLinks").classList.toggle("show");
+    const open = $("#navLinks").classList.contains("show");
+    $("#menuBtn").textContent = open ? "❌" : "☰";
+});
+// close menu when link clicked
+$$("#navLinks a").forEach(link => {
+    link.addEventListener("click", () => {
+        $("#navLinks").classList.remove("show");
+        $("#menuBtn").textContent = "☰";
+    });
+});
