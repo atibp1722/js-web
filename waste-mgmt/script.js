@@ -869,6 +869,7 @@ function animateCounters(){
     });
 }
 
+
 // intersection object for animating elements
 const statsObserver = new IntersectionObserver(entries => {
     // check element is in view
