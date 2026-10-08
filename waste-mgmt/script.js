@@ -573,14 +573,19 @@ function getRecurringRoutes(){
     );
 }
 
+// function to get most frequent routes
 function getTopRoutes(limit = 5){
     return getRecurringRoutes().slice(0, limit);
 }
 
+// function to get stats to show on dashboard
 function getDashboardStats(){
+    // filter the cancelled bookings
     const active = bookings.filter(booking => booking.status !== "Cancelled");
+    // filter booking having one off plan
     const recurring = active.filter(booking => booking.pickup.frequency !== "one-time");
     const routes = getTopRoutes();
+    // return object with necessary statistics
     return{
         totalBookings: bookings.length,
         activeBookings: active.length,
@@ -589,20 +594,138 @@ function getDashboardStats(){
     }
 }
 
+// function to update stats 
 function updateAnalytics(){
     const stats = getDashboardStats();
+    // update elements with latest stats
     $("#totalBookings").textContent = stats.totalBookings;
     $("#activeBookings").textContent = stats.activeBookings;
     $("#recurringBookings").textContent = stats.recurringBookings;
     $("#topRoute").textContent = stats.topRoute ? stats.topRoute.area : "NA";
+    // display stats on webpage
     renderTopRoutes();
     renderCapacityAnalytics();
 }
 
+// function to display most frequented routes on webpage
 function renderTopRoutes(){
-
+    // get top routes and display element
+    const routes = getTopRoutes();
+    const container = $("#topRoutes");
+    // check if route list empty
+    if (routes.length === 0){
+        // message to create a booking first
+        container.innerHTML = `<p stytle="color: #66736c; padding: 20px 0;">
+                                Create booking first before routes can appear. 
+                              </p>`;
+        return;
+    }
+    // map each route and create card
+    container.innerHTML = routes.map((route, index) => `
+                        <div class="route-item">
+                            <div class="route-rank">${index + 1}</div>
+                            <div class="route-info">
+                                <strong>${route.area}</strong><br>
+                                <strong>
+                                    ${route.time}<br>
+                                    ${route.recurringBookings} recurring pickups
+                                </strong>
+                            </div>
+                            <div class="route-score">Score: ${route.demandScore}</div>
+                        </div>`).join("");
 }
 
+// function to calculate capacity utilization of pickups
 function renderCapacityAnalytics(){
-    
+    // get display element
+    const container = $("#capacityAnalytics");
+    // get current date
+    const today = new Date().toISOString().split("T")[0];
+    // initialize empty route array
+    const routes = [];
+    // iterate each location
+    serviceLocations.forEach((fee, area) => {
+        let totalMax = 0;
+        let totalUsed = 0;
+        // iterate to get limit of all locations for current date
+        timeSlots.forEach((timeFee, time) => {
+            const capacity = getRouteCapacity(area, time, today);
+            totalMax += capacity.maximum;
+            totalUsed += capacity.used;
+        });
+        // push utilization metrics to route array
+        routes.push({
+            area, 
+            maximum: totalMax,
+            used: totalUsed,
+            utilization: totalMax ? (totalUsed / totalMax) * 100 : 0,
+        });
+    });
+    // sort to display in desending order
+    routes.sort((a, b) => b.utilization - a.utilization);
+    // display 6 of the most frequented routes on webpage
+    container.innerHTML = routes.slice(0, 6).map(route => `
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <strong>${route.area}</strong>
+                                <small>${Math.round(route.utilization)}%</small>
+                            </div>
+                            <div class="capacity-bar">
+                                <div style="width: ${Math.min(route.utilization, 100)}%;"></div>
+                            </div>
+                        </div>`).join("");
+}
+
+// function to display pricing breakdown on webpage
+function renderPriceBreakDown(price){
+    // dynamically insert info into html elements
+    $("#priceBreakdown").innerHTML = `<div class="price-row">
+                                        <span>Standard Pickup</span>
+                                        <strong>Rs. {price.base}</strong>
+                                      </div>
+                                      <div class="price-row">
+                                        <span>Waste Volume</span>
+                                        <strong>Rs. {price.bagCost}</strong>
+                                      </div>
+                                      <div class="price-row">
+                                        <span>Service Location</span>
+                                        <strong>Rs. {price.areaFee}</strong>
+                                      </div>
+                                      <div class="price-row">
+                                        <span>Service Timings</span>
+                                        <strong>Rs. {price.timeFee}</strong>
+                                      </div>
+                                      ${
+                                        price.demandSurcharge > 0 ? `
+                                        <div class="price-row">
+                                            <span>Demand Surcharge</span>
+                                            <strong>Rs. {price.demandSurcharge}</strong>
+                                        </div>` : ""
+                                      }
+                                      <div class="price-row discount">
+                                        <span>Recurring Discount</span>
+                                        <strong> - Rs. ${price.discount}</strong>
+                                      </div>
+                                      <div class="price-row total">
+                                        <span>Total Amount</span>
+                                        <strong>Rs. ${price.total}</strong>
+                                      </div>`;
+}
+
+// function to calculate updated price based on user input
+function updatePrice(){
+    // get user form data
+    const data = getFormData();
+    if (!data.wasteType || !data.frequency) return;
+    // calculate price based on user input
+    const price = calculatePrice(data);
+    // primary estimate
+    $("#estimate").textContent = `${price.currency} ${price.total.toLocaleString()}`;
+    // frequency info
+    const frequency = frequencies.get(data.frequency);
+    // update price with discount based on frequency selected
+    $("#frequencyText").textContent = `${frequency.name} . ${frequency.discount * 100}% recurring discount`;
+    // display detailed price on webpage
+    renderPriceBreakDown(price);
+    renderCapacity();
 }
