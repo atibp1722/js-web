@@ -842,3 +842,53 @@ $$("#navLinks a").forEach(link => {
         $("#menuBtn").textContent = "☰";
     });
 });
+
+// function for stats info animation
+function animateCounters(){
+    // get h3 elements having stat class
+    $$(".stat h3").forEach(counter => {
+        // get final number
+        const target = Number(counter.dataset.count);
+        let current = 0;
+        // step size for increment
+        const increment = Math.max(1, Math.ceil(target / 60));
+        // animation function
+        function update(){
+            current += increment;
+            if (current > target){
+                current = target;
+            }
+            // output formatting based on stat field
+            counter.textContent = target === 95 ? `${current}%` : `${current}+`;
+            // update the next frame
+            if (current < target){
+                requestAnimationFrame(update);
+            }
+        }
+        update();
+    });
+}
+
+// intersection object for animating elements
+const statsObserver = new IntersectionObserver(entries => {
+    // check element is in view
+        if (entries[0].isIntersecting){
+            // trigger and run animation only once
+            animateCounters();
+            statsObserver.disconnect();
+        }
+    // trigger when element 50% in view
+    }, {threshold: 0.5}
+);
+statsObserver.observe($(".stats"))
+
+// prevent selcting date of past
+$("#date").min = new Date().toISOString().split("T")[0];
+// get current year for copyright element
+$("#year").textContent = new Date().getFullYear();
+
+// call the functions
+renderBooking();
+updateAnalytics();
+updatePrice();
+renderCapacity();
