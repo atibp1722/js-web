@@ -97,7 +97,7 @@ section{
     color: var(--white);
     border: none;
     padding: 13px 22px;
-    border-radius: 5px;
+    border-radius: 8px;
     font-weight: 600;
     transition: 0.3s;
 }
@@ -460,7 +460,7 @@ input:focus, select:focus, textarea:focus{
 }
 
 .pickup-id{
-    background: var(--green);
+    background: var(--light-green);
     color: var(--dark-green);
     padding: 5px 10px;
     border-radius: 20px;

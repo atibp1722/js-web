@@ -53,7 +53,7 @@ const routeCapacity = new Map([
 // service fee for each location
 const serviceLocations = new Map([
     ["Koteswore", 30],
-    ["Baneswore", 35],,
+    ["Baneswore", 35],
     ["Mid Baneswore", 35],
     ["Old Baneswore", 35],
     ["Kamaladi", 40],
@@ -487,11 +487,11 @@ function renderBooking(booking){
                     <div>📅 ${formatDate(booking.pickup.date)}</div>
                     <div>🕐 ${booking.pickup.time}</div>
                     <div>📍${booking.pickup.area}</div>
-                    <div>🗑 ${booking.waste.bags} bags</div>
-                    <div>🔝 Frequency: ${frequency.name} bags</div>
+                    <div>🗑️ ${booking.waste.bags} bags</div>
+                    <div>🔝 Frequency: ${frequency.name}</div>
                     <div>💵 Total Rs. ${booking.pricing.total}</div>
-                    <div>👤 Collector: ${collector ? collector.name : "Unassigned"} bags</div>
-                    <div>🛵 Vehicle: ${collector ? collector.vehicle : "NA"} bags</div>
+                    <div>👤 Collector: ${collector ? collector.name : "Unassigned"}</div>
+                    <div>🛵 Vehicle: ${collector ? collector.vehicle : "NA"}</div>
                 </div>
                 ${renderStatusTracker(booking)}
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -615,7 +615,7 @@ function renderTopRoutes(){
     // check if route list empty
     if (routes.length === 0){
         // message to create a booking first
-        container.innerHTML = `<p stytle="color: #66736c; padding: 20px 0;">
+        container.innerHTML = `<p style="color: #66736c; padding: 20px 0;">
                                 Create booking first before routes can appear. 
                               </p>`;
         return;
@@ -689,7 +689,7 @@ function renderPriceBreakDown(price){
                                       </div>
                                       <div class="price-row">
                                         <span>Service Location</span>
-                                        <strong>Rs. ${price.areaFee}</strong>
+                                        <strong>Rs. ${price.locationFee}</strong>
                                       </div>
                                       <div class="price-row">
                                         <span>Service Timings</span>
@@ -723,7 +723,7 @@ function updatePrice(){
     // frequency info
     const frequency = frequencies.get(data.frequency);
     // update price with discount based on frequency selected
-    $("#frequencyText").textContent = `${frequency.name} - ${frequency.discount * 100}% recurring discount`;
+    $("#frequencyText").textContent = `${frequency.name} — ${frequency.discount}% recurring discount`;
     // display detailed price on webpage
     renderPriceBreakDown(price);
     renderCapacity();
