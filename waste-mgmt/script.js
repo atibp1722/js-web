@@ -189,7 +189,7 @@ function calculatePrice(data){
             demandSurcharge = 100;
         }
     }
-    const discount = subTotal * frequency.discount;
+    const discount = subTotal * (frequency.discount / 100);
     // final price ensure doesnot fall below minimum price
     const total = Math.max(Math.round(subTotal + demandSurcharge - discount), config.minPrice);
     return{
