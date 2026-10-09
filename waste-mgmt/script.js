@@ -79,7 +79,7 @@ const timeSlots = new Map([
 const frequencies = new Map([
     ["one-time",
         {
-            name: "One=time pickup",
+            name: "One-time pickup",
             discount: 0
         }
     ],
@@ -881,8 +881,9 @@ const statsObserver = new IntersectionObserver(entries => {
 );
 statsObserver.observe($(".stats"))
 
-// prevent selcting date of past
-$("#date").min = new Date().toISOString().split("T")[0];
+// prevent selecting past date
+const localDate = new Date();
+$("#date").min = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
 // get current year for copyright element
 $("#year").textContent = new Date().getFullYear();
 
