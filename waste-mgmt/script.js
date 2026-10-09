@@ -37,7 +37,7 @@ const wasteTypes = new Map([
 // max capacity per location
 const routeCapacity = new Map([
     ["Koteswore", 10],
-    ["Baneswore", 20],,
+    ["Baneswore", 20],
     ["Mid Baneswore", 20],
     ["Old Baneswore", 20],
     ["Kamaladi", 15],
@@ -375,7 +375,7 @@ function assignCollector(area){
 function updateBookingStatus(bookingId, newStatus){
     const booking = bookings.find(item => item.id === bookingId);
     if (!booking) return;
-    if (!bookingStatuses.includes(newStatus)){
+    if (!bookingStatus.includes(newStatus)){
         return;
     }
     // update with current status
@@ -488,10 +488,10 @@ function renderBooking(booking){
                     <div>🕐 ${booking.pickup.time}</div>
                     <div>📍${booking.pickup.area}</div>
                     <div>🗑 ${booking.waste.bags} bags</div>
-                    <div>🔝 ${frequency.name} bags</div>
-                    <div>💵 Rs. ${booking.pricing.total} bags</div>
-                    <div>👤 ${collector ? collector.name : "Unassigned"} bags</div>
-                    <div>🛵 ${collector ? collector.vehicle : "NA"} bags</div>
+                    <div>🔝 Frequency: ${frequency.name} bags</div>
+                    <div>💵 Total Rs. ${booking.pricing.total}</div>
+                    <div>👤 Collector: ${collector ? collector.name : "Unassigned"} bags</div>
+                    <div>🛵 Vehicle: ${collector ? collector.vehicle : "NA"} bags</div>
                 </div>
                 ${renderStatusTracker(booking)}
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -681,25 +681,24 @@ function renderPriceBreakDown(price){
     // dynamically insert info into html elements
     $("#priceBreakdown").innerHTML = `<div class="price-row">
                                         <span>Standard Pickup</span>
-                                        <strong>Rs. {price.base}</strong>
+                                        <strong>Rs. ${price.base}</strong>
                                       </div>
                                       <div class="price-row">
                                         <span>Waste Volume</span>
-                                        <strong>Rs. {price.bagCost}</strong>
+                                        <strong>Rs. ${price.bagCost}</strong>
                                       </div>
                                       <div class="price-row">
                                         <span>Service Location</span>
-                                        <strong>Rs. {price.areaFee}</strong>
+                                        <strong>Rs. ${price.areaFee}</strong>
                                       </div>
                                       <div class="price-row">
                                         <span>Service Timings</span>
-                                        <strong>Rs. {price.timeFee}</strong>
+                                        <strong>Rs. ${price.timeFee}</strong>
                                       </div>
-                                      ${
-                                        price.demandSurcharge > 0 ? `
+                                      ${price.demandSurcharge > 0 ? `
                                         <div class="price-row">
                                             <span>Demand Surcharge</span>
-                                            <strong>Rs. {price.demandSurcharge}</strong>
+                                            <strong>Rs. ${price.demandSurcharge}</strong>
                                         </div>` : ""
                                       }
                                       <div class="price-row discount">
@@ -724,7 +723,7 @@ function updatePrice(){
     // frequency info
     const frequency = frequencies.get(data.frequency);
     // update price with discount based on frequency selected
-    $("#frequencyText").textContent = `${frequency.name} . ${frequency.discount * 100}% recurring discount`;
+    $("#frequencyText").textContent = `${frequency.name} - ${frequency.discount * 100}% recurring discount`;
     // display detailed price on webpage
     renderPriceBreakDown(price);
     renderCapacity();
@@ -821,7 +820,7 @@ $$(".filter-buttons button").forEach(button => {
             // get target category using filter
             const filter = button.dataset.filter;
             // iterate and toggle visibilty baed on category filter
-            $$("#service-card").forEach(service => {
+            $$(".service").forEach(service => {
                 const category = service.dataset.category;
                 service.style.display = filter === "all" || category === filter ? "block" : "none";
             });
@@ -888,7 +887,7 @@ $("#date").min = new Date().toISOString().split("T")[0];
 $("#year").textContent = new Date().getFullYear();
 
 // call the functions
-renderBooking();
+renderBookings();
 updateAnalytics();
 updatePrice();
 renderCapacity();
