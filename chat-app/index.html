@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>कुरा गरम || CHAT APP</title>
+</head>
+<body>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>
+                <span>💬 कुरा गरम </span>
+                <span class="badge"></span>
+            </h1>
+            <div class="status-indicator">
+                <span class="dot"></span>
+            </div>
+        </div>
+        <div class="messages" id="messageContainer"></div>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" maxlength="100">
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
