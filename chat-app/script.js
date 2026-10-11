@@ -178,3 +178,54 @@ function showError(msg){
         }
     }, 3000);
 }
+
+// function to handle message send
+function handleSend(){
+    // get input from user
+    const rawText = messageInput.value;
+    errorMessageEl.textContent = "";
+    // enqueue message to queue
+    enqueueMessage(rawText, "self");
+    messageInput.value = "";
+    messageInput.focus();
+}
+
+// listener to handle send button
+sendBtn.addEventListener("click", handleSend);
+
+// listen for keydown event
+messageInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter"){
+        e.preventDefault();
+        handleSend();
+    }
+});
+
+// validate user input
+messageInput.addEventListener("input", () => {
+    const val = messageInput.value;
+    // validate user input
+    const tooLong = val.length > MAX_MSG_LENGTH;
+    const isEmpty = val.trim().length === 0;
+    const hasUnsafe = /[<>]/.test(val);
+    // scenario based warning messages when validation fails
+    if (tooLong){
+        showError(`Message exceeds ${MAX_MSG_LENGTH} characters.`);
+    }
+    else if (hasUnsafe){
+        showError("HTML tags (<>) not allowed.");
+    }
+    else if (isEmpty && val.length > 0){
+        showError("Message cannot be only spaces.");
+    } else{
+        if (errorMessageEl.textContent) errorMessageEl.textContent = "";
+    }
+});
+
+// function to intialize app
+function initChat(){
+    const welcomeText = `🔒 Your messages are secure but only the latest 50 will be shown.`;
+    enqueueMessage(welcomeText, "other");
+}
+
+initChat();
