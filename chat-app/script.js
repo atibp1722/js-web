@@ -32,7 +32,7 @@ function sanitizeText(raw){
 
 // fucntion to convert timestamp into a time format
 function formatTime(timestamp){
-    return new Date(timestamp).toLocaleTimeString([], {hour: '2 digit', minute: '2 digit'});
+    return new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 }
 
 // function to validate user message
