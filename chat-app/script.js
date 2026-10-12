@@ -105,8 +105,11 @@ function processQueue(){
         // only 50 messages allowed remove old ones
         if (messageMap.size >= 50){
             const firstkey = messageMap.keys().next().value;
+            // return matching element
             const node = messageContainer.querySelector(`[data-id="${firstkey}"]`);
+            // remove if matching exist
             if (node) node.remove();
+            // delete using its key
             messageMap.delete(firstkey);
         }
         // store message in map and display on webpage

@@ -12,16 +12,36 @@
         <div class="chat-header">
             <h1>
                 <span>💬 कुरा गरम </span>
-                <span class="badge"></span>
+                <span class="badge" id="msgCountBadge">0</span>
             </h1>
-            <div class="status-indicator">
-                <span class="dot"></span>
+            <div class="header-actions">
+                <button class="icon-btn" id="soundToggle" title="Toggle sound">🔔</button>
+                <button class="icon-btn" id="searchToggle" title="Search message">🔍</button>
+                <button class="icon-btn" id="clearChat" title="Clear chat">🗑️</button>
+                <div class="status-indicator">
+                    <span class="dot"></span>
+                </div>
             </div>
         </div>
+        <div class="search-bar" id="searchBar">
+            <input type="text" id="searchInput" placeholder="Search messages..." autocomplete="off">
+            <span class="search-count" id="searchCount"></span>
+        </div>
         <div class="messages" id="messageContainer"></div>
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span><span></span><span></span>
+        </div>
         <div class="error-message" id="errorMessage"></div>
         <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" maxlength="100">
+            <button class="icon-btn emoji-btn" id="emojiToggle" title="Emojis">🙂</button>
+            <div class="emoji-panel" id="emojiPanel">
+                <span>😀</span><span>😂</span><span>😍</span><span>👍</span>
+                <span>🙏</span><span>🔥</span><span>😉</span><span>🥳</span>
+                <span>😎</span><span>😴</span><span>😘</span><span>👏</span>
+                <span>💯</span><span>🥵</span><span>😅</span><span>😛</span>
+            </div>
+            <textarea id="messageInput" placeholder="Type a message..." autocomplete="off" maxlength="100" rows="1"></textarea>
+            <span class="char-counter" id="charCounter">0/100</span>
             <button id="sendButton">Send</button>
         </div>
     </div>
