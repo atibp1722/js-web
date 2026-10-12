@@ -105,6 +105,8 @@ function processQueue(){
         // only 50 messages allowed remove old ones
         if (messageMap.size >= 50){
             const firstkey = messageMap.keys().next().value;
+            const node = messageContainer.querySelector(`[data-id="${firstkey}"]`);
+            if (node) node.remove();
             messageMap.delete(firstkey);
         }
         // store message in map and display on webpage
@@ -224,7 +226,7 @@ messageInput.addEventListener("input", () => {
 
 // function to intialize app
 function initChat(){
-    const welcomeText = `🔒 Your messages are secure but only the latest 50 will be shown.`;
+    const welcomeText = `Your messages are secure but only the latest 50 will be shown.`;
     enqueueMessage(welcomeText, "other");
 }
 
