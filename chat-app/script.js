@@ -22,7 +22,7 @@ const errorMessageEl = document.getElementById("errorMessage");
 
 // function to generate ID using date
 function generateID(){
-    return `${Date.now().toString(36)}-${Math.random.toString(36).substring(2, 10)}`;
+    return `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 10)}`;
 }
 
 // function to prevent cross site attacks by escaping html tags
@@ -44,7 +44,7 @@ function validateMessage(text){
             // find which rule has been violated
             if (ruleName === 'maxLength') errors.push(`Message exceeds ${MAX_MSG_LENGTH} characters.`);
             else if (ruleName === 'allowedChars') errors.push('Message contains invalid characters.');
-            else if (ruleName === 'NotEmpty') errors.push('Message cannot be empty.');
+            else if (ruleName === 'notEmpty') errors.push('Message cannot be empty.');
             else if (ruleName === 'noUnsafeHTML') errors.push('HTML tags not allowed in messages..');
             else errors.push(`Validation failed: ${ruleName}`);
         } 
@@ -122,7 +122,7 @@ function renderMessage(message){
     const {text, sender, timestamp} = message;
     // message display div
     const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${sender === "self" ? "self" : "other"}`;
+    messageDiv.className = `message ${sender === "self" ? "self" : "message-other"}`;
     // message body div
     const textSpan = document.createElement("div");
     textSpan.textContent = text;
@@ -139,8 +139,8 @@ function renderMessage(message){
 }
 
 // function to automatically reply to message
-function simulateReply(originalUserMessage){
-    const userText = originalUserMessage;
+function simulateReply(cleanText){
+    const userText = cleanText;
     // different types of automated replies
     const msgTemplates = [
         (t) => `You wrote: "${t.substring(0, 20)}${t.length > 20 ? '...' : ''}"`,
