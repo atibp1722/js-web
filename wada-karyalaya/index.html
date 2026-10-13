@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-NP">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>मध्यपुर स्थानीय तह पोर्टल</title>
+</head>
+<body>
+<a href="#contentArea" class="skip-link">Skip to Home Page</a>    
+    
+    <div class="app">
+        <header class="gov-header">
+            <div>
+                <h1>ꔪ मध्यपुर स्थानीय तह</h1>
+                <div class="sub">
+                    <span>भक्तपुर, वाग्मती प्रदेश</span>
+                    <span class="badge live">🔴 Live</span>
+                </div>
+            </div>
+            <div class="header-tools">
+                <button class="icon-btn" id="notificationToggleBtn" title="Notifications" aria-label="Toggle notifications">
+                    <span class="notification-dot" id="notificationDot" style="display: none;"></span>
+                </button>
+                <button class="icon-btn" id="themeToggleBtn" title="Toggle theme" aria-label="Toggle dark mode"></button>
+            </div>
+        </header>
+        <div class="search-wrap">
+            <span class="search-icon">🔎</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search anything here..." autocomplete="off" aria-label="search">
+            <div class="search-results" id="searchResults" role="listbox"></div>
+        </div>
+        <nav class="nav-bar" id="navBar" role="tablist">
+            <button class="nav-btn active" data-page="home" role="tab">🏠Home</button>
+            <button class="nav-btn" data-page="charter" role="tab">📜 Citizen Charter</button>
+            <button class="nav-btn" data-page="people" role="tab">👥 People</button>
+            <button class="nav-btn" data-page="notices" role="tab">📢 Notices</button>
+            <button class="nav-btn" data-page="services" role="tab">🛠️ Services</button>
+            <button class="nav-btn" data-page="decisions" role="tab">⚖️ Decisions</button>
+            <button class="nav-btn" data-page="budget" role="tab">💰 Budget</button>
+            <button class="nav-btn" data-page="tender" role="tab">💼 Tenders</button>
+            <button class="nav-btn" data-page="contact" role="tab">☎️ Contact</button>
+        </nav>
+        <main class="content-area" id="contentArea" role="main"></main>
+        <footer class="gov-footer">
+            <div>© 2025 मध्यपुर स्थानीय तह &nbsp;•&nbsp;
+                <span class="tiny">Press <span style="font-family: monospace;">/</span> to search, <span style="font-family: monospace;">T </span>for theme, <span style="font-family: monospace;">Esc </span>to close</span>
+            </div>
+            <div class="clock" id="liveClock" aria-label="polite">--:--:--</div>
+        </footer>
+    </div>
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h4>🔔 Notifications</h4>
+            <button class="notification-clear" id="clearNotificationBtn">Clear All</button>
+        </div>
+        <div class="notitification-list" id="notificationList"></div>
+    </div>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <h3 id="modalTitle">Test</h3>
+                <button class="modal-close" id="modalCloseBtn" aria-label="close">X</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
