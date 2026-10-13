@@ -191,8 +191,8 @@ function renderMessage(message){
     // reaction element append if exist
     if (reaction){
         const reactionEl = document.createElement("span");
-        reactionEl.className = "reaction";
-        reaction.textContent = "🆗";
+        reactionEl.className = "message-reaction";
+        reaction.textContent = reaction;
         reactionEl.title = "Remove reaction";
         reactionEl.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -215,8 +215,8 @@ function toggleReaction(id){
     if (!node) return;
     if (msg.reaction){
         msg.reaction= null;
-        const exisitng = node.querySelector(".reaction");
-        if (exisitng) exisitng.remove();
+        const existing = node.querySelector(".reaction");
+        if (existing) existing.remove();
     } else{
         msg.reaction = "🆗";
         const reactionEl = document.createElement("span");
