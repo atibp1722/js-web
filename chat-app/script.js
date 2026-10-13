@@ -151,9 +151,9 @@ function processQueue(){
                 const m = messageMap.get(messageID);
                 if (m){
                     m.status = "sent";
-                    const statusEl = messageContainer.querySelector(`[data-id="${messageID}"].message-status`);
+                    const statusEl = messageContainer.querySelector(`[data-id="${messageID}"] .message-status`);
                     if (statusEl){
-                        statusEl.textContent = "✔️";
+                        statusEl.textContent = "✔";
                     }
                 }
             }, 400);
@@ -246,7 +246,14 @@ function simulateReply(cleanText){
     const msgTemplates = [
         (t) => `You wrote: "${t.substring(0, 20)}${t.length > 20 ? '...' : ''}"`,
         (t) => `Interesting (${t.length} characters)`,
-        (t) => `I recieved: "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `I received: "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `That's true: "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `This reminds me of: "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `Agree to disagree "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `I dont't think so "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `Awful take "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `Message received "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
+        (t) => `Wrong "${t.substring(0, 15)}${t.length > 15 ? '...' : ''}"`,
         (t) => `Echo: ${t}`
     ];
     // reply based on calculated index
