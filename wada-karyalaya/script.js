@@ -233,3 +233,103 @@ modalOverlay.addEventListener("click", e => {
         closeModal();
     }
 });
+
+// register the webpages
+const pages = [];
+
+// function register and render webpage
+function registerPage(id, renderFn, afterRender){
+    pages[id] = {
+        render: renderFn,
+        afterRender
+    };
+}
+
+// function to dyamically switch view
+function navigate(pageID){
+    if (!pages[pageID]) return;
+    STATE.currentPage = pageID;
+    contentArea.innerHTML = pages[pageID].render();
+    if (pages[pageID].afterRender){
+        pages[pageID].afterRender();
+    }
+    // activate navigation buttons
+    $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === pageID));
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+    if (location.hash.slice(1) !== pageID){
+        history.replaceState(null, '', '#' + pageID);
+    }
+}
+
+$$('.nav-btn').forEach(btn => {
+    btn.addEventListener("click", () => navigate(btn.dataset.page));
+});
+
+// home page rendering
+registerPage('home' ,() => {
+    const totalNotices = STATE.notices.length;
+    const openTenders = STATE.tenders.filter(t => t.status === "Open").length;
+    const implemented = STATE.decisions.filter(d => t.status === "Implemented").length;
+    return `
+           <h2>Welcome to Bhaktapur</h2>
+           <p class="lead">The cultural capital of Nepal, your local government web portal.</p>
+           <div class="card-grid">
+            <div class="card">
+                <h3>👩‍👩‍👧‍👦 Population</h3>
+                <div class="stat-number">3571</div>
+                <p>as per the latest census</p>
+            </div>
+            <div class="card">
+                <h3>🏘️ Wards</h3>
+                <div class="stat-number">5</div>
+                <p>admiistrative wards</p>
+            </div>
+            <div class="card">
+                <h3>📢 Notices</h3>
+                <div class="stat-number">${totalNotices}</div>
+                <p>latest announcements</p>
+            </div>
+            <div class="card">
+                <h3>💼 Tenders</h3>
+                <div class="stat-number">${openTenders}</div>
+                <p>open tenders</p>
+            </div>
+           </div>
+           <div class="section-divider>
+            <h3>⚡Quick Actions</h3>
+           </div>
+           <div class="btn-group>
+            <button class="btn" id="qaCharter">📜 Citizen Charter</button>
+            <button class="btn" id="qaPeople">👥 People</button>
+            <button class="btn" id="qaNotices">📢 Notices</button>
+            <button class="btn" id="qaBudget">💰 Budget</button>
+            <button class="btn" id="qaTenders">💼 Tenders</button>
+            <button class="btn-outline btn" id="qaDecisions">⚖️ Decisions</button>
+           </div>
+           <div class="section-divider>
+            <h3>🕓 Recent Activities</h3>
+           </div>
+           <div class="notice-list">
+            ${STATE.notices.slice(0, 3).map(n => `
+                <div class="notice-item">
+                    <div>
+                        <div class="notice-title">${escapeHTML(n.title)}</div>
+                        <div class="notice-meta">${escapeHTML(n.category)} • ${relativeTime(n.date)}</div>
+                    </div>
+                    <div class="notice-actions">
+                        <span class="notice-priority ${n.priority}">${n.priority}</span>
+                    </div>
+                </div>`).join("")}
+           </div>`;
+}, () => {
+    // listeners for other webpages
+    $('qaCharter')?.addEventListener("click", () => navigate('charter'));
+    $('qaPeople')?.addEventListener("click", () => navigate('people'));
+    $('qaNotices')?.addEventListener("click", () => navigate('notices'));
+    $('qaBudget')?.addEventListener("click", () => navigate('budget'));
+    $('qaTenders')?.addEventListener("click", () => navigate('tenders'));
+    $('qaDecisions')?.addEventListener("click", () => navigate('decisions'));
+});
