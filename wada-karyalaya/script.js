@@ -297,6 +297,11 @@ registerPage('home' ,() => {
                 <div class="stat-number">${openTenders}</div>
                 <p>open tenders</p>
             </div>
+            <div class="card">
+                <h3>⚖️ Decisions</h3>
+                <div class="stat-number">${implemented}</div>
+                <p>decisions implemented</p>
+            </div>
            </div>
            <div class="section-divider>
             <h3>⚡Quick Actions</h3>
@@ -332,4 +337,345 @@ registerPage('home' ,() => {
     $('qaBudget')?.addEventListener("click", () => navigate('budget'));
     $('qaTenders')?.addEventListener("click", () => navigate('tenders'));
     $('qaDecisions')?.addEventListener("click", () => navigate('decisions'));
+});
+
+// register charter page on website
+registerPage('charter', () => {
+    // get unique categories
+    const categories = [...new Set(citizenCharter.map(c => c.category))];
+    // custom html template
+    return `
+        <h2>📜 Citizen Charter</h2>   
+        <p class="lead">Transparency & Accountability -- our halmark</p>
+        <div class="filter-bar">
+            <label>Filter</label>
+            <input type="text" class="search-mini" id="charterSearch" placeholder="Search service here...">
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap">
+                <button class="filter-chip active" data-cat="all">All</button>
+                ${categories.map(c => `<button class="filter-chip" data-cat="${escapeHTML(c)}">${escapeHTML(c)}</button>`).join("")}
+            </div>
+        </div>
+        <div class="charter-section" id="charterList"></div>`;
+}, () => {
+    // category when page load
+    let activeCat = "all";
+    let searchTerm = "";
+    // display charter on screen
+    function renderCharter(){
+        const filtered = citizenCharter.filter(c => {
+            const matchesCat = activeCat === "all" || c.category === activeCat;
+            const matchesSearch = !searchTerm || c.service.toLowerCase().includes(searchTerm.toLowerCase()) || c.description.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesCat && matchesSearch;
+        });
+        const list = $("#charterList");
+        // empty message if none found
+        if (!filtered.length){
+            list.innerHTML = '<div class="empty-state"><span class="emoji">🔎</span>No services found.</div>';
+            return;
+        }
+        // map card for filtered services
+        list.innerHTML = filtered.map(c => `
+            <div class="charter-item" data-id="${c.id}">
+                <div style="flex: 1; min-width: 220px;">
+                    <div class="charter-service">${escapeHTML(c.service)}</div>
+                    <div class="charter-desc">${escapeHTML(c.summary)}</div>
+                    <div class="charter-meta">
+                        <span>🏢 ${escapeHTML(c.department)}</span>
+                        <span>🕒 ${escapeHTML(c.time)}</span>
+                        <span>💸 ${escapeHTML(c.fee)}</span>
+                    </div>
+                </div>
+                <button class="btn btn-sm byn-outline" data-apply="${c.id}">Apply ➝</button>
+            </div>`).join("");
+        // listeners on all buttons
+        $$(['data-apply'], list).forEach(btn => {
+            btn.addEventListener("click", () => {
+                const c = citizenCharter.find(x => x.id === btn.dataset.apply);
+                showToast("Application started for: " + c.service, "success");
+                addNotification("Your application for: " + c.service + "📋"); 
+            });
+        });
+    }
+    renderCharter();
+    // get search user value
+    $("#charterSearch").addEventListener("input", debounce(e => {
+        searchTerm = e.target.value.trim();
+        renderCharter();
+    }, 200));
+    // filtering categories
+    $$(".filter-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            $$(".filter-chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            activeCat = chip.dataset.cat;
+            renderCharter();
+        });
+    });
+});
+
+// register people page on website
+registerPage("people", () => {
+    // base layout
+    return `
+            <h2>👥 Key People</h2>
+            <p class="lead">Key people -- the difference makers</p>
+            <div class="filter-bar">
+                <label>Department: </label>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;" id="peopleFilter">
+                    <button class="filter-chip active" data-dept="all">All</button>
+                </div>
+            </div>
+            <div> class="people-grid" id="peopleGrid"></div>`;
+}, () => {
+    // get unique departments
+    const depts = [...new Set(KEY_PEOPLE.map(p => p.department))];
+    const filterWrap = $("#peopleFilter");
+    // append department filter button on page
+    depts.forEach(d => {
+        const b = document.createElement("button");
+        b.className = "filter-chip";
+        b.dataset.dept = d;
+        b.textContent = d;
+        filterWrap.appendChild(b);
+    });
+    let activeDept = "all";
+    function renderPeople(){
+        // filter people based on department
+        const filtered = KEY_PEOPLE.filter(p => activeDept === "all" || p.department === activeDept);
+        const grid = $("#peopleGrid");
+        // profile card for person
+        grid.innerHTML = filtered.map(p => `
+            <div class="person-card" data-id="${p.id}">
+                <div class="person-avatar">${escapeHTML(p.avatar)}</div>
+                <div class="person-name">${escapeHTML(p.name)}</div>
+                <div class="person-designation">${escapeHTML(p.designation)}</div>
+                <div class="person-department">${escapeHTML(p.department)}</div>
+                <div class="person-contact">${escapeHTML(p.contact)}</div>
+            </div>`).join("");
+        // detail people card for each person
+        $$(".person-card", grid).forEach(card => {
+            card.addEventListener("click", () => {
+                const p = KEY_PEOPLE.find(x => x.id === card.dataset.id);
+                openModal(p.name, `
+                    <div style="display: flex; gap: 1.2rem; align-items: center; margin-bottom: 1.2rem flex-wrap: wrap;">
+                        <div class="person-avatar" style="margin: 0;">${escapeHTML(p.avatar)}</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 1.10rem; color: var(--primary);">${escapeHTML(p.name)}</div>
+                            <div style="color: var(--text-muted);">${escapeHTML(p.designation)} -- ${escapeHTML(p.department)}</div>
+                        </div>
+                    </div>
+                    <dl class="detail-grid">
+                        <dt>Email</dt><dd><a href="mailto: ${escapeHTML(p.email)}">${escapeHTML(p.email)}</a></dd>
+                        <dt>Contact</dt><dd>${escapeHTML(p.contact)}</dd>
+                        <dt>Department</dt><dd>${escapeHTML(p.department)}</dd>
+                    </dl>`,
+                    `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Close</button>
+                    <button class="btn" id="contactPersonBtn">Contact</button>`
+                );
+                setTimeout(() => {
+                    $("#contactPersonBtn")?.addEventListener("click", () => {
+                        showToast("Open mail to " + p.email, "success");
+                        addNotification("You have mailed " + p.name, "📩");
+                    });
+                }, 100);
+            });
+        });
+    }
+    renderPeople();
+    // filter click button
+    $$("#peopleFilter .filter-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            $$("#peopleFilter .filter-chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            activeDept = chip.dataset.dept;
+            renderPeople();
+        });
+    });
+});
+
+// register notice page on website
+registerPage("notices", () => {
+    return `
+           <h2>📢 Notice & Releases</h2>
+           <p class="lead">Notices & Releases -- official communication</p>
+           <div class="filter-bar">
+                <input type="text" class="search-mini" id="noticeSearch" placeholder="Search notice...">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="filter-chip" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="Notice">Notice</button>
+                    <button class="filter-chip" data-filter="Press Release">Press Release</button>
+                    <button class="filter-chip" data-filter="High">High Priority</button>
+                </div>
+           </div>
+           <div class="btn-group">
+                <button class="btn" id="addNoticeBtn">➕ Add</button>
+                <button class="btn-outline btn" idr="exportNoticeBtn">📤 Export</button>
+           </div>
+           <div class="notice-list" id="noticeList"></div>`;
+}, () => {
+    let filter = "all";
+    let search = "";
+    function renderNotices(){
+        const filtered = STATE.notices.filter(n => {
+            const matchFilter = 
+                filter === "all" ? true : 
+                filter === "high" ? n.priority === "high" || n.priority === "critical" : 
+                n.category === filter;
+            const matchesSearch = !search || 
+                n.title.toLowerCase().includes(search.toLowerCase()) ||
+                n.body.toLowerCase().includes(search.toLowerCase());
+            return matchFilter && matchesSearch;
+        }).sort((a, b) => b.date - a.date);
+        const list = $("#noticeList");
+        if (!filtered.length){
+            list.innerHTML = '<div class="empty-state"><span class="emoji">🚫</span>No notice found.</div>';
+            return;
+        }
+        list.innerHTML = filtered.map(n => `
+            <div class="notice-item" data-id="${n.id}">
+                <div style="flex: 1; min-width: 220px;">
+                    <div class="notice-title">${escapeHTML(n.title)}</div>
+                    <div class="notice-meta">${escapeHTML(n.categories)} • ${relativeTime(n.date)}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">${escapeHTML(n.body.slice(0, 120))}${n.body.length>120 ? "..." : ""}</div>
+                </div>
+                <div class="notice-actions">
+                    <span class="notice-priority ${n.priority}">${n.priority}</span>
+                    <span class="notice-date">${formatDate(n.date)}</span>
+                    <button class="btn btn-sm btn-outline" data-view="${n.id}">View</button>
+                    <button class="del-btn" data-del="${n.id}" title="Delete">🗑️</button>
+                </div>
+            </div>`).join("");
+        $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
+            const n = STATE.notices.find(x => x.id === b.dataset.view);
+            opanModal(n.title, `
+                <div style="margin-bottom: 1rem;">
+                    <span class="notice-priority ${n.priority}" style="margin-right: 0.5rem;">${n.priority}</span>
+                    <span class="notice-date">${n.category}</span>
+                    <span class="notice-date">${formatDate(n.date)}</span>
+                </div>
+                <p style="line-height: 1.5;">${escapeHTML(n.body)}</p>`,
+                `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBt').click()">Close</button>
+                <button class="btn" id="shareNoticeBtn" title="Share">🔁</button>`
+            );
+            setTimeout(() => {
+                $('#shareNoticeBtn')?.addEventListener("click", () => {
+                    showToast("Notice link copied", "success");
+                    closeModal();
+                });
+            }, 100);
+        }));
+        $$("[data-del]", list).forEach(b => b.addEventListener("click", () => {
+            const id = b.dataset.del;
+            const n = STATE.notices.find(x => x.id === id);
+            openModal("Confirm Delete", `
+                    <p>Are you sure you want to delete "<stong>${escapeHTML(n.title)}</strong>?"</p>`
+                    `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
+                    <button class="btn btn-danger" id="confirmDelBtn">Delete</button>`
+                );
+            setTimeout(() => {
+                $("#confirmDelBtn")?.addEventListener("click", () => {
+                    STATE.notices = STATE.notices.filter(x => x.id !== id);
+                    persist.notices();
+                    closeModal();
+                    renderNotices();
+                    showToast("Notice deleted", "success");
+                });
+            }, 100);
+        }));
+    }
+    renderNotices();
+    $("#noticeSearch").addEventListener("input", debounce(e => {
+        search = e.target.value.trim();
+        renderNotices();
+    }, 200));
+    $$(".filter-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            $$(".filter-chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            filter = chip.dataset.filter;
+            renderNotices();
+        });
+    });
+    $("#addNoticeBtn").addEventListener("click", () => {
+        openModal("Add New Notice", `
+            <div class="form-group">
+                <label class="form-label">Title </label>
+                <input class="form-input" id="nTitle" placeholder="Notice title">
+                <div class="form-error" id="errTitle">Title required</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="nCategory">
+                        <option>Notice</option>
+                        <option>Press Release</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="nPriority">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Body </label>
+                <textarea class="form-textarea" id="nBody" placeholder="Full notice text…"></textarea>
+                <div class="form-error" id="errBody">Body required</div>
+            </div>`,
+            `<button class="btn btn-outline" "document.getElementById('modalCloseBtn').click()">Cancel</button>
+            <button class="btn" id="saveNoticeBtn">Save Notice</button>`
+        );
+        setTimeout(() => {
+            $("#saveNoticeBtn")?.addEventListener("click", () => {
+                const title = $("#nTitle").value.trim();
+                const body = $("#nBody").value.trim();
+                let valid = true;
+                if (!title){
+                    $("#nTitle").classList.add("error");
+                    $("#errTitle").classList.add("show");
+                    valid = false;
+                } else{
+                    $("#nTitle").classList.remove("error");
+                    $("#errTitle").classList.remove("show");
+                }
+                if (!body){
+                    $("#nBody").classList.add("error");
+                    $("#errBody").classList.add("show");
+                    valid = false;
+                } else{
+                    $("#nBody").classList.remove("error");
+                    $("#errBody").classList.remove("show");
+                }
+                if (!valid) return;
+                const newNotice = {
+                    id: uid(),
+                    title, body,
+                    category: $("#nCategory").value,
+                    priority: $("#nPriority").value,
+                    date: Date.now()
+                };
+                STATE.notices.unshift(newNotice);
+                persist.notices();
+                addNotification("New "+newNotice.category+": "+ title,"📢");
+                closeModal();
+                renderNotices();
+                showToast("Notices added succesfully.", "success");
+            });
+        }, 100);
+    });
+    $('#exportNoticesBtn').addEventListener("click", () => {
+    const text = STATE.notices.map(n => `[${formatDate(n.date)}] ${n.category} (${n.priority})\n${n.title}\n${n.body}\n---`).join('\n\n');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'bhaktapur-notices.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Notices exported', 'success');
+    });
 });
