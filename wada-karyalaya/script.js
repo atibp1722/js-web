@@ -531,6 +531,7 @@ registerPage("notices", () => {
             list.innerHTML = '<div class="empty-state"><span class="emoji">🚫</span>No notice found.</div>';
             return;
         }
+        // notice item list
         list.innerHTML = filtered.map(n => `
             <div class="notice-item" data-id="${n.id}">
                 <div style="flex: 1; min-width: 220px;">
@@ -545,9 +546,10 @@ registerPage("notices", () => {
                     <button class="del-btn" data-del="${n.id}" title="Delete">🗑️</button>
                 </div>
             </div>`).join("");
+        // modal handler for notice
         $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
             const n = STATE.notices.find(x => x.id === b.dataset.view);
-            opanModal(n.title, `
+            openModal(n.title, `
                 <div style="margin-bottom: 1rem;">
                     <span class="notice-priority ${n.priority}" style="margin-right: 0.5rem;">${n.priority}</span>
                     <span class="notice-date">${n.category}</span>
@@ -568,7 +570,7 @@ registerPage("notices", () => {
             const id = b.dataset.del;
             const n = STATE.notices.find(x => x.id === id);
             openModal("Confirm Delete", `
-                    <p>Are you sure you want to delete "<stong>${escapeHTML(n.title)}</strong>?"</p>`
+                    <p>Are you sure you want to delete "<strong>${escapeHTML(n.title)}</strong>?"</p>`
                     `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
                     <button class="btn btn-danger" id="confirmDelBtn">Delete</button>`
                 );
@@ -584,6 +586,7 @@ registerPage("notices", () => {
         }));
     }
     renderNotices();
+    // listener for user input search and filter
     $("#noticeSearch").addEventListener("input", debounce(e => {
         search = e.target.value.trim();
         renderNotices();
@@ -596,6 +599,7 @@ registerPage("notices", () => {
             renderNotices();
         });
     });
+    // modal to add new notice
     $("#addNoticeBtn").addEventListener("click", () => {
         openModal("Add New Notice", `
             <div class="form-group">
@@ -667,6 +671,7 @@ registerPage("notices", () => {
             });
         }, 100);
     });
+    // export notice as downloadable txt file
     $('#exportNoticesBtn').addEventListener("click", () => {
     const text = STATE.notices.map(n => `[${formatDate(n.date)}] ${n.category} (${n.priority})\n${n.title}\n${n.body}\n---`).join('\n\n');
     const blob = new Blob([text], { type: 'text/plain' });
@@ -679,3 +684,56 @@ registerPage("notices", () => {
     showToast('Notices exported', 'success');
     });
 });
+
+registerPage("decisions", () => {
+    return `
+           <h2>Executive Decisions</h2>
+           <p class="lead">Key decisions and resolutions made by the committee.</p>
+           <div class="filter-bar">
+                <input type="text" class="search-mini" placeholder="Search decisions...">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="filter-chip" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="Implemented">Implemented</button>
+                    <button class="filter-chip" data-filter="In Progress">In Progress</button>
+                    <button class="filter-chip" data-filter="Under Review">Under Review"</button>
+                </div>
+           </div>
+           <div class="btn-group">
+                <button class="btn" id="addDecisionBtn">➕ Add</button>
+           </div>
+           <div id="decisionList" style="margin-top: 1rem;"></div>`;
+}, () => {
+    let filterStatus = "all";
+    let search = "";
+    function renderDecisions(){
+        const filtered = STATE.decisions.filter(d => {
+            const matchStatus = filterStatus === "all" || d.status === filterStatus; 
+            const matchSearch = !search || 
+                d.title.toLowerCase().includes(search.toLowerCase()) ||
+                d.ref.toLowerCase().includes(search.toLowerCase()) ||
+                d.department.toLowerCase().includes(search.toLowerCase());
+            return matchStatus && matchSearch;
+        }).sort((a, b) => b.date - a.date);
+        const list = $("#decisionList");
+        if (!filtered.length){
+            list.innerHTML = '<div class="empty-state"><span class="emoji">🚫</span>No decisions found.</div>';
+            return;
+        }
+        list.innerHTML = filtered.map(d => `
+                        <div class="notice-item" style="border-left-color: var(--text-muted)">
+                            <div style="flex: 1; min-width: 220px;">
+                                 <div class="notice-title">${escapeHTML(d.title)}</div>
+                                <div class="notice-meta">
+                                    <strong>${escapeHTML(d.ref)}</strong> • ${relativeTime(d.department)} • ${relativeTime(d.date)}
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">${escapeHTML(d.summary.slice(0, 120))}${d.summary.length>120 ? "..." : ""}</div>
+                            </div>
+                        </div>
+                        <div class="notice-actions">
+                            <span class="pill ${d.status === 'Implemented' ? 'pill-open' : d.status === 'Under Review' ? 'pill-awarded' : 'pill-pending'}">${d.status}</span>
+                            <button class="btn btn-sm btn-outline" data-view="${d.id}">Details</button>
+                            <button class="del-btn" data-del="${d.id}" title="Delete">🗑️</button>
+                        </div>`),join("");
+        $$
+    }
+})
