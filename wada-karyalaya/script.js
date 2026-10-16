@@ -685,6 +685,7 @@ registerPage("notices", () => {
     });
 });
 
+// register decision page on website
 registerPage("decisions", () => {
     return `
            <h2>Executive Decisions</h2>
@@ -703,9 +704,12 @@ registerPage("decisions", () => {
            </div>
            <div id="decisionList" style="margin-top: 1rem;"></div>`;
 }, () => {
+    // current status and search query
     let filterStatus = "all";
     let search = "";
+    // display decision page
     function renderDecisions(){
+        // filter decisions
         const filtered = STATE.decisions.filter(d => {
             const matchStatus = filterStatus === "all" || d.status === filterStatus; 
             const matchSearch = !search || 
@@ -713,12 +717,15 @@ registerPage("decisions", () => {
                 d.ref.toLowerCase().includes(search.toLowerCase()) ||
                 d.department.toLowerCase().includes(search.toLowerCase());
             return matchStatus && matchSearch;
+        // put new ones on top
         }).sort((a, b) => b.date - a.date);
         const list = $("#decisionList");
+        // if no decision exist
         if (!filtered.length){
             list.innerHTML = '<div class="empty-state"><span class="emoji">🚫</span>No decisions found.</div>';
             return;
         }
+        // map to html
         list.innerHTML = filtered.map(d => `
                         <div class="notice-item" style="border-left-color: var(--text-muted)">
                             <div style="flex: 1; min-width: 220px;">
@@ -734,6 +741,298 @@ registerPage("decisions", () => {
                             <button class="btn btn-sm btn-outline" data-view="${d.id}">Details</button>
                             <button class="del-btn" data-del="${d.id}" title="Delete">🗑️</button>
                         </div>`),join("");
-        $$
+        // event listeners on all buttons to open modal
+        $$("[data-view]", list),forEach(b => b.addEventListener("click", () => {
+            const d = STATE.decisions.find(x => x.id === b.dataset.view);
+            openModal(d.title, `
+                        <dl class="detail-grid" style="margin-bottom: 1rem;">
+                            <dt>Reference</dt><dd>${escapeHTML(d.ref)}</dd>
+                            <dt>Department</dt><dd>${escapeHTML(d.department)}</dd>
+                            <dt>Decision</dt><dd>${escapeHTML(d.decision)}</dd>
+                            <dt>Status</dt><dd>${escapeHTML(d.status)}</dd>
+                            <dt>Date</dt><dd>${formatDate(d.ref)}</dd>
+                        </dl>
+                        <p style="line-height: 1.5">${escapeHTML(d.summary)}</p>`,
+                        `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">CLose</button>`
+                    );
+        }));
+        // event listener to delete decision
+        $$("[data-del]", list).forEach(b => b.addEventListener("click", () => {
+            const id = b.dataset.del;
+            STATE.decisions = STATE.decisions.filter(x => x.id !== id);
+            persist.decisions();
+            renderDecisions();
+            showToast("Decision deleted.", "success");
+        }));
+    }
+    renderDecisions();
+    $("#decisionSearch").addEventListener("input", debounce(e => {
+        search = e.target.value.trim();
+        renderDecisions();
+    }, 200));
+    // toggling categories
+    $$(".filter-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            $$(".filter-chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            filterStatus = chip.dataset.filter;
+            renderDecisions();
+        });
+    });
+    // open add new decision modal
+    $("#addDecisionBtn").addEventListener("click", () => {
+        openModal("Add Executive Decision", `
+            <div class="form-group">
+                <label class="form-label">Title </label>
+                <input class="form-input" id="dTitle" placeholder="Decision title">
+                <div class="form-error" id="errDTitle">Title required</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Reference</label>
+                    <input class="form-input" id="dRef" placeholder="EXE/BKT-XXXX-X">
+                    <div class="form-error" id="errDRef">Reference is required</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <input class="form-input" id="dDept" placeholder="e.g. Health">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Decision</label>
+                        <select class="form-select" id="dDecision">
+                            <option>Approved</option>
+                            <option>Rejected</option>
+                            <option>Pending</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                        <select class="form-select" id="dStatus">
+                            <option>Implemented</option>
+                            <option selected>In Progress</option>
+                            <option>Under Review</option>
+                        </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Summary </label>
+                <textarea class="form-textarea" id="dSummary" placeholder="Full decision text…"></textarea>
+                <div class="form-error" id="errDSummary">Summary required</div>
+            </div>`,
+            `<button class="btn btn-outline" "document.getElementById('modalCloseBtn').click()">Cancel</button>
+            <button class="btn" id="saveDecisionBtn">Save Notice</button>`
+        );
+        // wait till modal appears
+        setTimeout(() => {
+            $('#saveDecisionBtn')?.addEventListener('click', () => {
+                const title = $('#dTitle').value.trim();
+                const ref = $('#dRef').value.trim();
+                const summary = $('#dSummary').value.trim();
+                let valid = true;
+                // required field validations
+                if (!title){ 
+                    $('#dTitle').classList.add('error'); 
+                    $('#errDTitle').classList.add('show'); 
+                    valid = false; 
+                } else{ 
+                    $('#dTitle').classList.remove('error'); 
+                    $('#errDTitle').classList.remove('show'); 
+                }
+                if (!ref){
+                     $('#dRef').classList.add('error'); 
+                     $('#errDRef').classList.add('show'); 
+                     valid = false; 
+                } else{ 
+                    $('#dRef').classList.remove('error');
+                    $('#errDRef').classList.remove('show'); 
+                }
+                if (!summary){ 
+                    $('#dSummary').classList.add('error'); 
+                    $('#errDSummary').classList.add('show'); 
+                    valid = false; 
+                } else{ 
+                    $('#dSummary').classList.remove('error'); 
+                    $('#errDSummary').classList.remove('show'); 
+                }
+                if (!valid) return;
+                // prepend new object
+                STATE.decisions.unshift({
+                    id: uid(),
+                    title, ref,
+                    department: $('#dDept').value.trim() || 'Executive Committee',
+                    decision: $('#dDecision').value,
+                    status: $('#dStatus').value,
+                    summary,
+                    date: Date.now()
+                });
+                persist.decisions();
+                addNotification('New executive decision added: ' + title, '⚖️');
+                closeModal();
+                renderDecisions();
+                showToast('Decision added', 'success');
+            });
+        }, 100);
+    });
+});
+
+// register budget on website
+registerPage("budget", () => {
+    // budget related calculations
+    const totalAllocated = budgetData.categories.reduce((s, c) => s + c.allocated, 0);
+    const totalSpent = budgetData.categories.reduce((s, c) => s + c.spend, 0);
+    const spentPct = ((totalSpent / totalAllocated) * 100).toFixed(1);
+    return `
+           <h2>💰 Budget ${escapeHTML(budgetData.fiscalYear)}</h2>
+           <p class="lead">Transparent allocation and utilization of municipal budget.</p>
+           <div class="budget-summary">
+                <div class="budget-stat">
+                    <div class="label">Total Budget</div>
+                    <div class="value">${formatMoney(budgetData.total)}</div>
+                </div>
+                <div class="budget-stat">
+                    <div class="label">Revenue Target</div>
+                    <div class="value">${formatMoney(budgetData.revenue)}</div>
+                </div>
+                <div class="budget-stat">
+                    <div class="label">Allocated Budget</div>
+                    <div class="value">${formatMoney(budgetData.allocated)}</div>
+                </div>
+                <div class="budget-stat">
+                    <div class="label">Spent Budget</div>
+                    <div class="value">${formatMoney(budgetData.spend)}</div>
+                </div>
+           </div>
+           <div class="section-divider">
+                <h3>📊 Budget Allocation Titles</h3>
+                <button class="btn btn-sm btn-outline" id="refreshBudgetBtn" title="Refresh">🔄</button>
+           </div>
+           <div class="bar-chart" id="budgetChart"></div>
+           <div class="section-divider">
+                <h3>📑 Budget Breakdown</h3>
+           </div>
+           <div class="table-wrap">
+                <table class="data-table" id="budgetTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Allocated</th>
+                            <th>Spent</th>
+                            <th>Reamining</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody id="budgetTableBody"></tbody>
+                </table>
+           </div>`
+}, () => {
+    // display budget page
+    function renderBudget(){
+        // chart and breakdown table
+        const chart = $("#budgetChart");
+        const maxAlloc = Math.max(...budgetData.categories.map(c => c.allocated));
+        chart.innerHTML = budgetData.categories.map(c => {
+            // generate bar chart
+            const w = (c.allocated / maxAlloc) * 100;
+            const spentW = (c.spend / maxAlloc) * 100;
+            return `
+                   <div class="bar-row">
+                        <div style="font-weight: 500;">${escapeHTML(c.title)}</div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: ${spentW}%;"></div>
+                            </div>
+                        </div class="bar-value">${formatMoney(c.allocated)}</div>
+                   </div>`
+        }).join("");
+        // put detail into table rows
+        const tbody = $("#budgetTableBody");
+        tbody.innerHTML = budgetData.categories.map(c => {
+            const remaining = c.allocated - c.spend;
+            const pct = ((c.spend / c.allocated) * 100).toFixed(0);
+            return `
+                    <tr>
+                        <td><strong>${escapeHTML(c.title)}</strong></td>
+                        <td>${formatMoney(c.allocated)}</td>
+                        <td>${formatMoney(c.spend)}</td>
+                        <td>${formatMoney(remaining)}</td>
+                        <td>
+                            <div class="progress-ring" style="--p:${pct};">
+                                <span>${pct}%</span>
+                            </div>
+                        </td>
+                    </tr>`
+        }).join("");
+    }
+    renderBudget();
+    $("#refreshBudgetBtn").addEventListener("click", () => {
+        budgetData.categories.forEach(c => {
+            const inc = Math.floor(Math.random() * 8000000);
+            c.spend = Math.min(c.allocated, c.spend + inc);
+      });
+      renderBudget();
+      showToast("Budget data refreshed", "success");
+    });
+});
+
+// register tender page on website
+registerPage("tenders", () => {
+    return `
+           <h2>💼 Procurement & Tenders</h2>
+           <p class="lead">Get notices regarding tenders and bidding process.</p>
+           <div class="filter-bar">
+                <input type="text" class="search-mini" id="tenderSearch" placeholder="Search tenders...">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="filter-chip active" data-tstatus="all">All</button>
+                    <button class="filter-chip" data-tstatus="Open">Open</button>
+                    <button class="filter-chip" data-tstatus="Closed">Closed</button>
+                    <button class="filter-chip" data-tstatus="Awarded">Awarded</button>
+                </div>
+           </div>
+           <div class="btn-group">
+                <button class="btn" id="addTenderBtn">➕ Tender</button>
+           </div>
+           <div id="tenderList" style="margin-top: 1rem;"></div>`;
+}, () => {
+    // selected tender and search query
+    let statusFIlter = "all";
+    let search = "";
+    // display tenders
+    function renderTenders(){
+        const filtered = STATE.tenders.filter(t => {
+            const matchStatus = statusFIlter === "all" || t.status === statusFIlter;
+            const matchSearch = !search ||
+                t.title.toLowerCase().includes(search.toLowerCase()) ||
+                t.ref.toLowerCase().includes(search.toLowerCase()) ||
+                t.category.toLowerCase().includes(search.toLowerCase());
+            return matchStatus && matchSearch;
+        });
+        const list = $("#tenderList");
+        if (!filtered.length){
+            list.innerHTML = '<div class="empty-state"><span class="emoji">🚫</span>No matching tenders found.</div>';
+            return;
+        }
+        // map filtered tenders
+        list.innerHTML = filtered.map( t => {
+            const daysLeft = Math.ceil((t.deadline - Date.now()) / 86400000);
+            const deadlineText = daysLeft > 0 ? daysLeft + " days left" : "Deadline passed";
+            return `
+                   <div class="notice-item">
+                        <div style="flex: 1; min-width: 220px;">
+                            <div class="notice-title">${escapeHTML(t.title)}</div>
+                            <div class="notice-meta">
+                                <strong>${escapeHTML(t.ref)}</strong> • ${escapeHTML(t.category)} • Budget: ${formatMoney(t.budget)} • ${t.bidders} bidders
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                ⏳ ${deadlineText} ${formatDate(t.deadline)}
+                            </div>
+                        </div>
+                        <div class="notice-actions">
+                            <span></span>
+                            <button></button>
+                            <button></button>
+                        </div>
+                   </div>`
+        })
     }
 })
