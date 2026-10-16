@@ -995,12 +995,12 @@ registerPage("tenders", () => {
            <div id="tenderList" style="margin-top: 1rem;"></div>`;
 }, () => {
     // selected tender and search query
-    let statusFIlter = "all";
+    let statusFilter = "all";
     let search = "";
     // display tenders
     function renderTenders(){
         const filtered = STATE.tenders.filter(t => {
-            const matchStatus = statusFIlter === "all" || t.status === statusFIlter;
+            const matchStatus = statusFilter === "all" || t.status === statusFilter;
             const matchSearch = !search ||
                 t.title.toLowerCase().includes(search.toLowerCase()) ||
                 t.ref.toLowerCase().includes(search.toLowerCase()) ||
@@ -1017,7 +1017,7 @@ registerPage("tenders", () => {
             const daysLeft = Math.ceil((t.deadline - Date.now()) / 86400000);
             const deadlineText = daysLeft > 0 ? daysLeft + " days left" : "Deadline passed";
             return `
-                   <div class="notice-item">
+                   <div class="notice-item" style="border-left-color: ${t.status === 'Open' ? 'var(--success)' : t.status === 'Closed' ? 'var(--danger)' : 'var(--info)'};">
                         <div style="flex: 1; min-width: 220px;">
                             <div class="notice-title">${escapeHTML(t.title)}</div>
                             <div class="notice-meta">
@@ -1028,11 +1028,164 @@ registerPage("tenders", () => {
                             </div>
                         </div>
                         <div class="notice-actions">
-                            <span></span>
-                            <button></button>
-                            <button></button>
+                            <span class="pill ${t.status === 'Open' ? 'pill-open' : t.status === 'Closed' ? 'pill-closed' : 'pill-awarded'}">${t.status}</span>
+                            <button class="btn btn-sm btn-outline" data-view="${t.id}">Details</button>
+                            <button class="del-btn" data-del="${t.id}" title="Delete">🗑️</button>
                         </div>
                    </div>`
-        })
+        }).join("");
+        $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
+            const t = state.tenders.find(x => x.id === b.dataset.view);
+            openModal(t.title, `
+                <dl class="detail-grid" style="margin-bottom:1rem;">
+                    <dt>Reference</dt><dd>${escapeHTML(t.ref)}</dd>
+                    <dt>Category</dt><dd>${escapeHTML(t.category)}</dd>
+                    <dt>Budget</dt><dd>${formatMoney(t.budget)}</dd>
+                    <dt>Deadline</dt><dd>${formatDate(t.deadline)}</dd>
+                    <dt>Status</dt><dd>${escapeHTML(t.status)}</dd>
+                    <dt>Bidders</dt><dd>${t.bidders}</dd>
+                </dl>
+                <p style="line-height: 1.6;">${escapeHtml(t.description)}</p>`,
+                `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Close</button>
+                ${t.status === 'Open' ? `<button class="btn" id="bidBtn">📝 Submit Bid</button>` : ""}`
+            );
+            setTimeout(() => {
+            $('#bidBtn')?.addEventListener("click", () => {
+                addNotification("Bid interest registered for " + t.ref, "📝");
+                showToast("Bid submission form opened for " + t.ref, "success");
+                closeModal();
+            });
+            }, 100);
+        }));
+        $$("[data-del]", list).forEach(b => b.addEventListener("click", () => {
+            const id = b.dataset.del;
+            STATE.tenders = STATE.tenders.filter(x => x.id !== id);
+            persist.tenders();
+            renderTenders();
+            showToast("Tender deleted.", "success");
+        }));
     }
-})
+    renderTenders();
+    $("#tenderSearch").addEventListener("input", debounce(e => {
+        search = e.target.value.trim();
+        renderTenders();
+    }, 200));
+    // toggling categories
+    $$(".filter-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            $$(".filter-chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            statusFilter = chip.dataset.tstatus;
+            renderTenders();
+        });
+    });
+    $("#addDecisionBtn").addEventListener("click", () => {
+        openModal("Add New Tender", `
+            <div class="form-group">
+                <label class="form-label">Title </label>
+                <input class="form-input" id="tTitle" placeholder="Tender title">
+                <div class="form-error" id="errTTitle">Title required</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Reference</label>
+                    <input class="form-input" id="tRef" placeholder="BKT/TND-XXXX-X">
+                    <div class="form-error" id="errTRef">Reference is required</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <input class="form-input" id="tCategory" placeholder="e.g. Infrastructure">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Budget (NPR) </label>
+                    <input type="number" class="form-input" id="tBudget" placeholder="5000000">
+                    <div class="form-error" id="errTBudget">Valid budget required</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Deadline </label>
+                    <input type="date" class="form-input" id="tDeadline">
+                    <div class="form-error" id="errTDeadline">Deadline required</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description </label>
+                <textarea class="form-textarea" id="tDesc" placeholder="Full description text…"></textarea>
+                <div class="form-error" id="errTDesc">Description required</div>
+            </div>`,
+            `<button class="btn btn-outline" "document.getElementById('modalCloseBtn').click()">Cancel</button>
+            <button class="btn" id="saveTenderBtn">Save Tender</button>`
+        );
+        setTimeout(() => {
+            $("#saveTenderBtn")?.addEventListener("click", () => {
+                const title = $("#tTitle").value.trim();
+                const ref = $("#tRef").value.trim();
+                const budget = parseFloat($("#tBudget").value);
+                const deadlineVal = $("#tDeadline").value;
+                const desc = $("#tDesc").value.trim();
+                let valid = true;
+                if (!title){ 
+                    $("#tTitle").classList.add("error");
+                    $("#errTTitle").classList.add("show"); 
+                    valid = false;
+                } else{ 
+                    $("tTitle").classList.remove("error"); 
+                    $("errTTitle").classList.remove("show"); 
+                }
+                if (!ref){ 
+                    $("#tRef").classList.add("error"); 
+                    $("#errTRef").classList.add("show"); 
+                    valid = false; 
+                } else{ 
+                    $("#tRef").classList.remove("error"); 
+                    $("#errTRef").classList.remove("show"); 
+
+                }
+                if (!budget || budget <= 0){ 
+                    $("#tBudget").classList.add("error"); 
+                    $("#errTBudget").classList.add("show"); 
+                    valid = false; 
+                } else{ 
+                    $("#tBudget").classList.remove("error"); 
+                    $("#errTBudget").classList.remove("show"); 
+
+                }
+                if (!deadlineVal){ 
+                    $("#tDeadline").classList.add("error"); 
+                    $("#errTDeadline").classList.add("show"); 
+                    valid = false; 
+                } else{ 
+                    $("#tDeadline").classList.remove("error"); 
+                    $("#errTDeadline").classList.remove("show"); 
+
+                }
+                if (!desc){
+                     $("#tDesc").classList.add("error"); 
+                     $("#errTDesc").classList.add("show"); 
+                     valid = false; 
+                } else{ 
+                    $("#tDesc").classList.remove("error"); 
+                    $("#errTDesc").classList.remove("show"); 
+                }
+                if (!valid) return;
+
+                STATE.tenders.unshift({
+                    id: uid(),
+                    title, ref,
+                    category: $("#tCategory").value.trim() || "General",
+                    budget,
+                    deadline: new Date(deadlineVal).getTime(),
+                    status: "Open",
+                    bidders: 0,
+                    description: desc
+                });
+                persist.tenders();
+                addNotification("New tender published: " + title, "📑");
+                closeModal();
+                renderTenders();
+                showToast("Tender published", "success");
+            });
+        }, 100);
+    });
+});
