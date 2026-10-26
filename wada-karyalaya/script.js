@@ -1396,3 +1396,86 @@ $("#themeToggleBtn").addEventListener("click", () => {
     // toast message to notify of change
     showToast(STATE.theme === "dark" ? "Dark Mode" : "Light Mode", "info", 3000);
 });
+
+// toggle notification status
+$("#notificationToggleBtn").addEventListener("click", e => {
+    e.stopPropagation();
+    notificationPanel.classList.toggle("active");
+});
+
+// clear all notifications
+$("#clearNotificationBtn").addEventListener("click", () => {
+    // reset notifications
+    STATE.notifications = [];
+    // save empty state
+    persist.notifications();
+    renderNotifications();
+    showToast("Notification cleared", "info", 3000);
+});
+
+// function to update website clock
+function updateClock(){
+    const now = new Date();
+    // format date as DD MM YYYY & time as HH:MM:SS
+    clockEl.textContent = now.toLocaleDateString("en-NP", {day: "2-digit", month: "short", year: "numeric"}) + " " + now.toLocaleTimeString("en-US", {hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit"}); 
+}
+// update clock every second
+updateClock();
+setInterval(updateClock, 1000);
+
+document.addEventListener("keydown", e => {
+    // escape key to close modals
+    if (e.key === "Escape"){
+        if (modalOverlay.classList.contains("active")){
+            closeModal();
+        } else if (notificationPanel.classList.contains("active")){
+            notificationPanel.classList.remove("active");
+        } else if (searchResults.classList.contains("active")){
+            searchResults.classList.remove("active");
+        }
+    }
+    // focus search query
+    if (e.key === "/" && document.activeElement !== searchInput && !e.ctrlKey && !e.metaKey){
+        // prevent default typing
+        e.preventDefault();
+        searchInput.focus();
+    }
+    // toggle theme except inside input or textarea
+    if (e.key.toLowerCase() === 't' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
+        // click theme change button
+        $("#themeToggleBtn").click();
+    }
+    // toggle notification except inside input or textarea
+    if (e.key.toLowerCase() === 'n' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
+        // click notification toggle button
+        $("#notificationToggleBtn").click();
+    }
+});
+
+// apply theme & display existing notifications
+appplyTheme();
+renderNotifications();
+
+// check user welcome before or not
+if (!localStorage.getItem("bkt-welcomed")){
+    setTimeout(() => {
+        addNotification("Welcome to Madhyapur Local Government", "👋");
+        addNotification("Please explore our services", "success", 5000);
+        // save so it only runs on first visit
+        localStorage.setItem("bkt-welcomed", "1");
+    }, 500);
+}
+
+// read initial url hash
+const initial = location.hash.slice(1);
+// navigate to valid page
+navigate(pages[initial] ? initial : "home");
+
+// change in hash to handle navigation dynamically 
+window.addEventListener("hashchange", () => {
+    const p = location.hash.slice(1);
+    if (pages[p] && p !== STATE.currentPage){
+        // navigate to new page if different from current page
+        navigate(p);
+    }
+});
