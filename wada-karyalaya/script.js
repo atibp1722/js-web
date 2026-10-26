@@ -97,7 +97,7 @@ const notificationPanel = $('#notificationPanel');
 const notificationList = $('#notificationList');
 const notificationDot = $('#notificationDot');
 const searchInput = $('#searchInput');
-const saerchResults = $('#saerchResults');
+const searchResults = $('#searchResults');
 const clockEl = $('#clockEl');
 
 // function to generate unique id
@@ -1343,6 +1343,56 @@ function renderSearchResults(query){
         searchResults.classList.add("active");
         return;
     }
+    // map each search to individual html
     searchResults.innerHTML = results.map(r => `
-        <div></div>`)
+        <div class="search-result-item" data-page="${r.page}">
+            <div class="search-category">${r.category}</div>
+            <div style="font-weight: 500; margin: 0.2rem 0;">${highlight(r.title, query)}</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">${highlight(r.snippet, query)}…</div>
+        </div>`).join("");
+    // show search result container
+    searchResults.classList.add("active");
+    // listener to search item
+    $$(".search-result-item", searchResults).forEach(el => {
+        el.addEventListener("click", () => {
+            navigate(el.dataset.page);
+            searchResults.classList.remove("active");
+            searchInput.value = "";
+            // toast message
+            showToast("Navigated to " + el.dataset.page, "info");
+        });
+    });
 }
+
+// listen to type event on search
+searchInput.addEventListener("input", debounce(e => {
+    renderSearchResults(e.target.value.trim());
+    }, 300));
+
+// listener for close/open panel when click outside
+document.addEventListener("click", e => {
+    // close search result container
+    if (!e.target.closest(".search-wrap")) searchResults.classList.remove("active");
+    // close notification panel
+    if (!e.target.closest(".notif-panel") && !e.target.closest("#notificationToggleBtn")){
+        notificationPanel.classList.remove("active");
+    }
+});
+
+// function to apply theme on website
+function appplyTheme(){
+    document.documentElement.setAttribute("data-theme", STATE.theme);
+    $("#themeToggleBtn").textContent = STATE.theme === "dark" ? "💡" : "🌑";
+}
+
+// listener to toggle between dark and light theme
+$("#themeToggleBtn").addEventListener("click", () => {
+    // theme state values
+    STATE.theme = STATE.theme === "dark" ? "light" : "dark";
+    // save updated perference
+    persist.theme();
+    // apply theme to website
+    appplyTheme();
+    // toast message to notify of change
+    showToast(STATE.theme === "dark" ? "Dark Mode" : "Light Mode", "info", 3000);
+});
