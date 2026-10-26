@@ -1189,3 +1189,88 @@ registerPage("tenders", () => {
         }, 100);
     });
 });
+
+// register service page to the website
+// individual cards for various services
+registerPage("services", () => `
+        <h2>🛠️ Services</h2>
+        <p class="lead">View all provided services.</p>
+        <div class="card-grid">
+            <div class="card">
+                <h3>📋 Birth Registration</h3>
+                <p>Online registration for birth certificate</p>
+                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Birth registration">Apply</button>
+            </div>
+            <div class="card">
+                <h3>🏗️ Construction Permit</h3>
+                <p>Submit documents & drawings online</p>
+                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Building permit">Apply</button>
+            </div>
+            <div class="card">
+                <h3>🗑️ Waste Collection</h3>
+                <p>Request pickup & report uncollected waste</p>
+                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Waste collection">Apply</button>
+            </div>
+            <div class="card">
+                <h3>🚰 Water Connection</h3>
+                <p>Online application for new water connection</p>
+                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Water connection">Apply</button>
+            </div>
+            <div class="card">
+                <h3>🏥 Health Card</h3>
+                <p>Get health card for free halth insurance & services</p>
+                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Health card">Apply</button>
+            </div>
+            <div class="card">
+                <h3>💰 Tax Payments</h3>
+                <p>Online payment of property and tenant tax</p>
+                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Property tax">Pay</button>
+            </div>
+        </div>
+        <div id="serviceFeedback" style="margin-top: 1rem;"></div>
+        `, () => {
+            // select elements with svc attributes
+            $$("[data-svc]").forEach(b => b.addEventListener("click", () => {
+                // get service name
+                const svc = b.dataset.svc;
+                // random reference code
+                const ref = 'BKT-' + Math.floor(Math.random() * 1000000);
+                // message to be shown using service name and reference code
+                $("#serviceFeedback").innerHTML = `<div class="dynamic-message">✔️ ${escapeHTML(svc)} request recieved. Reference #: ${ref}. We will be in touch.</div>`
+            }));
+        });
+
+// register contact page on website
+// individual cards for contact inforamtion
+registerPage("contact", () => `
+        <h2>☎️ Contact Information</h2>
+        <p class="lead">Get in touch with your local government.</p>
+        <div class="card-grid">
+            <div class="card">
+                <h3>📍 Office Location</h3>
+                <p>मध्यपुर स्थानिय कार्यालय <br>Bhaktapur 44800, Bagmati Province</p>
+                <p style="margin-top: 0.8rem;">📞 +977-01-6648325</p>
+                <p>✉️ info@bkt.gov.np</p>
+            </div>
+            <div class="card">
+                <h3>🕒 Office Timing</h3>
+                <p>SUN - FRI: 9AM - 5PM</p>
+                <p>Closed on government issued holidays</p>
+                <button class="btn-outline btn" style="margin-top: 1rem;" id="callBtn">📞 Call</button>
+            </div>
+            <div class="card">
+                <h3>🚨 Emergency</h3>
+                <p>🚔 Police: 100</p>
+                <p>🚒 Fire: 101</p>
+                <p>🚑 Ambulance: 102</p>
+            </div>
+        </div>
+        <div id="contactDynamic" style="margin-top: 1.5rem;"></div>
+        `, () => {
+            // select call button and listen for click
+            $("#callBtn")?.addEventListener("click", () => {
+                // show dynamic message with calling action
+                $("#contactDynamic").innerHTML = `<div class="dynamic-message">📞 Calling office... Please wait a while.</div>`;
+            }) ;
+        });
+
