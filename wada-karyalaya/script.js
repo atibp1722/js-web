@@ -1238,7 +1238,7 @@ registerPage("services", () => `
                 // message to be shown using service name and reference code
                 $("#serviceFeedback").innerHTML = `<div class="dynamic-message">✔️ ${escapeHTML(svc)} request recieved. Reference #: ${ref}. We will be in touch.</div>`
             }));
-        });
+});
 
 // register contact page on website
 // individual cards for contact inforamtion
@@ -1272,5 +1272,77 @@ registerPage("contact", () => `
                 // show dynamic message with calling action
                 $("#contactDynamic").innerHTML = `<div class="dynamic-message">📞 Calling office... Please wait a while.</div>`;
             }) ;
-        });
+});
 
+// function for user search
+function performSearch(query){
+    // return empty if only 2 chars in search query
+    if (!query || query.length < 2) return [];
+    // convert all to lowercase
+    const q = query.toLowerCase();
+    const results = [];
+    // search through all page with their attributes
+    // check whetther body or title contains search query
+    // push result in to an object
+    STATE.notices.forEach(n => {
+        if (n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q)){
+            results.push({category: 'Notice', title: n.title, snippet: n.body.slice(0, 50), page: 'notices'});
+        }
+    });
+    STATE.decisions.forEach(d => {
+        if (d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q)){
+            results.push({category: 'Decision', title: d.title, snippet: d.body.slice(0, 50), page: 'decisions'});
+        }
+    });
+    STATE.tenders.forEach(t => {
+        if (t.title.toLowerCase().includes(q) || t.body.toLowerCase().includes(q)){
+            results.push({category: 'Tenders', title: t.title, snippet: t.body.slice(0, 50), page: 'tenders'});
+        }
+    });
+    KEY_PEOPLE.forEach(p => {
+        if (p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q)){
+            results.push({category: 'People', title: p.name, snippet: p.designation + '-' +p.department, page: 'people'});
+        }
+    });
+    citizenCharter.forEach(c => {
+        if (c.title.toLowerCase().includes(q) || c.body.toLowerCase().includes(q)){
+            results.push({category: 'Charter', title: c.service, snippet: c.summary.slice(0, 50), page: 'charter'});
+        }
+    });
+    budgetData.categories.forEach(b => {
+        if (b.title.toLowerCase().includes(q) || b.body.toLowerCase().includes(q)){
+            results.push({category: 'Budget', title: b.title, snippet: 'Allocated: '+ formatMoney(b.allocated), page: 'budget'});
+        }
+    });
+    return results.slice(0, 10);
+}
+
+// function to highlight matching query within text
+function highlight(text, query){
+    //escape to prevent xss attacks if no query
+    if (!query) return escapeHTML(text);
+    const safe = escapeHTML(text);
+    // esacpe regex to not break using case insensetive regex 
+    const reg = new RegExp('('+query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+')', "gi");
+    // keep matching instances maintaining original case
+    return safe.replace(reg, '<mark>$1</mark>');
+}
+
+// function to display search results on webpage
+function renderSearchResults(query){
+    // hide search if only 2 char user input
+    if (!query || query.length < 2){
+        searchResults.classList.remove("active");
+        return;
+    }
+    // function call for matching
+    const results = performSearch(query);
+    // message when no results found
+    if (!results.length){
+        searchResults.innerHTML = `<div style="padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">No results for '"'+escapeHTML(query)+'"'"</div>`;
+        searchResults.classList.add("active");
+        return;
+    }
+    searchResults.innerHTML = results.map(r => `
+        <div></div>`)
+}
