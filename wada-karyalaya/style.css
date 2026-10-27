@@ -1079,6 +1079,10 @@ h4{
     color: #e6edf5;
 }
 
+[data-theme="dark"] .charter-service{
+    color: white;
+}
+
 .toast-container{
    position: fixed;
    top: 20px;
