@@ -6,7 +6,7 @@
     --border: #e2e9f2;
     --text-muted: #3e4f63;
     --primary: #0b2e4f;
-    --primay-light: #17416b;
+    --primary-light: #17416b;
     --primary-bg: #f0f5fe;
     --accent: #ffb347;
     --success: #2e7d5e;
@@ -25,7 +25,7 @@
     --border: #25384d;
     --text-muted: #a8b8cc;
     --primary: #0b2e4f;
-    --primay-light: #6aa9e8;
+    --primary-light: #6aa9e8;
     --primary-bg: #1a2838;
     --shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
@@ -70,6 +70,7 @@ body{
     font-size: 1.7rem;
     font-weight: 600;
     letter-spacing: -0.02em;
+    text-wrap: balance;
 }
 
 .gov-header .sub{
@@ -92,7 +93,7 @@ body{
 }
 
 .badge .live{
-    animation: pulse infinite;
+    animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse{
@@ -196,7 +197,7 @@ body{
 .search-result-item{
     padding: 0.9rem 1.2rem;
     cursor: pointer;
-    border: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     transition: 0.15s;
 }
 
@@ -312,7 +313,6 @@ h4{
     background: var(--surface-2);
     padding: 1.2rem 2rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     font-size: 0.9rem;
     color: var(--text-muted);
@@ -355,7 +355,7 @@ h4{
 
 .card:hover{
     transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow);
 }
 
 .card p{
@@ -492,7 +492,7 @@ h4{
 }
 
 .notice-item{
-    background: var(--primary);
+    background: var(--surface-2);
     padding: 1.1rem 1.3rem;
     border-radius: 15px;
     border-left: 6px solid var(--primary);
@@ -573,17 +573,17 @@ h4{
     color: white;
 }
 
-[data-theme="dark"].notice-priority.high{
+[data-theme="dark"] .notice-priority.high{
     background: #3a1a17;
     color: #ff8a7a;
 }
 
-[data-theme="dark"].notice-priority.medium{
+[data-theme="dark"] .notice-priority.medium{
     background: #3a2f17;
     color: #ffc66e;
 }
 
-[data-theme="dark"].notice-priority.low{
+[data-theme="dark"] .notice-priority.low{
     background: #172a2a;
     color: #7eeb0b;
 }
@@ -605,7 +605,7 @@ h4{
 
 .project-item{
     padding: 1rem 0;
-    border-bottom: 1px solid var(--primary);
+    border-bottom: 1px solid var(--border);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -618,11 +618,12 @@ h4{
 }
 
 .progress-bar-bg{
-    width: 140px;
+    width: 100px;
     height: 8px;
     background: var(--border);
     border-radius: 20px;
     overflow: hidden;
+    flex: 1 1 140px;
 }
 
 .progress-fill{
@@ -641,7 +642,7 @@ h4{
     display: block;
     font-weight: 500;
     margin-bottom: 0.4rem;
-    font-size: 0.4rem;
+    font-size: 0.8rem;
 }
 
 .form-input, .form-textarea, .form-select{
@@ -757,19 +758,19 @@ h4{
     background: #e8f0fe; color: #1a4f8a; 
 }
 
-[data-theme="dark"].pill-open{ 
+[data-theme="dark"] .pill-open{ 
    background: #173a2a; color: #7ee0b0; 
 }
 
-[data-theme="dark"].pill-closed{ 
+[data-theme="dark"] .pill-closed{ 
    background: #3a1a17; color: #ff8a7a; 
 }
 
-[data-theme="dark"].pill-pending{ 
+[data-theme="dark"] .pill-pending{ 
    background: #3a2f17; color: #ffc66e; 
 }
 
-[data-theme="dark"].pill-awarded{ 
+[data-theme="dark"] .pill-awarded{ 
    background: #1a2f4a; color: #8ab4f8; 
 }
 
@@ -923,7 +924,7 @@ h4{
 
 .bar-track{
     height: 22px;
-    background: var(--border);;
+    background: var(--border);
     border-radius: 50px;
     overflow: hidden;
     position: relative;
@@ -1216,7 +1217,7 @@ h4{
 
 .skip-link{
     position: absolute;
-    top: -40px;
+    top: 0;
     left: 0;
     background: var(--primary);
     color: white;
@@ -1224,10 +1225,12 @@ h4{
     z-index: 10000;
     border-radius: 0 0 8px 0;
     text-decoration: none;
+    transform: translateY(-150%);
+    transition: transform 0.2s ease-in;
 }
 
 .skip-link:focus{ 
-   top: 0; 
+   transform: translateY(0); 
 }
 
 .spinner{
@@ -1339,7 +1342,7 @@ h4{
       left: 20px;
       right: 20px;
       max-width: none;
-    } .notif-panel{
+    } .notification-panel{
       left: 20px;
       right: 20px;
       width: auto;
