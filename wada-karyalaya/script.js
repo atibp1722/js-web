@@ -45,15 +45,15 @@ if (!STATE.decisions){
 
 // list of key people
 const KEY_PEOPLE = [
-    {id: 'EMP-010', name: 'Ram Kumar Karki', designation: 'Ward Chairperson', department: 'Executive Committe', avatar: 'RK', email: 'exec@bkt.gov.np', contact: 9851098510},
-    {id: 'EMP-010', name: 'Kunti Pariyar', designation: 'Ward Member', department: 'Executive Committe', avatar: 'KP', email: 'exec@bkt.gov.np', contact: 9849098460},
-    {id: 'EMP-010', name: 'Sambhu Sharma', designation: 'Ward Member', department: 'Executive Committe', avatar: 'SS', email: 'exec@bkt.gov.np', contact: 9851052410},
-    {id: 'EMP-010', name: 'Bandana Bista', designation: 'Ward Secretary', department: 'Executive Committe', avatar: 'BS', email: 'exec@bkt.gov.np', contact: 9852078635},
-    {id: 'EMP-010', name: 'Ramesh KC', designation: 'Computer Officer', department: 'IT & Admin', avatar: 'RK', email: 'admin@bkt.gov.np', contact: 9863417823},
-    {id: 'EMP-010', name: 'Kumar Basnet', designation: 'Computer Operator', department: 'IT & Admin', avatar: 'KB', email: 'admin@bkt.gov.np', contact: 9188254132},
-    {id: 'EMP-010', name: 'Dinesh Shakya', designation: 'Account Officer', department: 'Finance & Planning', avatar: 'DS', email: 'planning@bkt.gov.np', contact: 9870265152},
-    {id: 'EMP-010', name: 'Gourav KC', designation: 'Health Officer', department: 'Health', avatar: 'GK', email: 'health@bkt.gov.np', contact: 9889324156},
-    {id: 'EMP-010', name: 'Kumari Dahal', designation: 'Account Assistant', department: 'Finance & Planning', avatar: 'KD', email: 'planning@bkt.gov.np', contact: 9851098511}
+    {id: 'EMP-001', name: 'Ram Kumar Karki', designation: 'Ward Chairperson', department: 'Executive Committe', avatar: 'RK', email: 'exec@bkt.gov.np', contact: 9851098510},
+    {id: 'EMP-002', name: 'Kunti Pariyar', designation: 'Ward Member', department: 'Executive Committe', avatar: 'KP', email: 'exec@bkt.gov.np', contact: 9849098460},
+    {id: 'EMP-003', name: 'Sambhu Sharma', designation: 'Ward Member', department: 'Executive Committe', avatar: 'SS', email: 'exec@bkt.gov.np', contact: 9851052410},
+    {id: 'EMP-004', name: 'Bandana Bista', designation: 'Ward Secretary', department: 'Executive Committe', avatar: 'BS', email: 'exec@bkt.gov.np', contact: 9852078635},
+    {id: 'EMP-005', name: 'Ramesh KC', designation: 'Computer Officer', department: 'IT & Admin', avatar: 'RK', email: 'admin@bkt.gov.np', contact: 9863417823},
+    {id: 'EMP-006', name: 'Kumar Basnet', designation: 'Computer Operator', department: 'IT & Admin', avatar: 'KB', email: 'admin@bkt.gov.np', contact: 9188254132},
+    {id: 'EMP-007', name: 'Dinesh Shakya', designation: 'Account Officer', department: 'Finance & Planning', avatar: 'DS', email: 'planning@bkt.gov.np', contact: 9870265152},
+    {id: 'EMP-008', name: 'Gourav KC', designation: 'Health Officer', department: 'Health', avatar: 'GK', email: 'health@bkt.gov.np', contact: 9889324156},
+    {id: 'EMP-009', name: 'Kumari Dahal', designation: 'Account Assistant', department: 'Finance & Planning', avatar: 'KD', email: 'planning@bkt.gov.np', contact: 9851098511}
 ];
 
 // citizen charer list
@@ -81,7 +81,7 @@ const budgetData = {
         {title: 'Cultural Promotion', allocation: 15000000, spend: 10000000},
         {title: 'Infrasructure', allocation: 15000000, spend: 900000},
         {title: 'Health & Sanitation', allocation: 15000000, spend: 7500000},
-        {title: 'Administration', allocation: 15000000, spend: 77500000},
+        {title: 'Administration', allocation: 15000000, spend: 7750000},
         {title: 'Social Welfare', allocation: 15000000, spend: 5000000}
     ]
 };
@@ -150,7 +150,7 @@ const persist = {
     tenders: () => localStorage.setItem('bkt-tenders', JSON.stringify(STATE.tenders)),
     notifications: () => localStorage.setItem('bkt-notifications', JSON.stringify(STATE.notifications)),
     feedback: () => localStorage.setItem('bkt-feedback', JSON.stringify(STATE.feedback)),
-    theme: () => localStorage.setItem('bkt-theme', JSON.stringify(STATE.theme))
+    theme: () => localStorage.setItem('bkt-theme', STATE.theme)
 };
 
 // fucntion to show toast for user feedback
@@ -164,7 +164,7 @@ function showToast(msg, type='info', duration=3000){
     const t = document.createElement("div");
     t.className = 'toast ' + type;
     t.setAttribute('role', 'alert');
-    t.innerHTML = '<span>' + (icons[type] || 'ℹ️') + '</span> <span style="flex: 1">' + escapeHTML(msg) + '</span><button class="toast-close" aria-label="Close>X</button>';
+    t.innerHTML = '<span>' + (icons[type] || 'ℹ️') + '</span> <span style="flex: 1">' + escapeHTML(msg) + '</span><button class="toast-close" aria-label="Close">X</button>';
     toastContainer.appendChild(t);
     const close = () => {
         t.classList.add("removing");
@@ -195,7 +195,7 @@ function renderNotifications(){
         return;
     }
     notificationList.innerHTML = STATE.notifications.map(n => 
-        `<div class=".notification-item ${n.read ? '' : 'unread'}"data-id="${n.id}">
+        `<div class="notification-item ${n.read ? '' : 'unread'}"data-id="${n.id}">
             <div class="notification-icon">${n.icon}</div>
             <div style="flex: 1">
                 <div class="notification-text">${escapeHTML(n.text)}</div>
@@ -203,7 +203,7 @@ function renderNotifications(){
             </div>
         </div>`
     ).join("");
-    $$('notification-item', notificationList).forEach(el => {
+    $$('.notification-item', notificationList).forEach(el => {
         el.addEventListener("click", () => {
             const n = STATE.notifications.find(x => x.id === el.dataset.id);
             if (n){
@@ -276,7 +276,7 @@ $$('.nav-btn').forEach(btn => {
 registerPage('home' ,() => {
     const totalNotices = STATE.notices.length;
     const openTenders = STATE.tenders.filter(t => t.status === "Open").length;
-    const implemented = STATE.decisions.filter(d => t.status === "Implemented").length;
+    const implemented = STATE.decisions.filter(d => d.status === "Implemented").length;
     return `
            <h2>Welcome to Bhaktapur</h2>
            <p class="lead">The cultural capital of Nepal, your local government web portal.</p>
@@ -307,10 +307,10 @@ registerPage('home' ,() => {
                 <p>decisions implemented</p>
             </div>
            </div>
-           <div class="section-divider>
+           <div class="section-divider">
             <h3>⚡Quick Actions</h3>
            </div>
-           <div class="btn-group>
+           <div class="btn-group">
             <button class="btn" id="qaCharter">📜 Citizen Charter</button>
             <button class="btn" id="qaPeople">👥 People</button>
             <button class="btn" id="qaNotices">📢 Notices</button>
@@ -329,7 +329,7 @@ registerPage('home' ,() => {
                         <div class="notice-meta">${escapeHTML(n.category)} • ${relativeTime(n.date)}</div>
                     </div>
                     <div class="notice-actions">
-                        <span class="notice-priority ${n.priority}">${n.priority}</span>
+                        <span class="notice-priority ${n.priority.toLowerCase()}">${n.priority}</span>
                     </div>
                 </div>`).join("")}
            </div>`;
@@ -368,7 +368,7 @@ registerPage('charter', () => {
     function renderCharter(){
         const filtered = citizenCharter.filter(c => {
             const matchesCat = activeCat === "all" || c.category === activeCat;
-            const matchesSearch = !searchTerm || c.service.toLowerCase().includes(searchTerm.toLowerCase()) || c.description.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = !searchTerm || c.service.toLowerCase().includes(searchTerm.toLowerCase()) || c.summary.toLowerCase().includes(searchTerm.toLowerCase());
             return matchesCat && matchesSearch;
         });
         const list = $("#charterList");
@@ -392,11 +392,11 @@ registerPage('charter', () => {
                 <button class="btn btn-sm byn-outline" data-apply="${c.id}">Apply ➝</button>
             </div>`).join("");
         // listeners on all buttons
-        $$(['data-apply'], list).forEach(btn => {
+        $$('[data-apply]', list).forEach(btn => {
             btn.addEventListener("click", () => {
                 const c = citizenCharter.find(x => x.id === btn.dataset.apply);
                 showToast("Application started for: " + c.service, "success");
-                addNotification("Your application for: " + c.service + "📋"); 
+                addNotification("Your application for: " + c.service + " 📋"); 
             });
         });
     }
@@ -461,7 +461,7 @@ registerPage("people", () => {
             card.addEventListener("click", () => {
                 const p = KEY_PEOPLE.find(x => x.id === card.dataset.id);
                 openModal(p.name, `
-                    <div style="display: flex; gap: 1.2rem; align-items: center; margin-bottom: 1.2rem flex-wrap: wrap;">
+                    <div style="display: flex; gap: 1.2rem; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap;">
                         <div class="person-avatar" style="margin: 0;">${escapeHTML(p.avatar)}</div>
                         <div>
                             <div style="font-weight: 600; font-size: 1.10rem; color: var(--primary);">${escapeHTML(p.name)}</div>
@@ -513,7 +513,7 @@ registerPage("notices", () => {
            </div>
            <div class="btn-group">
                 <button class="btn" id="addNoticeBtn">➕ Add</button>
-                <button class="btn-outline btn" idr="exportNoticeBtn">📤 Export</button>
+                <button class="btn-outline btn" id="exportNoticeBtn">📤 Export</button>
            </div>
            <div class="notice-list" id="noticeList"></div>`;
 }, () => {
@@ -540,11 +540,11 @@ registerPage("notices", () => {
             <div class="notice-item" data-id="${n.id}">
                 <div style="flex: 1; min-width: 220px;">
                     <div class="notice-title">${escapeHTML(n.title)}</div>
-                    <div class="notice-meta">${escapeHTML(n.categories)} • ${relativeTime(n.date)}</div>
+                    <div class="notice-meta">${escapeHTML(n.category)} • ${relativeTime(n.date)}</div>
                     <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">${escapeHTML(n.body.slice(0, 120))}${n.body.length>120 ? "..." : ""}</div>
                 </div>
                 <div class="notice-actions">
-                    <span class="notice-priority ${n.priority}">${n.priority}</span>
+                    <span class="notice-priority ${n.priority.toLowerCase()}">${n.priority}</span>
                     <span class="notice-date">${formatDate(n.date)}</span>
                     <button class="btn btn-sm btn-outline" data-view="${n.id}">View</button>
                     <button class="del-btn" data-del="${n.id}" title="Delete">🗑️</button>
@@ -560,7 +560,7 @@ registerPage("notices", () => {
                     <span class="notice-date">${formatDate(n.date)}</span>
                 </div>
                 <p style="line-height: 1.5;">${escapeHTML(n.body)}</p>`,
-                `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBt').click()">Close</button>
+                `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Close</button>
                 <button class="btn" id="shareNoticeBtn" title="Share">🔁</button>`
             );
             setTimeout(() => {
@@ -574,7 +574,7 @@ registerPage("notices", () => {
             const id = b.dataset.del;
             const n = STATE.notices.find(x => x.id === id);
             openModal("Confirm Delete", `
-                    <p>Are you sure you want to delete "<strong>${escapeHTML(n.title)}</strong>?"</p>`
+                    <p>Are you sure you want to delete "<strong>${escapeHTML(n.title)}</strong>?"</p>`,
                     `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
                     <button class="btn btn-danger" id="confirmDelBtn">Delete</button>`
                 );
@@ -611,14 +611,12 @@ registerPage("notices", () => {
                 <input class="form-input" id="nTitle" placeholder="Notice title">
                 <div class="form-error" id="errTitle">Title required</div>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Category</label>
-                    <select class="form-select" id="nCategory">
-                        <option>Notice</option>
-                        <option>Press Release</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="nCategory">
+                    <option>Notice</option>
+                    <option>Press Release</option>
+                </select>
             </div>
             <div class="form-group">
                 <label class="form-label">Priority</label>
@@ -634,7 +632,7 @@ registerPage("notices", () => {
                 <textarea class="form-textarea" id="nBody" placeholder="Full notice text…"></textarea>
                 <div class="form-error" id="errBody">Body required</div>
             </div>`,
-            `<button class="btn btn-outline" "document.getElementById('modalCloseBtn').click()">Cancel</button>
+            `<button class="btn btn-outline" onlick="document.getElementById('modalCloseBtn').click()">Cancel</button>
             <button class="btn" id="saveNoticeBtn">Save Notice</button>`
         );
         setTimeout(() => {
@@ -695,12 +693,12 @@ registerPage("decisions", () => {
            <h2>Executive Decisions</h2>
            <p class="lead">Key decisions and resolutions made by the committee.</p>
            <div class="filter-bar">
-                <input type="text" class="search-mini" placeholder="Search decisions...">
+                <input type="text" class="search-mini" id="decisionSearch" placeholder="Search decisions...">
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                     <button class="filter-chip" data-filter="all">All</button>
                     <button class="filter-chip" data-filter="Implemented">Implemented</button>
                     <button class="filter-chip" data-filter="In Progress">In Progress</button>
-                    <button class="filter-chip" data-filter="Under Review">Under Review"</button>
+                    <button class="filter-chip" data-filter="Under Review">Under Review</button>
                 </div>
            </div>
            <div class="btn-group">
@@ -735,7 +733,7 @@ registerPage("decisions", () => {
                             <div style="flex: 1; min-width: 220px;">
                                  <div class="notice-title">${escapeHTML(d.title)}</div>
                                 <div class="notice-meta">
-                                    <strong>${escapeHTML(d.ref)}</strong> • ${relativeTime(d.department)} • ${relativeTime(d.date)}
+                                    <strong>${escapeHTML(d.ref)}</strong> • ${escapeHTML(d.department)} • ${relativeTime(d.date)}
                                 </div>
                                 <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">${escapeHTML(d.summary.slice(0, 120))}${d.summary.length>120 ? "..." : ""}</div>
                             </div>
@@ -744,9 +742,9 @@ registerPage("decisions", () => {
                             <span class="pill ${d.status === 'Implemented' ? 'pill-open' : d.status === 'Under Review' ? 'pill-awarded' : 'pill-pending'}">${d.status}</span>
                             <button class="btn btn-sm btn-outline" data-view="${d.id}">Details</button>
                             <button class="del-btn" data-del="${d.id}" title="Delete">🗑️</button>
-                        </div>`),join("");
+                        </div>`).join("");
         // event listeners on all buttons to open modal
-        $$("[data-view]", list),forEach(b => b.addEventListener("click", () => {
+        $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
             const d = STATE.decisions.find(x => x.id === b.dataset.view);
             openModal(d.title, `
                         <dl class="detail-grid" style="margin-bottom: 1rem;">
@@ -754,7 +752,7 @@ registerPage("decisions", () => {
                             <dt>Department</dt><dd>${escapeHTML(d.department)}</dd>
                             <dt>Decision</dt><dd>${escapeHTML(d.decision)}</dd>
                             <dt>Status</dt><dd>${escapeHTML(d.status)}</dd>
-                            <dt>Date</dt><dd>${formatDate(d.ref)}</dd>
+                            <dt>Date</dt><dd>${formatDate(d.date)}</dd>
                         </dl>
                         <p style="line-height: 1.5">${escapeHTML(d.summary)}</p>`,
                         `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">CLose</button>`
@@ -825,8 +823,8 @@ registerPage("decisions", () => {
                 <textarea class="form-textarea" id="dSummary" placeholder="Full decision text…"></textarea>
                 <div class="form-error" id="errDSummary">Summary required</div>
             </div>`,
-            `<button class="btn btn-outline" "document.getElementById('modalCloseBtn').click()">Cancel</button>
-            <button class="btn" id="saveDecisionBtn">Save Notice</button>`
+            `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
+            <button class="btn" id="saveDecisionBtn">Save Decision</button>`
         );
         // wait till modal appears
         setTimeout(() => {
@@ -884,9 +882,9 @@ registerPage("decisions", () => {
 // register budget on website
 registerPage("budget", () => {
     // budget related calculations
-    const totalAllocated = budgetData.categories.reduce((s, c) => s + c.allocated, 0);
+    const totalAllocated = budgetData.categories.reduce((s, c) => s + c.allocation, 0);
     const totalSpent = budgetData.categories.reduce((s, c) => s + c.spend, 0);
-    const spentPct = ((totalSpent / totalAllocated) * 100).toFixed(1);
+    //const spentPct = ((totalSpent / totalAllocated) * 100).toFixed(1);
     return `
            <h2>💰 Budget ${escapeHTML(budgetData.fiscalYear)}</h2>
            <p class="lead">Transparent allocation and utilization of municipal budget.</p>
@@ -901,11 +899,11 @@ registerPage("budget", () => {
                 </div>
                 <div class="budget-stat">
                     <div class="label">Allocated Budget</div>
-                    <div class="value">${formatMoney(budgetData.allocated)}</div>
+                    <div class="value">${formatMoney(totalAllocated)}</div>
                 </div>
                 <div class="budget-stat">
                     <div class="label">Spent Budget</div>
-                    <div class="value">${formatMoney(budgetData.spend)}</div>
+                    <div class="value">${formatMoney(totalSpent)}</div>
                 </div>
            </div>
            <div class="section-divider">
@@ -935,10 +933,10 @@ registerPage("budget", () => {
     function renderBudget(){
         // chart and breakdown table
         const chart = $("#budgetChart");
-        const maxAlloc = Math.max(...budgetData.categories.map(c => c.allocated));
+        const maxAlloc = Math.max(...budgetData.categories.map(c => c.allocation));
         chart.innerHTML = budgetData.categories.map(c => {
             // generate bar chart
-            const w = (c.allocated / maxAlloc) * 100;
+            const w = (c.allocation / maxAlloc) * 100;
             const spentW = (c.spend / maxAlloc) * 100;
             return `
                    <div class="bar-row">
@@ -946,18 +944,18 @@ registerPage("budget", () => {
                             <div class="bar-track">
                                 <div class="bar-fill" style="width: ${spentW}%;"></div>
                             </div>
-                        </div class="bar-value">${formatMoney(c.allocated)}</div>
+                        <div class="bar-value">${formatMoney(c.allocation)}</div>
                    </div>`
         }).join("");
         // put detail into table rows
         const tbody = $("#budgetTableBody");
         tbody.innerHTML = budgetData.categories.map(c => {
-            const remaining = c.allocated - c.spend;
-            const pct = ((c.spend / c.allocated) * 100).toFixed(0);
+            const remaining = c.allocation - c.spend;
+            const pct = ((c.spend / c.allocation) * 100).toFixed(0);
             return `
                     <tr>
                         <td><strong>${escapeHTML(c.title)}</strong></td>
-                        <td>${formatMoney(c.allocated)}</td>
+                        <td>${formatMoney(c.allocation)}</td>
                         <td>${formatMoney(c.spend)}</td>
                         <td>${formatMoney(remaining)}</td>
                         <td>
@@ -972,7 +970,7 @@ registerPage("budget", () => {
     $("#refreshBudgetBtn").addEventListener("click", () => {
         budgetData.categories.forEach(c => {
             const inc = Math.floor(Math.random() * 8000000);
-            c.spend = Math.min(c.allocated, c.spend + inc);
+            c.spend = Math.min(c.allocation, c.spend + inc);
       });
       renderBudget();
       showToast("Budget data refreshed", "success");
@@ -1021,25 +1019,25 @@ registerPage("tenders", () => {
             const daysLeft = Math.ceil((t.deadline - Date.now()) / 86400000);
             const deadlineText = daysLeft > 0 ? daysLeft + " days left" : "Deadline passed";
             return `
-                   <div class="notice-item" style="border-left-color: ${t.status === 'Open' ? 'var(--success)' : t.status === 'Closed' ? 'var(--danger)' : 'var(--info)'};">
-                        <div style="flex: 1; min-width: 220px;">
-                            <div class="notice-title">${escapeHTML(t.title)}</div>
-                            <div class="notice-meta">
-                                <strong>${escapeHTML(t.ref)}</strong> • ${escapeHTML(t.category)} • Budget: ${formatMoney(t.budget)} • ${t.bidders} bidders
-                            </div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
-                                ⏳ ${deadlineText} ${formatDate(t.deadline)}
-                            </div>
+                <div class="notice-item" style="border-left-color: ${t.status === 'Open' ? 'var(--success)' : t.status === 'Closed' ? 'var(--danger)' : 'var(--info)'};">
+                    <div style="flex: 1; min-width: 220px;">
+                        <div class="notice-title">${escapeHTML(t.title)}</div>
+                        <div class="notice-meta">
+                            <strong>${escapeHTML(t.ref)}</strong> • ${escapeHTML(t.category)} • Budget: ${formatMoney(t.budget)} • ${t.bidders} bidders
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                            ⏳ ${deadlineText} ${formatDate(t.deadline)}
                         </div>
                         <div class="notice-actions">
                             <span class="pill ${t.status === 'Open' ? 'pill-open' : t.status === 'Closed' ? 'pill-closed' : 'pill-awarded'}">${t.status}</span>
                             <button class="btn btn-sm btn-outline" data-view="${t.id}">Details</button>
                             <button class="del-btn" data-del="${t.id}" title="Delete">🗑️</button>
                         </div>
-                   </div>`
+                    </div>
+                </div>`
         }).join("");
         $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
-            const t = state.tenders.find(x => x.id === b.dataset.view);
+            const t = STATE.tenders.find(x => x.id === b.dataset.view);
             openModal(t.title, `
                 <dl class="detail-grid" style="margin-bottom:1rem;">
                     <dt>Reference</dt><dd>${escapeHTML(t.ref)}</dd>
@@ -1049,7 +1047,7 @@ registerPage("tenders", () => {
                     <dt>Status</dt><dd>${escapeHTML(t.status)}</dd>
                     <dt>Bidders</dt><dd>${t.bidders}</dd>
                 </dl>
-                <p style="line-height: 1.6;">${escapeHtml(t.description)}</p>`,
+                <p style="line-height: 1.6;">${escapeHTML(t.summary)}</p>`,
                 `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Close</button>
                 ${t.status === 'Open' ? `<button class="btn" id="bidBtn">📝 Submit Bid</button>` : ""}`
             );
@@ -1083,7 +1081,7 @@ registerPage("tenders", () => {
             renderTenders();
         });
     });
-    $("#addDecisionBtn").addEventListener("click", () => {
+    $("#addTenderBtn").addEventListener("click", () => {
         openModal("Add New Tender", `
             <div class="form-group">
                 <label class="form-label">Title </label>
@@ -1118,7 +1116,7 @@ registerPage("tenders", () => {
                 <textarea class="form-textarea" id="tDesc" placeholder="Full description text…"></textarea>
                 <div class="form-error" id="errTDesc">Description required</div>
             </div>`,
-            `<button class="btn btn-outline" "document.getElementById('modalCloseBtn').click()">Cancel</button>
+            `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
             <button class="btn" id="saveTenderBtn">Save Tender</button>`
         );
         setTimeout(() => {
@@ -1144,7 +1142,6 @@ registerPage("tenders", () => {
                 } else{ 
                     $("#tRef").classList.remove("error"); 
                     $("#errTRef").classList.remove("show"); 
-
                 }
                 if (!budget || budget <= 0){ 
                     $("#tBudget").classList.add("error"); 
@@ -1162,7 +1159,6 @@ registerPage("tenders", () => {
                 } else{ 
                     $("#tDeadline").classList.remove("error"); 
                     $("#errTDeadline").classList.remove("show"); 
-
                 }
                 if (!desc){
                      $("#tDesc").classList.add("error"); 
@@ -1182,7 +1178,7 @@ registerPage("tenders", () => {
                     deadline: new Date(deadlineVal).getTime(),
                     status: "Open",
                     bidders: 0,
-                    description: desc
+                    summary: desc
                 });
                 persist.tenders();
                 addNotification("New tender published: " + title, "📑");
@@ -1203,32 +1199,32 @@ registerPage("services", () => `
             <div class="card">
                 <h3>📋 Birth Registration</h3>
                 <p>Online registration for birth certificate</p>
-                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Birth registration">Apply</button>
+                <button class="btn-outline btn" style="margin-top: 1rem;" data-svc="Birth registration">Apply</button>
             </div>
             <div class="card">
                 <h3>🏗️ Construction Permit</h3>
                 <p>Submit documents & drawings online</p>
-                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Building permit">Apply</button>
+                <button class="btn-outline btn" style="margin-top: 1rem;" data-svc="Building permit">Apply</button>
             </div>
             <div class="card">
                 <h3>🗑️ Waste Collection</h3>
                 <p>Request pickup & report uncollected waste</p>
-                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Waste collection">Apply</button>
+                <button class="btn-outline btn" style="margin-top: 1rem;" data-svc="Waste collection">Apply</button>
             </div>
             <div class="card">
                 <h3>🚰 Water Connection</h3>
                 <p>Online application for new water connection</p>
-                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Water connection">Apply</button>
+                <button class="btn-outline btn" style="margin-top: 1rem;" data-svc="Water connection">Apply</button>
             </div>
             <div class="card">
                 <h3>🏥 Health Card</h3>
                 <p>Get health card for free halth insurance & services</p>
-                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Health card">Apply</button>
+                <button class="btn-outline btn" style="margin-top: 1rem;" data-svc="Health card">Apply</button>
             </div>
             <div class="card">
                 <h3>💰 Tax Payments</h3>
                 <p>Online payment of property and tenant tax</p>
-                <button class="btn-outline btn" style="margin-top:1 rem;" data-svc="Property tax">Pay</button>
+                <button class="btn-outline btn" style="margin-top: 1rem;" data-svc="Property tax">Pay</button>
             </div>
         </div>
         <div id="serviceFeedback" style="margin-top: 1rem;"></div>
@@ -1295,27 +1291,27 @@ function performSearch(query){
     });
     STATE.decisions.forEach(d => {
         if (d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q)){
-            results.push({category: 'Decision', title: d.title, snippet: d.body.slice(0, 50), page: 'decisions'});
+            results.push({category: 'Decision', title: d.title, snippet: d.summary.slice(0, 50), page: 'decisions'});
         }
     });
     STATE.tenders.forEach(t => {
-        if (t.title.toLowerCase().includes(q) || t.body.toLowerCase().includes(q)){
-            results.push({category: 'Tenders', title: t.title, snippet: t.body.slice(0, 50), page: 'tenders'});
+        if (t.title.toLowerCase().includes(q) || (t.summary || '').toLowerCase().includes(q)){
+            results.push({category: 'Tenders', title: t.title, snippet: (t.summary || '').slice(0, 50), page: 'tenders'});
         }
     });
     KEY_PEOPLE.forEach(p => {
-        if (p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q)){
+        if (p.title.toLowerCase().includes(q) || p.designation.toLowerCase().includes(q) || p.department.toLowerCase().includes(q)){
             results.push({category: 'People', title: p.name, snippet: p.designation + '-' +p.department, page: 'people'});
         }
     });
     citizenCharter.forEach(c => {
-        if (c.title.toLowerCase().includes(q) || c.body.toLowerCase().includes(q)){
+        if (c.title.toLowerCase().includes(q) || c.summary.toLowerCase().includes(q)){
             results.push({category: 'Charter', title: c.service, snippet: c.summary.slice(0, 50), page: 'charter'});
         }
     });
     budgetData.categories.forEach(b => {
-        if (b.title.toLowerCase().includes(q) || b.body.toLowerCase().includes(q)){
-            results.push({category: 'Budget', title: b.title, snippet: 'Allocated: '+ formatMoney(b.allocated), page: 'budget'});
+        if (b.title.toLowerCase().includes(q)){
+            results.push({category: 'Budget', title: b.title, snippet: 'Allocated: '+ formatMoney(b.allocation), page: 'budget'});
         }
     });
     return results.slice(0, 10);
@@ -1378,7 +1374,7 @@ document.addEventListener("click", e => {
     // close search result container
     if (!e.target.closest(".search-wrap")) searchResults.classList.remove("active");
     // close notification panel
-    if (!e.target.closest(".notif-panel") && !e.target.closest("#notificationToggleBtn")){
+    if (!e.target.closest(".notification-panel") && !e.target.closest("#notificationToggleBtn")){
         notificationPanel.classList.remove("active");
     }
 });
@@ -1464,7 +1460,7 @@ renderNotifications();
 if (!localStorage.getItem("bkt-welcomed")){
     setTimeout(() => {
         addNotification("Welcome to Madhyapur Local Government", "👋");
-        addNotification("Please explore our services", "success", 5000);
+        addNotification("Please explore our services", "✅");
         // save so it only runs on first visit
         localStorage.setItem("bkt-welcomed", "1");
     }, 500);
