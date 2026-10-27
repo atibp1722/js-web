@@ -92,14 +92,15 @@ body{
     font-size: 0.7rem;
 }
 
-.badge .live{
+.badge.live{
     animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse{
     0%,100%{
         opacity: 1;
-    } 50%{
+    } 
+    50%{
         opacity: 0.5;
     }
 }
@@ -677,14 +678,14 @@ h4{
     resize: vertical;
 }
 
-.form.error{
+.form-error{
     color: var(--danger);
     font-size: 0.8rem;
     margin-top: 0.3rem;
     display: none;
 }
 
-.form.error.show{
+.form-error.show{
     display: block;
 }
 
@@ -837,18 +838,18 @@ h4{
    margin-top: 1.5rem; 
 }
 
- .charter-item{
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.2rem 1.4rem;
-    margin-bottom: 0.8rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    transition: 0.15s;
+.charter-item{
+   background: var(--surface-2);
+   border: 1px solid var(--border);
+   border-radius: 16px;
+   padding: 1.2rem 1.4rem;
+   margin-bottom: 0.8rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 1rem;
+   flex-wrap: wrap;
+   transition: 0.15s;
 }
 
 .charter-item:hover{ 
@@ -935,7 +936,7 @@ h4{
     position: relative;
 }
 
- .bar-fill{
+.bar-fill{
     height: 100%;
     background: linear-gradient(90deg, var(--primary), var(--primary-light));
     border-radius: 50px;
@@ -949,7 +950,7 @@ h4{
     min-width: 2px;
 }
 
- .bar-value{ 
+.bar-value{ 
    text-align: right; 
    font-weight: 600; 
    color: var(--primary); 
