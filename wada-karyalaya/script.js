@@ -13,6 +13,16 @@ const STATE = {
     filters: {notices: 'all', decisions: 'all', tenders: 'all'}
 };
 
+// sync properties to browser storage
+const persist = {
+    notices: () => localStorage.setItem('bkt-notices', JSON.stringify(STATE.notices)),
+    decisions: () => localStorage.setItem('bkt-decisions', JSON.stringify(STATE.decisions)),
+    tenders: () => localStorage.setItem('bkt-tenders', JSON.stringify(STATE.tenders)),
+    notifications: () => localStorage.setItem('bkt-notifications', JSON.stringify(STATE.notifications)),
+    feedback: () => localStorage.setItem('bkt-feedback', JSON.stringify(STATE.feedback)),
+    theme: () => localStorage.setItem('bkt-theme', STATE.theme)
+};
+
 // populating notice, tender and decision content
 if (!STATE.notices){
     STATE.notices = [
@@ -102,7 +112,7 @@ const notificationList = $('#notificationList');
 const notificationDot = $('#notificationDot');
 const searchInput = $('#searchInput');
 const searchResults = $('#searchResults');
-const clockEl = $('#clockEl');
+const clockEl = $('#liveClock');
 
 // function to generate unique id
 function uid(){
@@ -142,16 +152,6 @@ function debounce(fn, delay=180){
         t=setTimeout(() => fn(...a), delay);
     };
 }
-
-// sync properties to browser storage
-const persist = {
-    notices: () => localStorage.setItem('bkt-notices', JSON.stringify(STATE.notices)),
-    decisions: () => localStorage.setItem('bkt-decisions', JSON.stringify(STATE.decisions)),
-    tenders: () => localStorage.setItem('bkt-tenders', JSON.stringify(STATE.tenders)),
-    notifications: () => localStorage.setItem('bkt-notifications', JSON.stringify(STATE.notifications)),
-    feedback: () => localStorage.setItem('bkt-feedback', JSON.stringify(STATE.feedback)),
-    theme: () => localStorage.setItem('bkt-theme', STATE.theme)
-};
 
 // fucntion to show toast for user feedback
 function showToast(msg, type='info', duration=3000){
@@ -1132,8 +1132,8 @@ registerPage("tenders", () => {
                     $("#errTTitle").classList.add("show"); 
                     valid = false;
                 } else{ 
-                    $("tTitle").classList.remove("error"); 
-                    $("errTTitle").classList.remove("show"); 
+                    $("#tTitle").classList.remove("error"); 
+                    $("#errTTitle").classList.remove("show"); 
                 }
                 if (!ref){ 
                     $("#tRef").classList.add("error"); 
@@ -1150,7 +1150,6 @@ registerPage("tenders", () => {
                 } else{ 
                     $("#tBudget").classList.remove("error"); 
                     $("#errTBudget").classList.remove("show"); 
-
                 }
                 if (!deadlineVal){ 
                     $("#tDeadline").classList.add("error"); 
