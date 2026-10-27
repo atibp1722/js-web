@@ -264,7 +264,7 @@ function navigate(pageID){
         behavior: 'smooth'
     });
     if (location.hash.slice(1) !== pageID){
-        history.replaceState(null, '', '#' + pageID);
+        location.hash = pageID;
     }
 }
 
@@ -429,7 +429,7 @@ registerPage("people", () => {
                     <button class="filter-chip active" data-dept="all">All</button>
                 </div>
             </div>
-            <div> class="people-grid" id="peopleGrid"></div>`;
+            <div class="people-grid" id="peopleGrid"></div>`;
 }, () => {
     // get unique departments
     const depts = [...new Set(KEY_PEOPLE.map(p => p.department))];
@@ -1020,26 +1020,26 @@ registerPage("tenders", () => {
             const deadlineText = daysLeft > 0 ? daysLeft + " days left" : "Deadline passed";
             return `
                 <div class="notice-item" style="border-left-color: ${t.status === 'Open' ? 'var(--success)' : t.status === 'Closed' ? 'var(--danger)' : 'var(--info)'};">
-                    <div style="flex: 1; min-width: 220px;">
+                    <div style="flex: 1; min-width: 220px">
                         <div class="notice-title">${escapeHTML(t.title)}</div>
                         <div class="notice-meta">
                             <strong>${escapeHTML(t.ref)}</strong> • ${escapeHTML(t.category)} • Budget: ${formatMoney(t.budget)} • ${t.bidders} bidders
                         </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem">
                             ⏳ ${deadlineText} ${formatDate(t.deadline)}
                         </div>
-                        <div class="notice-actions">
-                            <span class="pill ${t.status === 'Open' ? 'pill-open' : t.status === 'Closed' ? 'pill-closed' : 'pill-awarded'}">${t.status}</span>
-                            <button class="btn btn-sm btn-outline" data-view="${t.id}">Details</button>
-                            <button class="del-btn" data-del="${t.id}" title="Delete">🗑️</button>
-                        </div>
                     </div>
-                </div>`
-        }).join("");
+                    <div class="notice-actions">
+                        <span class="pill ${t.status === 'Open' ? 'pill-open' : t.status === 'Closed' ? 'pill-closed' : 'pill-awarded'}">${t.status}</span>
+                        <button class="btn btn-sm btn-outline" data-view="${t.id}">Details</button>
+                        <button class="del-btn" data-del="${t.id}" title="Delete">🗑️</button>
+                    </div>
+                </div>`}).join("");
         $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
             const t = STATE.tenders.find(x => x.id === b.dataset.view);
+            if (!t) return;
             openModal(t.title, `
-                <dl class="detail-grid" style="margin-bottom:1rem;">
+                <dl class="detail-grid" style="margin-bottom: 1rem;">
                     <dt>Reference</dt><dd>${escapeHTML(t.ref)}</dd>
                     <dt>Category</dt><dd>${escapeHTML(t.category)}</dd>
                     <dt>Budget</dt><dd>${formatMoney(t.budget)}</dd>
@@ -1047,7 +1047,7 @@ registerPage("tenders", () => {
                     <dt>Status</dt><dd>${escapeHTML(t.status)}</dd>
                     <dt>Bidders</dt><dd>${t.bidders}</dd>
                 </dl>
-                <p style="line-height: 1.6;">${escapeHTML(t.summary)}</p>`,
+                <p style="line-height: 1.6;">${escapeHTML(t.summary || '')}</p>`,
                 `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Close</button>
                 ${t.status === 'Open' ? `<button class="btn" id="bidBtn">📝 Submit Bid</button>` : ""}`
             );

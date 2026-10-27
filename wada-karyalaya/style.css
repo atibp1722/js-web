@@ -1069,10 +1069,14 @@ h4{
     animation: slideIn 0.3s ease;
 }
 
- [data-theme="dark"] .dynamic-message{ 
+[data-theme="dark"] .dynamic-message{ 
     background: #173a2a; 
     color: #7ee0b0; 
     border-color: #2a5c44; 
+}
+
+[data-theme="dark"] h2,  [data-theme="dark"] h3,  [data-theme="dark"] h4{
+    color: #e6edf5;
 }
 
 .toast-container{
