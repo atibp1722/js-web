@@ -168,11 +168,12 @@ body{
 
 .search-icon{
     position: absolute;
-    left: 3rem;
+    left: calc(2rem + 1rem);
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
     opacity: 0.6;
+    font-size: 1rem;
 }
 
 .search-results{
@@ -387,7 +388,7 @@ h4{
 }
 
 .btn:hover:not(:disabled){
-    background: var(--primay-light);
+    background: var(--primary-light);
     transform: scale(1.02);
 }
 
@@ -588,6 +589,11 @@ h4{
     color: #7eeb0b;
 }
 
+[data-theme="dark"] .notice-priority.critical{
+    background: #8b1f2c;
+    color: #ffd2d5;
+}
+
 .del-btn{
     background: transparent;
     border: none;
@@ -618,7 +624,6 @@ h4{
 }
 
 .progress-bar-bg{
-    width: 100px;
     height: 8px;
     background: var(--border);
     border-radius: 20px;
@@ -663,7 +668,7 @@ h4{
     box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.10);
 }
 
-.form-input.error, .form-textarea.error{
+.form-input.error, .form-textarea.error, .form-select.error{
     border-color: var(--danger);
 }
 
@@ -793,7 +798,7 @@ h4{
 
 .person-card:hover{ 
     transform: translateY(-4px); 
-    box-shadow: 0 14px 28px rgba(0,0,0,0.08); 
+    box-shadow: var(--shadow); 
     border-color: var(--primary); 
 }
 
@@ -967,11 +972,11 @@ h4{
     justify-content: center;
     z-index: 9998;
     padding: 20px;
-    animation: fadeIn 0.2s ease;
  }
 
 .modal-overlay.active{ 
-   display: flex; 
+    display: flex; 
+    animation: fadeIn 0.2s ease;
  }
 
  @keyframes fadeIn{ 
@@ -1297,7 +1302,6 @@ h4{
 }
 
 .progress-ring{
-   display: inline-block;
    width: 46px;
    height: 46px;
    border-radius: 50%;
@@ -1319,7 +1323,8 @@ h4{
 }
 
 .progress-ring span{ 
-   position: relative; z-index: 1; 
+   position: relative; 
+   z-index: 1; 
 }
 
 @media(max-width: 600px){
@@ -1350,7 +1355,7 @@ h4{
       left: 1.2rem;
       right: 1.2rem;
     } .search-icon{
-      left: 2rem;
+      left: calc(1.2rem + 0.75rem);
     } .detail-grid{
       grid-template-columns: 110px 1fr;
       font-size: 0.82rem;
