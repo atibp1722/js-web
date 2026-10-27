@@ -335,12 +335,12 @@ registerPage('home' ,() => {
            </div>`;
 }, () => {
     // listeners for other webpages
-    $('qaCharter')?.addEventListener("click", () => navigate('charter'));
-    $('qaPeople')?.addEventListener("click", () => navigate('people'));
-    $('qaNotices')?.addEventListener("click", () => navigate('notices'));
-    $('qaBudget')?.addEventListener("click", () => navigate('budget'));
-    $('qaTenders')?.addEventListener("click", () => navigate('tenders'));
-    $('qaDecisions')?.addEventListener("click", () => navigate('decisions'));
+    $('#qaCharter')?.addEventListener("click", () => navigate('charter'));
+    $('#qaPeople')?.addEventListener("click", () => navigate('people'));
+    $('#qaNotices')?.addEventListener("click", () => navigate('notices'));
+    $('#qaBudget')?.addEventListener("click", () => navigate('budget'));
+    $('#qaTenders')?.addEventListener("click", () => navigate('tenders'));
+    $('#qaDecisions')?.addEventListener("click", () => navigate('decisions'));
 });
 
 // register charter page on website
@@ -523,8 +523,7 @@ registerPage("notices", () => {
         const filtered = STATE.notices.filter(n => {
             const matchFilter = 
                 filter === "all" ? true : 
-                filter === "high" ? n.priority === "high" || n.priority === "critical" : 
-                n.category === filter;
+                filter === "High" ? ["high", "critical"].includes(String(n.priority).toLowerCase()) : n.category === filter;
             const matchesSearch = !search || 
                 n.title.toLowerCase().includes(search.toLowerCase()) ||
                 n.body.toLowerCase().includes(search.toLowerCase());
@@ -632,7 +631,7 @@ registerPage("notices", () => {
                 <textarea class="form-textarea" id="nBody" placeholder="Full notice text…"></textarea>
                 <div class="form-error" id="errBody">Body required</div>
             </div>`,
-            `<button class="btn btn-outline" onlick="document.getElementById('modalCloseBtn').click()">Cancel</button>
+            `<button class="btn btn-outline" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
             <button class="btn" id="saveNoticeBtn">Save Notice</button>`
         );
         setTimeout(() => {
@@ -674,7 +673,7 @@ registerPage("notices", () => {
         }, 100);
     });
     // export notice as downloadable txt file
-    $('#exportNoticesBtn').addEventListener("click", () => {
+    $('#exportNoticeBtn').addEventListener("click", () => {
     const text = STATE.notices.map(n => `[${formatDate(n.date)}] ${n.category} (${n.priority})\n${n.title}\n${n.body}\n---`).join('\n\n');
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -1023,7 +1022,9 @@ registerPage("tenders", () => {
                     <div style="flex: 1; min-width: 220px">
                         <div class="notice-title">${escapeHTML(t.title)}</div>
                         <div class="notice-meta">
-                            <strong>${escapeHTML(t.ref)}</strong> • ${escapeHTML(t.category)} • Budget: ${formatMoney(t.budget)} • ${t.bidders} bidders
+                            <strong>${escapeHTML(t.ref)}</strong> • ${escapeHTML(t.category)} • 
+                            Budget: ${formatMoney(t.budget)} • 
+                            ${t.bidders} bidders
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem">
                             ⏳ ${deadlineText} ${formatDate(t.deadline)}
