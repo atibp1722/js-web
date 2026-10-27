@@ -279,7 +279,8 @@ body{
     from{
         opacity: 0.5;
         transform: translateY(4px);
-    } to{
+    } 
+    to{
         opacity: 1;
         transform: translateY(0);
     }
@@ -510,7 +511,8 @@ h4{
     from{
         opacity: 0;
         transform: translateX(-20px);
-    } to{
+    } 
+    to{
         opacity: 1;
         transform: translateX(0);
     }
@@ -983,9 +985,10 @@ h4{
  @keyframes fadeIn{ 
     from{ 
      opacity: 0; 
-   } to{ 
+    } 
+    to{ 
       opacity: 1; 
-   } 
+    } 
 }
 
 .modal{
@@ -1001,8 +1004,9 @@ h4{
 
 @keyframes modalIn{
    from{
-     opacity: 0; transform: scale(0.95) translateY(20px); 
-   } to{
+    opacity: 0; transform: scale(0.95) translateY(20px); 
+   } 
+   to{
      opacity: 1; transform: scale(1) translateY(0); 
    }
 }
@@ -1115,9 +1119,10 @@ h4{
  @keyframes toastIn{ 
     from{ 
      opacity: 0; transform: translateX(40px); 
-   }to{
+    }
+    to{
      opacity: 1; transform: translateX(0); 
-   } 
+    } 
 }
  @keyframes toastOut{ 
     to{ 

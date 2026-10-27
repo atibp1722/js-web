@@ -58,14 +58,18 @@ const KEY_PEOPLE = [
 
 // citizen charer list
 const citizenCharter = [
-    {id: 'c1', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c2', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c3', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c4', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c5', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c6', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c7', service: '', category: '', time: '', fee: '', department: '', summary: ''},
-    {id: 'c8', service: '', category: '', time: '', fee: '', department: '', summary: ''},
+    {id: 'c1', service: 'Birth Registration', category: 'Civil', time: 'Same Day', fee: 'Free (Within 35 Days)', department: 'Civil Registration', summary: 'Registration of new born and issue certificate to parents.'},
+    {id: 'c2', service: 'Death Registration', category: 'Civil', time: 'Same Day', fee: 'Free (Within 35 Days)', department: 'Civil Registration', summary: 'Registration of death and issue certificate to family.'},
+    {id: 'c3', service: 'Marriage Registration', category: 'Civil', time: 'Same Day', fee: 'Free (Within 35 Days)', department: 'Civil Registration', summary: 'Registration of marriage and issue certificate to couple.'},
+    {id: 'c4', service: 'Construction Permit (Residential)', category: 'Development', time: '7 Working Days', fee: 'Based on Area & Size', department: 'Finance & Planning', summary: 'Approve residential construction within ward boundary.'},
+    {id: 'c5', service: 'Construction Permit (Commercial)', category: 'Development', time: '15 Working Days', fee: 'Based on Area & Size', department: 'Finance & Planning', summary: 'Approve commercial construction within ward boundary.'},
+    {id: 'c6', service: 'Waste Collection', category: 'Sanitation', time: '24 Hours', fee: 'Free', department: 'Health', summary: 'Request for waste collection or removal.'},
+    {id: 'c7', service: 'Water Connection', category: 'Drinking Water', time: '2 Working Days', fee: 'Rs. 5000', department: 'Drining Water', summary: 'Water connection installation for residential/commercial purpose.'},
+    {id: 'c8', service: 'Health Card', category: 'Health', time: 'Same Day', fee: 'Free', department: 'Health', summary: 'Issue health card for government insurance and subsidies.'},
+    {id: 'c9', service: 'Property Tax', category: 'Revenue', time: 'Same Day', fee: 'As Assessment', department: 'Finance & Planning', summary: 'Annual tax payment based on size and rate determined by government with receipt.'},
+    {id: 'c10', service: 'Tenant Tax', category: 'Revenue', time: 'Same Day', fee: 'As Assessment', department: 'Finance & Planning', summary: 'Annual tax for residential/commerical property based on size and area with receipt.'},
+    {id: 'c11', service: 'Ward Recommendation Letter', category: 'General', time: 'Same Day', fee: 'Rs. 100', department: 'Civil Registration', summary: 'Recommendation letter required for various tasks and services.'},
+    {id: 'c12', service: 'Business Registration', category: 'Revenue', time: '3 Working Days', fee: 'Rs. 1000-5000', department: 'Finance & Planning', summary: 'Issue approval for business operation within ward boundary.'}
 ];
 
 // budget breakdown details
