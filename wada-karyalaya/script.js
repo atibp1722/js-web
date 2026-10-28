@@ -88,10 +88,10 @@ const budgetData = {
     total: 75000000,
     revenue: 62000000,
     categories: [
-        {title: 'Cultural Promotion', allocation: 15000000, spend: 10000000},
-        {title: 'Infrasructure', allocation: 15000000, spend: 900000},
-        {title: 'Health & Sanitation', allocation: 15000000, spend: 7500000},
-        {title: 'Administration', allocation: 15000000, spend: 7750000},
+        {title: 'Cultural Promotion', allocation: 15000000, spend: 10500000},
+        {title: 'Infrasructure', allocation: 15000000, spend: 9000000},
+        {title: 'Health & Sanitation', allocation: 15000000, spend: 5500000},
+        {title: 'Administration', allocation: 15000000, spend: 9750000},
         {title: 'Social Welfare', allocation: 15000000, spend: 5000000}
     ]
 };
@@ -126,7 +126,7 @@ function escapeHTML(s){
 
 // function to format money fto readable format
 function formatMoney(n){
-    return 'NPR ' + (n/1000000).toFixed(2) + 'M';
+    return 'NPR ' + (n/1000000).toFixed(2) + 'm';
 }
 
 // function format date to readable format
@@ -350,7 +350,7 @@ registerPage('charter', () => {
     // custom html template
     return `
         <h2>📜 Citizen Charter</h2>   
-        <p class="lead">Transparency & Accountability -- our halmark</p>
+        <p class="lead">Our Priority -- Transparency & Accountability</p>
         <div class="filter-bar">
             <label>Filter</label>
             <input type="text" class="search-mini" id="charterSearch" placeholder="Search service here...">
@@ -422,7 +422,7 @@ registerPage("people", () => {
     // base layout
     return `
             <h2>👥 Key People</h2>
-            <p class="lead">Key people -- the difference makers</p>
+            <p class="lead">Meet The People -- At Your Service</p>
             <div class="filter-bar">
                 <label>Department: </label>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;" id="peopleFilter">
@@ -501,7 +501,7 @@ registerPage("people", () => {
 registerPage("notices", () => {
     return `
            <h2>📢 Notice & Releases</h2>
-           <p class="lead">Notices & Releases -- official communication</p>
+           <p class="lead">Notices & Press Releases -- Official Communication</p>
            <div class="filter-bar">
                 <input type="text" class="search-mini" id="noticeSearch" placeholder="Search notice...">
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
