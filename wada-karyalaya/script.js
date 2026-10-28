@@ -325,7 +325,7 @@ registerPage('home' ,() => {
             <button class="btn" id="qaCharter">📜 Citizen Charter</button>
             <button class="btn" id="qaPeople">👥 People</button>
             <button class="btn-outline btn" id="qaNotices">📢 Notices</button>
-            <button class="btn">💰 Budget</button>
+            <button class="btn>💰 Budget</button>
             <button class="btn" id="qaTenders">💼 Tenders</button>
             <button class="btn">⚖️ Decisions</button>
            </div>
@@ -1031,7 +1031,7 @@ registerPage("tenders", () => {
         }
         // map filtered tenders
         list.innerHTML = filtered.map( t => {
-            const daysLeft = Math.ceil((t.deadline - Date.now()) / 86400000);
+            const daysLeft = Math.ceil((new Date(t.deadline).getTime() - Date.now()) / 86400000);
             const deadlineText = daysLeft > 0 ? daysLeft + " days left" : "Deadline passed";
             return `
                 <div class="notice-item" style="border-left-color: ${t.status === 'Open' ? 'var(--success)' : t.status === 'Closed' ? 'var(--danger)' : 'var(--info)'};">
@@ -1043,7 +1043,7 @@ registerPage("tenders", () => {
                             ${t.bidders} bidders
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem">
-                            ⏳ ${deadlineText} ${formatDate(t.deadline)}
+                            ⏳ ${deadlineText} ${isNaN(new Date(t.deadline).getTime()) ? "" : formatDate(t.deadline)}
                         </div>
                     </div>
                     <div class="notice-actions">
