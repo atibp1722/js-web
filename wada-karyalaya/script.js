@@ -324,10 +324,10 @@ registerPage('home' ,() => {
            <div class="btn-group">
             <button class="btn" id="qaCharter">📜 Citizen Charter</button>
             <button class="btn" id="qaPeople">👥 People</button>
-            <button class="btn" id="qaNotices">📢 Notices</button>
-            <button class="btn" id="qaBudget">💰 Budget</button>
+            <button class="btn-outline btn" id="qaNotices">📢 Notices</button>
+            <button class="btn">💰 Budget</button>
             <button class="btn" id="qaTenders">💼 Tenders</button>
-            <button class="btn-outline btn" id="qaDecisions">⚖️ Decisions</button>
+            <button class="btn">⚖️ Decisions</button>
            </div>
            <div class="section-divider>
             <h3>🕓 Recent Activities</h3>

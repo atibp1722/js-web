@@ -428,6 +428,7 @@ h4{
     flex-wrap: wrap;
     gap: 0.8rem;
     margin-top: 1.2rem;
+    margin-bottom: 0.3rem;
 }
 
 .filter-bar{
