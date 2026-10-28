@@ -2,49 +2,49 @@
 Compilation applications built using JavaScript, also used are HTML and CSS. Works are neatly arranged in their own folders and are independent of each other. 
 
 bookmark:
-a manager that allows for quick and easy organization of frequented websites
+a manager that allows for quick and easy organization of frequented websites.
 
 morse code:
- translate normal text to morse code and vice versa
+ translate normal text to morse code and vice versa.
 
 pro-con:
- a list maker that weighs the pros and cons of entered topic
+ a list maker that weighs the pros and cons of entered topic.
 
 snake:
- the classic game based on keyboard controls with score tracking and gradual increase in difficulty
+ the classic game based on keyboard controls with score tracking and gradual increase in difficulty.
 
 video player:
- custom video player based on interactivity and features 
+ custom video player based on interactivity and feature. 
 
 wordle:
- word guessing game where users try to guess correctly words based on their position
+ word guessing game where users try to guess correctly words based on their position.
 
 sudoku-bactrack:
- sudoku game using backtracking algorithm allow user to set game difficulty level
+ sudoku game using backtracking algorithm allow user to set game difficulty level.
 
 minesweeper:
- classic game where user click on cells to reveal mine or number until all cells are cleared
+ classic game where user click on cells to reveal mine or number until all cells are cleared.
 
 cocktails:
- get info (ingredients, instructions) on your favorite cocktails from cocktailDB
+ get info (ingredients, instructions) on your favorite cocktails from cocktailDB.
 
 stack-master:
- create tower if the fixed base block overlap position with a moving block when it is moving across
+ create tower if the fixed base block overlap position with a moving block when it is moving across.
 
 queue-mgmt:
- queue manager to add and process customers assign priority so customer can be in first place
+ queue manager to add and process customers assign priority so customer can be in first place.
 
 factory-sim:
- factory conveyer belt simulator to add products on the line and auto execution in orderly manner
+ factory conveyer belt simulator to add products on the line and auto execution in orderly manner.
 
 fcfs-sim:
- first come first serve implementation to add process to list, track processing order and display time results
+ first come first serve implementation to add process to list, track processing order and display time results.
 
 round-robin:
- round robin algorithm to simulate scheduling by processing multiple jobs at once with time and order of processing
+ round robin algorithm to simulate scheduling by processing multiple jobs at once with time and order of processing.
 
 music-player:
- doubly linked list implementation to simulate a playlist that wraps around to begin based on nodes in list
+ doubly linked list implementation to simulate a playlist that wraps around to begin based on nodes in list.
 
 otp-app:
  generate, validate and verify one time password(otp) with customizable length and expiry time
@@ -53,6 +53,13 @@ photo-editor:
  photo editor allowing user to rotate, flip images along with adjust brightness, contrast, saturation etc.
 
 whats-in-my-fridge:
- app where user enters ingredients they have and potential recipes along with cooking instructions based on match shown to user
+ app where user enters ingredients they have and potential recipes along with cooking instructions based on match shown to user.
 
-assistant-app: assistant which provides current weather related information and forecasts, latest news from across the world in various languages and latest stock price of listed companies
+assistant-app: 
+ assistant which provides current weather related information and forecasts, latest news from across the world in various languages and latest stock price of listed companies.
+
+waste-mgmt:
+ web app to manage waste by allowing scheduled pickups, status and route capacity tracking. 
+
+wada-karyalaya:
+ we portal for local government that provide information regarding notice, decision, tender status and budget details.
