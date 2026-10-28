@@ -149,9 +149,9 @@ function relativeTime(ts){
         return `${Math.ceil(secs / 86400)}m`;
     }
     if (diff < 60) return "just now";
-    if (diff < 60) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 60) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 60) return `${Math.floor(diff / 86400)}d ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < (7 * 86400)) return `${Math.floor(diff / 86400)}d ago`;
     return formatDate(ts);
 }
 
@@ -325,11 +325,11 @@ registerPage('home' ,() => {
             <button class="btn" id="qaCharter">📜 Citizen Charter</button>
             <button class="btn" id="qaPeople">👥 People</button>
             <button class="btn-outline btn" id="qaNotices">📢 Notices</button>
-            <button class="btn>💰 Budget</button>
+            <button class="btn">💰 Budget</button>
             <button class="btn" id="qaTenders">💼 Tenders</button>
-            <button class="btn">⚖️ Decisions</button>
+            <button class="btn" id="qaDecisions">⚖️ Decisions</button>
            </div>
-           <div class="section-divider>
+           <div class="section-divider">
             <h3>🕓 Recent Activities</h3>
            </div>
            <div class="notice-list">
@@ -480,7 +480,7 @@ registerPage("people", () => {
                         </div>
                     </div>
                     <dl class="detail-grid">
-                        <dt>Email</dt><dd><a href="mailto: ${escapeHTML(p.email)}">${escapeHTML(p.email)}</a></dd>
+                        <dt>Email</dt><dd><a href="mailto:${escapeHTML(p.email)}">${escapeHTML(p.email)}</a></dd>
                         <dt>Contact</dt><dd>${escapeHTML(p.contact)}</dd>
                         <dt>Department</dt><dd>${escapeHTML(p.department)}</dd>
                     </dl>`,
@@ -1060,7 +1060,7 @@ registerPage("tenders", () => {
                     <dt>Reference</dt><dd>${escapeHTML(t.ref)}</dd>
                     <dt>Category</dt><dd>${escapeHTML(t.category)}</dd>
                     <dt>Budget</dt><dd>${formatMoney(t.budget)}</dd>
-                    <dt>Deadline</dt><dd>${formatDate(t.deadline)}</dd>
+                    <dt>Deadline</dt><dd>${Number.isFinite(Number(t.deadline)) ? formatDate(t.deadline): "NA"}</dd>
                     <dt>Status</dt><dd>${escapeHTML(t.status)}</dd>
                     <dt>Bidders</dt><dd>${t.bidders}</dd>
                 </dl>
