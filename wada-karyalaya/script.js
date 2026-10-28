@@ -136,11 +136,22 @@ function formatDate(ts){
 
 // function to convert time to ease understood past format
 function relativeTime(ts){
-    const d = Math.floor((Date.now() - ts) / 1000);
-    if (d < 60) return 'just now';
-    if (d < 3600) return Math.floor(d / 60) + 'm ago';
-    if (d < 86400) return Math.floor(d / 3600) + 'h ago';
-    if (d < 604800) return Math.floor(d / 86400) + 'ds ago';
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 0){
+        const secs = Math.abs(diff);
+        if (secs < 60) return 'few seconds';
+        if (secs < 3600){
+            return `${Math.ceil(secs / 60)}m`;
+        }
+        if (secs < 86400){
+            return `${Math.ceil(secs / 3600)}h`;
+        }
+        return `${Math.ceil(secs / 86400)}m`;
+    }
+    if (diff < 60) return "just now";
+    if (diff < 60) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 60) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 60) return `${Math.floor(diff / 86400)}d ago`;
     return formatDate(ts);
 }
 
@@ -196,7 +207,7 @@ function renderNotifications(){
     }
     notificationList.innerHTML = STATE.notifications.map(n => 
         `<div class="notification-item ${n.read ? '' : 'unread'}"data-id="${n.id}">
-            <div class="notification-icon">${n.icon}</div>
+            <div class="notification-icon">${escapeHTML(n.icon)}</div>
             <div style="flex: 1">
                 <div class="notification-text">${escapeHTML(n.text)}</div>
                 <div class="notification-time">${relativeTime(n.time)}</div>
@@ -289,7 +300,7 @@ registerPage('home' ,() => {
             <div class="card">
                 <h3>🏘️ Wards</h3>
                 <div class="stat-number">5</div>
-                <p>admiistrative wards</p>
+                <p>administrative wards</p>
             </div>
             <div class="card">
                 <h3>📢 Notices</h3>
@@ -329,7 +340,7 @@ registerPage('home' ,() => {
                         <div class="notice-meta">${escapeHTML(n.category)} • ${relativeTime(n.date)}</div>
                     </div>
                     <div class="notice-actions">
-                        <span class="notice-priority ${n.priority.toLowerCase()}">${n.priority}</span>
+                        <span class="notice-priority ${escapeHTML(String(n.priority).toLowerCase())}">${escapeHTML(n.priority)}</span>
                     </div>
                 </div>`).join("")}
            </div>`;
@@ -945,7 +956,6 @@ registerPage("budget", () => {
         const maxAlloc = Math.max(...budgetData.categories.map(c => c.allocation));
         chart.innerHTML = budgetData.categories.map(c => {
             // generate bar chart
-            const w = (c.allocation / maxAlloc) * 100;
             const spentW = Math.min(100, Math.max(0, (c.spend / c.allocation) * 100));
             return `
                    <div class="bar-row">
@@ -977,12 +987,8 @@ registerPage("budget", () => {
     }
     renderBudget();
     $("#refreshBudgetBtn").addEventListener("click", () => {
-        budgetData.categories.forEach(c => {
-            const inc = Math.floor(Math.random() * 8000000);
-            c.spend = Math.min(c.allocation, c.spend + inc);
-      });
-      renderBudget();
-      showToast("Budget data refreshed", "success");
+        renderBudget();
+        showToast("Budget data refreshed", "success");
     });
 });
 
