@@ -146,7 +146,7 @@ function relativeTime(ts){
         if (secs < 86400){
             return `${Math.ceil(secs / 3600)}h`;
         }
-        return `${Math.ceil(secs / 86400)}m`;
+        return `${Math.ceil(secs / 86400)}d`;
     }
     if (diff < 60) return "just now";
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
@@ -565,7 +565,7 @@ registerPage("notices", () => {
             const n = STATE.notices.find(x => x.id === b.dataset.view);
             openModal(n.title, `
                 <div style="margin-bottom: 1rem;">
-                    <span class="notice-priority ${n.priority}" style="margin-right: 0.5rem;">${n.priority}</span>
+                    <span class="notice-priority ${escapeHTML(String(n.priority).toLowerCase())}" style="margin-right: 0.5rem;">${escapeHTML(n.priority)}</span>
                     <span class="notice-date">${n.category}</span>
                     <span class="notice-date">${formatDate(n.date)}</span>
                 </div>
