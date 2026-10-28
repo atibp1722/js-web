@@ -728,20 +728,30 @@ registerPage("decisions", () => {
         }
         // map to html
         list.innerHTML = filtered.map(d => `
-                        <div class="notice-item" style="border-left-color: var(--text-muted)">
-                            <div style="flex: 1; min-width: 220px;">
-                                 <div class="notice-title">${escapeHTML(d.title)}</div>
-                                <div class="notice-meta">
-                                    <strong>${escapeHTML(d.ref)}</strong> • ${escapeHTML(d.department)} • ${relativeTime(d.date)}
-                                </div>
-                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">${escapeHTML(d.summary.slice(0, 120))}${d.summary.length>120 ? "..." : ""}</div>
-                            </div>
-                        </div>
-                        <div class="notice-actions">
-                            <span class="pill ${d.status === 'Implemented' ? 'pill-open' : d.status === 'Under Review' ? 'pill-awarded' : 'pill-pending'}">${d.status}</span>
-                            <button class="btn btn-sm btn-outline" data-view="${d.id}">Details</button>
-                            <button class="del-btn" data-del="${d.id}" title="Delete">🗑️</button>
-                        </div>`).join("");
+            <div class="notice-item" style="border-left-color: var(--text-muted)">
+                <div style="flex: 1; min-width: 220px;">
+                    <div class="notice-title">
+                        ${escapeHTML(d.title)}
+                    </div>
+                    <div class="notice-meta">
+                        <strong>${escapeHTML(d.ref)}</strong> • ${escapeHTML(d.department)} • ${relativeTime(d.date)}
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                        ${escapeHTML(d.summary.slice(0, 120))}
+                        ${d.summary.length > 120 ? "..." : ""}
+                    </div>
+                </div>
+                <div class="notice-actions">
+                    <span class="pill ${d.status === 'Implemented' ? 'pill-open' : d.status === 'Under Review' ? 'pill-awarded' : 'pill-pending'}">
+                        ${escapeHTML(d.status)}
+                    </span>
+                    <button class="btn btn-sm btn-outline"
+                            data-view="${escapeHTML(d.id)}">
+                        Details
+                    </button>
+                    <button class="del-btn" data-del="${escapeHTML(d.id)}" title="Delete" aria-label="Delete decision">🗑️</button>
+                </div>
+            </div>`).join("");
         // event listeners on all buttons to open modal
         $$("[data-view]", list).forEach(b => b.addEventListener("click", () => {
             const d = STATE.decisions.find(x => x.id === b.dataset.view);
@@ -936,7 +946,7 @@ registerPage("budget", () => {
         chart.innerHTML = budgetData.categories.map(c => {
             // generate bar chart
             const w = (c.allocation / maxAlloc) * 100;
-            const spentW = (c.spend / maxAlloc) * 100;
+            const spentW = Math.min(100, Math.max(0, (c.spend / c.allocation) * 100));
             return `
                    <div class="bar-row">
                         <div style="font-weight: 500;">${escapeHTML(c.title)}</div>
@@ -1290,7 +1300,7 @@ function performSearch(query){
         }
     });
     STATE.decisions.forEach(d => {
-        if (d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q)){
+        if (d.title.toLowerCase().includes(q) || d.summary.toLowerCase().includes(q)){
             results.push({category: 'Decision', title: d.title, snippet: d.summary.slice(0, 50), page: 'decisions'});
         }
     });
@@ -1300,12 +1310,12 @@ function performSearch(query){
         }
     });
     KEY_PEOPLE.forEach(p => {
-        if (p.title.toLowerCase().includes(q) || p.designation.toLowerCase().includes(q) || p.department.toLowerCase().includes(q)){
+        if (p.name.toLowerCase().includes(q) || p.designation.toLowerCase().includes(q) || p.department.toLowerCase().includes(q)){
             results.push({category: 'People', title: p.name, snippet: p.designation + '-' +p.department, page: 'people'});
         }
     });
     citizenCharter.forEach(c => {
-        if (c.title.toLowerCase().includes(q) || c.summary.toLowerCase().includes(q)){
+        if (c.service.toLowerCase().includes(q) || c.summary.toLowerCase().includes(q)){
             results.push({category: 'Charter', title: c.service, snippet: c.summary.slice(0, 50), page: 'charter'});
         }
     });
