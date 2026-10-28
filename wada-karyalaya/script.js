@@ -1349,7 +1349,7 @@ function renderSearchResults(query){
     const results = performSearch(query);
     // message when no results found
     if (!results.length){
-        searchResults.innerHTML = `<div style="padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">No results for '"'+escapeHTML(query)+'"'"</div>`;
+        searchResults.innerHTML = `<div style="padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">No results for "${escapeHTML(query)}"</div>`;
         searchResults.classList.add("active");
         return;
     }
