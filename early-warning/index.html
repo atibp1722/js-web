@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="./style.css">
+    <title>Early Warning App</title>
+</head>
+<body>
+    
+    <div class="container">
+        <header>
+            <h1>🇳🇵 Nepal<span>Early Warning App</span></h1>
+            <div class="header-actions">
+                <button class="btn" id="themeToggle">🌗 Theme</button>
+                <div class="badge">
+                    <span class="dot-loadiing" id="statusDot"></span>
+                    <span id="statusText">Init</span>
+                </div>
+            </div>
+        </header>
+        <div class="search-card">
+            <div class="card-header">
+                <span class="card-title">🔎 Search City</span>
+            </div>
+            <div class="search-row">
+                <input type="text" id="ciytInput" placeholder="Type city name e.g. Kathmandu">
+                <button id="searchBtn">Check</button>
+            </div>
+            <div id="cityResultContainer" style="display: none;">
+                <div class="city-header">
+                    <h2 id="cityName">--</h2>
+                    <span id="cityCoords">--</span>
+                </div>
+                <div class="city-results">
+                    <div class="result-box">
+                        <h4>🌊 Nearest River</h4>
+                        <div id="nearestRiverBox">
+                            <span class="sub">Search city to see river status.</span>
+                        </div>
+                    </div>
+                    <div class="result-box">
+                        <h4>⛰️ Recent Earthquakes</h4>
+                        <div id="nearbyEqBox">
+                            <span class="sub">Search city to see seismic activity.</span>
+                        </div>
+                    </div>
+                    <div class="result-box">
+                        <h4>💨 Air Quality & Lakes</h4>
+                        <div id="aqBox">
+                            <span class="sub">Search city to see AQI.</span>
+                        </div>
+                        <div id="lakeBox" style="margin-top: 0.5rem;">
+                            <span class="sub">Search city to see nearby lakes.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <div class="class-header">
+                    <span class="card-title">Map & Seismic Activity</span>
+                    <span class="count-badge" id="eqCount">--</span>
+                </div>
+                <div id="map"></div>
+                <div class="data-list" id="eqList">
+                    <div class="placeholder">Loading earthquakes...</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="class-header">
+                    <span class="card-title">River Status</span>
+                    <span class="count-badge" id="riverCount">--</span>
+                </div>
+                <div class="data-list" id="riverList">
+                    <div class="placeholder">Loading rivers...</div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <span>USGS ⬩ Open-Meteo ⬩ Leaflet ⬩ OSM</span>
+            <span id="lastUpdated">--</span>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>
