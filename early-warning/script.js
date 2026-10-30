@@ -6,7 +6,7 @@ const NEPAL_COORDS = {
     minLat: 26.0,
     maxLat: 31.0,
     minLon: 80.0,
-    maxLOn: 89.0
+    maxLon: 89.0
 };
 
 // object for api endpoints 
@@ -170,4 +170,138 @@ function updateMapMarkers(){
         // bind popup info with river layer    
         }).bindPop(`<b>${rv.name}</b><br>` + `${rv.discharge?.toFixed(0) || "?"}m³/s`).addTo(riverLayer);
     });
+}
+
+// function to get earthquakes data from api
+async function fetchEarthquakes(){
+    setStatus("loading", "Seismic...");
+    // fetch data from api
+    try{
+        const res = await fetch(API.USGS);
+        if (!res.ok){
+            throw new Error(`HTTP ${res.status}`);
+        }
+        // parse response as json
+        const data = await res.json();
+        // filter using Nepal coordinates
+        earthquakes = (data.features || []).filter((f) => {
+            const [lon, lat] = f.geometry.coordinates;
+            return(
+                lat >= NEPAL_COORDS.minLat &&
+                lat <= NEPAL_COORDS.maxLat && 
+                lon >= NEPAL_COORDS.minLon &&
+                lon <= NEPAL_COORDS.maxLon 
+            );
+        // sort latest earthquakes     
+        }).sort((a, b) => b.properties.time - a.properties.time);
+        renderEarthquakes();
+        // update map markers with earthquakes
+        updateMapMarkers();
+        // if still loading switch to live
+        if ($("statusDot").classList.contains("loading")){
+            setStatus("ok", "Live");
+        }
+    // catch errors and display them    
+    } catch(err){
+        console.error("Error fetching earthquakes", err);
+        $("eqList").innerHTML = `<div class="error-msg">${err.message}</div>`;
+        setStatus("error", "Seismic error");
+    }
+}
+
+// function to render earthquakes on webpage
+function renderEarthquakes(){
+    // update count
+    $("eqCount").textContent = earthquakes.length;
+    // show message and exit if none found
+    if (!earthquakes.length){
+        $("eqList").innerHTML = '<div class="placeholder">No earthquakes in the region.</div>';
+        return;
+    }
+    // map earthquakes into cards and join 
+    $("eqList").innerHTML = earthquakes.slice(0, 15).map((f) => {
+        const p = f.properties;
+        return `
+               <div class="data-item ${magRiskClass(p.mag)}">
+                    <div class="item-main">
+                        <div class="item-title">${p.place || "Unknown"}</div>
+                        <div class="item-meta">
+                            ${timeAgo(new Date(p.time).toISOString())} ago
+                        </div>
+                    </div>
+                    <div class="item-value ${magValueClass(p.mag)}">
+                        M${p.mag?.toFixed(1) || "?"}
+                    </div>
+               </div>`;
+    }).join("");
+}
+
+// function to get river data from api
+async function fetchRivers(){
+    setStatus("loading", "Rivers...");
+    // store river data
+    const results = [];
+    // iterate each river object
+    for (const rv of RIVERS){
+        try{
+            // url parameters for flood api
+            const params = new URLSearchParams({
+                latitude: rv.lat,
+                longitude: rv.lon,
+                daily: "river_discharge",
+                forecast_days: 7,
+                timezone: "auto"
+            });
+            // discharge info from river coordinates
+            const res = await fetch(`${API.FLOODS}?${params}`);
+            if (!res.ok) continue;
+            const data = await res.json();
+            // filter null values 
+            const vals = (data.daily?.river_discharge || []).filter((v) => v != null);
+            if (!vals.length) continue;
+            // push data into array
+            results.push({
+                ...rv, 
+                discharge: vals[0],
+                maxDischarge: Math.max(...vals)
+            });
+        // catch error without breaking iteration cycle    
+        } catch (err){
+            console.warn(`${rv.name} river data fetch failed.`, err);
+        }
+    }
+    // array data into variable
+    rivers = results;
+    renderRivers();
+    // update map markers with rivers
+    updateMapMarkers();
+    if ($("statusDot").classList.contains("loading")){
+        setStatus("ok", "Live")
+    }
+}
+
+// function to render river on webpage
+function renderRivers(){
+    // update count
+    $("riverCount").textContent = rivers.length;
+    // show message and exit if no data found
+    if (!rivers.length){
+        $("riverList").innerHTML = `<div class="placeholder">No river data available.</div>`;
+        return;
+    }
+    // map river object into card and join
+    $("riverList").innerHTML = rivers.map((rv) => {
+        // ratio of current discharge to max discharge
+        const ratio = rv.discharge && rv.maxDischarge ? rv.discharge / rv.maxDischarge : 0;
+        return `
+               <div class="data-item ${floodRiskClass(ratio)}">
+                    <div class="item-main">
+                        <div class="item_title">${rv.name}</div>
+                        <div class="item_meta">${rv.system}</div>
+                    </div>
+                    <div class="item-value ${floodValueClass(ratio)}">
+                        ${rv.discharge?.toFixed(0) || "?"} m³/s
+                    </div>
+               </div>`;
+    }).join("");
 }
