@@ -67,9 +67,10 @@ function setStatus(state, text){
 
 // function to convert date to format 5m, 2h, 3d
 function timeAgo(iso){
-    if (!iso) return;
+    const timestamp = new Date(iso).getTime();
+    if (!Number.isFinite(timestamp)) return "Invalid Time";
     // elapsed time in seconds
-    const d = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+    const d = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
     if (d < 60) return `${d}s`;
     if (d < 3600) return `${Math.floor(d / 60)}m`;
     if (d < 86400) return `${Math.floor(d / 3600)}h`;
@@ -84,7 +85,7 @@ function distanceInKm(lat1, lon1, lat2, lon2){
     const dLat = (lat2 -lat1) * Math.PI / 180;
     const dLon = (lon2 -lon1) * Math.PI / 180;
     // haversine formula
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
     // final distance kn km
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
@@ -105,6 +106,7 @@ function magValueClass(mag){
 
 // function categorize flood risk
 function floodRiskClass(ratio){
+    if (!Number.isFinite(ratio)) return "info";
     if (ratio >= 0.85) return "high";
     if (ratio >= 0.6) return "medium";
     return "low";
@@ -112,6 +114,7 @@ function floodRiskClass(ratio){
 
 // function to assign css class to conditional flood values
 function floodValueClass(ratio){
+    if (!Number.isFinite(ratio)) return "val-info";
     if (ratio >= 0.85) return "val-high";
     if (ratio >= 0.6) return "val-medium";
     return "val-low";
@@ -152,13 +155,13 @@ function updateMapMarkers(){
             fillOpacity: 0.4,
             weight: 1
         // bind popup info with earthquake layer
-        }).bindPopup(`<b>${p.place}</b><br>` + `M${p.mag?.toFixed(1)}.${timeAgo(new Date(p.time).toISOString())} ago`).addTo(eqLayer);
+        }).bindPopup(`<b>${p.place}</b><br>` + `M${p.mag?.toFixed(1) ?? "?"} ⬩ ${timeAgo(p.time)} ago`).addTo(eqLayer);
     });
     riverLayer.clearLayers();
     // iterate rivers
     rivers.forEach((rv) => {
         // calculate discharge ration
-        const ratio = rv.discharge && rv.maxDischarge ? rv.discharge / rv.maxDischarge : 0;
+        const ratio = Number.isFinite(rv.discharge) && Number.isFinite(rv.maxDischarge) && rv.maxDischarge > 0 ? rv.discharge / rv.maxDischarge : NaN;;
         // color based on discharge ratio
         const color = ratio >= 0.85 ? "#f44336" : ratio >= 0.6 ? "#ff9800" : "#4caf50";
         L.circleMarker([rv.lat, rv.lon], {
@@ -295,7 +298,7 @@ function renderRivers(){
     // map river object into card and join
     $("riverList").innerHTML = rivers.map((rv) => {
         // ratio of current discharge to max discharge
-        const ratio = rv.discharge && rv.maxDischarge ? rv.discharge / rv.maxDischarge : 0;
+        const ratio = Number.isFinite(rv.discharge) && Number.isFinite(rv.maxDischarge) && rv.maxDischarge > 0 ? rv.discharge / rv.maxDischarge : NaN;
         return `
                <div class="data-item ${floodRiskClass(ratio)}">
                     <div class="item-main">
@@ -314,6 +317,7 @@ async function geocodeCity(name){
     // params for nominatim request
     const params = new URLSearchParams({
         q: `${name}, Nepal`,
+        coutrycodes: "np",
         format: 'json',
         limit: 1,
         addressdetails: 1
@@ -367,7 +371,7 @@ async function searchCity(){
         });
         // when found update ratio and category
         if (nearestRiver){
-            const ratio = nearestRiver.discharge && nearestRiver.maxDischarge ? nearestRiver.discharge / nearestRiver.maxDischarge : 0;
+            const ratio = Number.isFinite(nearestRiver.discharge) && Number.isFinite(nearestRiver.maxDischarge) && nearestRiver.maxDischarge > 0 ? nearestRiver.discharge / nearestRiver.maxDischarge : NaN;;
             let label, labelClass;
             // risk based on discharge ration
             if (ratio >= 0.85){
@@ -385,7 +389,7 @@ async function searchCity(){
                                              <div class="big-num ${labelClass}">${label}</div>
                                              <div class="sub">${nearestRiver.name}</div>
                                              <div class="sub" style="margin-top: 0.3rem;">
-                                                Distance: ${minDist.toFixed(1)} km ⬩ ${nearestRiver.discharge.toFixed() || "?"} m³/s (${(ratio * 100).toFixed(0)}% of peak)
+                                                Distance: ${minDist.toFixed(1)} km ⬩ ${Number.isFinite(nearestRiver.discharge) ? nearestRiver.discharge.toFixed(0) : "?"} m³/s (${(ratio * 100).toFixed(0)}% of peak)
                                              </div>
                                              <div class="sub">System: ${nearestRiver.system}</div>`;
         } else{
@@ -436,14 +440,17 @@ async function searchCity(){
                 // aqi categorization labels
                 let aqiLabel = "Good";
                 let aqiClass = "ok-text";
-                if (aqi > 150){
-                    aqiLabel = "Unhealthy";
+                if (aqi > 500){
+                    aqiLabel = "Hazardous";
                     aqiClass = "warn-text";
-                } else if (aqi > 100){
-                    aqiLabel = "Sensetive";
+                } else if (aqi >= 150){
+                    aqiLabel = "Unhealthy";
                     aqiClass = "mid-text";
-                } else if (aqi > 50){
+                } else if (aqi > 100){
                     aqiLabel = "Moderate";
+                    aqiClass = "ok-text";
+                } else if (aqi < 50){
+                    aqiLabel = "Good";
                     aqiClass = "ok-text";
                 }
                 // put info into its dom

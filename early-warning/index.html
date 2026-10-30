@@ -15,7 +15,7 @@
             <div class="header-actions">
                 <button class="btn" id="themeToggle">🌗 Theme</button>
                 <div class="badge">
-                    <span class="dot-loading" id="statusDot"></span>
+                    <span class="dot loading" id="statusDot"></span>
                     <span id="statusText">--</span>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                     <span class="card-title">Map & Seismic Activity</span>
                     <span class="count-badge" id="eqCount">--</span>
                 </div>
-                <div id="map"></div>
-                <div class="data-list" id="eqList">
+                <div id="map" role="region"></div>
+                <div class="data-list" id="eqList" aria-live="polite">
                     <div class="placeholder">Loading earthquakes...</div>
                 </div>
             </div>
