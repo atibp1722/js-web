@@ -305,3 +305,188 @@ function renderRivers(){
                </div>`;
     }).join("");
 }
+
+// function to take Nepal city name and return its coordinates
+async function geocodeCity(name){
+    // params for nominatim request
+    const params = new URLSearchParams({
+        q: `${name}, Nepal`,
+        format: 'json',
+        limit: 1,
+        addressdetails: 1
+    });
+    // fetch data with english language
+    const res = await fetch (`${API.NOMINATIM}?${params}`, {
+        headers: {'Accept-Language': "en"}
+    });
+    if (!res.ok){
+        throw new Error("Geocding service unavailable.");
+    }
+    // parse into json
+    const data = await res.json();
+    // error if nothhing found
+    if (!data.length){
+        throw new Error("No such city in Nepal.");
+    }
+    // return city coordinates
+    return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+        displayName: data[0].display_name.split(",")[0]
+    };
+}
+
+// main function to handle geocoding, get info, update map and webpage details
+async function searchCity(){
+    // get user input
+    const input = $("cityInput").value.trim();
+    if (!input) return;
+    $("cityResultContainer").style.display = "none";
+    setStatus("loading", "Geocoding...");
+    try{
+        // wait geocoding results
+        const city = await geocodeCity(input);
+        currentCity = city;
+        // update webpage with details
+        $("cityName").textContent = city.displayName;
+        $("cityCoords").textContent = `${city.lat.toFixed(3)}°N, ${city.lon.toFixed(3)}°E`;
+        $("cityResultContainer").style.display = "block";
+        // variables for river near city
+        let nearestRiver = null;
+        let minDist = Infinity;
+        // iterate rivers to find minimum distance from city coordinates
+        rivers.forEach((rv) => {
+            const d = distanceInKm(city.lat, city.lon, rv.lat, rv.lon);
+            if (d < minDist){
+                minDist = d;
+                nearestRiver = rv;
+            }
+        });
+        // when found update ratio and category
+        if (nearestRiver){
+            const ratio = nearestRiver.discharge && nearestRiver.maxDischarge ? nearestRiver.discharge / nearestRiver.maxDischarge : 0;
+            let label, labelClass;
+            // risk based on discharge ration
+            if (ratio >= 0.85){
+                label = "High Risk";
+                labelClass = "warn-text";
+            } else if (ratio >= 0.6){
+                label = "Elevated";
+                labelClass = "mid-text";
+            } else{
+                label = "Ok";
+                labelClass = "ok-text";
+            }
+            // put info into its dom
+            $("nearestRiverBox").innerHTML = `
+                                             <div class="big-num ${labelClass}">${label}</div>
+                                             <div class="sub">${nearestRiver.name}</div>
+                                             <div class="sub" style="margin-top: 0.3rem;">
+                                                Distance: ${minDist.toFixed(1)} km ⬩ ${nearestRiver.discharge.toFixed() || "?"} m³/s (${(ratio * 100).toFixed(0)}% of peak)
+                                             </div>
+                                             <div class="sub">System: ${nearestRiver.system}</div>`;
+        } else{
+            // error messsage if none found
+            $("nearestRiverBox").innerHTML = '<span class="sub">No river data available</span>';
+        }
+        // get earthquakes within 100km of user entered city
+        const nearbyEarthquakes = earthquakes.filter((f) => {
+            const [lon, lat] = f.geometry.coordinates;
+            return (
+                distanceInKm(city.lat, city.lon, lat, lon) <= 100
+            );
+        }).slice(0, 5);
+        // get nearby earthquakes
+        if (nearbyEarthquakes.length){
+            $("nearbyEqBox").innerHTML = nearbyEarthquakes.map((f) => {
+                const p = f.properties;
+                const [lon, lat] = f.geometry.coordinates;
+                const d = distanceInKm(city.lat, city.lon, lat, lon);
+                const cls = p.mag >= 5 ? "warn-text" : "";
+                return `
+                       <div class="nearby-item">
+                            <span class="name ${cls}">
+                                M${p.mag?.toFixed(1)}
+                            </span>
+                            <span class="dist">
+                                ${d.toFixed(0)} km ⬩ ${timeAgo(new Date(p.time).toISOString())} ago
+                            </span>
+                       </div>`
+            }).join("");
+        } else{
+            // error message if none found
+            $("nearbyEqBox").innerHTML = '<span class="ok-text" style="font-size: 0.75rem;">' + 'No earthquakes within 100 kms.</span>';
+        }
+        // get aqi data for user entered city
+        try{
+            const aqParams = new URLSearchParams({
+                latitude: city.lat,
+                longitude: city.lon,
+                current: 'pm2_5,us_aqi',
+                timezone: 'auto'
+            });
+            const aqRes = await fetch (`${API.AIR}?${aqParams}`);
+            if (aqRes.ok){
+                const aqData = await aqRes.json();
+                const pm25 = aqData.current?.pm2_5;
+                const aqi = aqData.current?.us_aqi;
+                // aqi categorization labels
+                let aqiLabel = "Good";
+                let aqiClass = "ok-text";
+                if (aqi > 150){
+                    aqiLabel = "Unhealthy";
+                    aqiClass = "warn-text";
+                } else if (aqi > 100){
+                    aqiLabel = "Sensetive";
+                    aqiClass = "mid-text";
+                } else if (aqi > 50){
+                    aqiLabel = "Moderate";
+                    aqiClass = "ok-text";
+                }
+                // put info into its dom
+                $("aqBox").innerHTML = `
+                                       <div class="big-num ${aqiClass}">${aqiClass ?? "?"}</div>
+                                       <div class="sub">AQI: ${aqiLabel}</div>
+                                       <div class="sub">PM2.5: ${pm25 ?? "?"}</div>`;
+            } else{
+                $("aqBox").innerHTML = '<span class="sub">AQI data unavaiable.</span>';
+            }
+        } catch (err){
+            $("aqBox").innerHTML = '<span class="sub">AQI data unavaiable.</span>';
+        }
+        // get lakes within 50km of user entered city
+        const nearbyLakes = LAKES.filter((lk) => distanceInKm(city.lat, city.lon, lk.lat, lk.lon) <= 50);
+        if (nearbyLakes.length){
+            $("lakeBox").innerHTML = '<div class="sub" style="margin-bottom: 0.2rem; font-weight: 500;">' + 
+                                     'Nearby Lakes: </div>' + 
+                                     nearbyLakes.map((lk) => {
+                                        const d = distanceInKm(city.lat, city.lon, lk.lat, lk.lon);
+                                        return `
+                                               <div class="nearby-item">
+                                                    <span class="name">${lk.name}</span>
+                                                    <span class="dist">${d.toFixed(0)} km</span>
+                                               </div>`;
+                                     }).join("");
+        } else{
+            $("lakeBox").innerHTML = '<span class="sub" style="font-size: 0.7rem;">No lakes within 50km.</span>';
+        }
+        // remove existing city marker
+        if (cityMarker) map.removeLayer(cityMarker);
+        // new marker for user entered city
+        cityMarker = L.marker([city.lat, city.lon]).addTo(map).bindPop(`<b>${city.displayName}</b><br>Your search location`).openPopup();
+        // zoom to new city
+        map.setView([city.lat, city.lon], 9);
+        setStatus("ok", "Live");
+    } catch (err){
+        // handle errors
+        console.error("Error searching city.", err);
+        $("cityName").textContent = "Not Found";
+        $("cityCoords").textContent = "";
+        $("cityResultContainer").style.display = "block";
+        $("nearestRiverBox").innerHTML = `<span class="warn-text" style="font-size: 0.75rem">${err.message}</span>`;
+        $("nearestEqBox").innerHTML = "";
+        $("aqBox").innerHTML = "";
+        $("lakeBox").innerHTML = "";
+        setStatus("error", "City error");
+    }
+}
