@@ -33,7 +33,7 @@ body{
     color: var(--text);
     min-height: 100vh;
     padding: 1.5rem;
-    transition: background 0.3s color 0.3s;
+    transition: background 0.3s, color 0.3s;
 }
 
 .container{
@@ -297,6 +297,7 @@ h1 span{
 
 #map{
     height: 260px;
+    width: 100%;
     border-radius: 12px;
     margin-bottom: 1rem;
     border: 1px solid var(--border);

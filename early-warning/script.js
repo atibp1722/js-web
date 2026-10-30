@@ -11,7 +11,7 @@ const NEPAL_COORDS = {
 
 // object for api endpoints 
 const API = {
-    USGS: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php",
+    USGS: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/all_week.geojson.php",
     FLOODS: "https://flood-api.open-meteo.com/v1/flood",
     AIR: "https://air-quality-api.open-meteo.com/v1/air-quality",
     NOMINATIM: "https://nominatim.openstreetmap.org/search"
@@ -122,14 +122,14 @@ function initMap(){
     // Nepal map at zoom level 6 
     map = L.map("map").setView([28.3, 84.1], 6);
     // map key attributes
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: "&copy; OSM &copy; CARTO",
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
         subdomains: "abcd",
         maxZoom: 19
     }).addTo(map);
     // add earthquake and river layer to map
-    eqLayer = L.layerGroup.addTo(map);
-    riverLayer = L.layerGroup.addTo(map);
+    eqLayer = L.layerGroup().addTo(map);
+    riverLayer = L.layerGroup().addTo(map);
 }
 
 // function to update map based on earthquake and river 
@@ -152,7 +152,7 @@ function updateMapMarkers(){
             fillOpacity: 0.4,
             weight: 1
         // bind popup info with earthquake layer
-        }).bindPop(`<b>${p.place}</b><br>` + `M${p.mag?.toFixed(1)}.${timeAgo(new Date(p.time).toISOString())} ago`).addTo(eqLayer);
+        }).bindPopup(`<b>${p.place}</b><br>` + `M${p.mag?.toFixed(1)}.${timeAgo(new Date(p.time).toISOString())} ago`).addTo(eqLayer);
     });
     riverLayer.clearLayers();
     // iterate rivers
@@ -168,7 +168,7 @@ function updateMapMarkers(){
             fillOpacity: 0.7,
             weight: 2
         // bind popup info with river layer    
-        }).bindPop(`<b>${rv.name}</b><br>` + `${rv.discharge?.toFixed(0) || "?"}m³/s`).addTo(riverLayer);
+        }).bindPopup(`<b>${rv.name}</b><br>` + `${rv.discharge?.toFixed(0) || "?"}m³/s`).addTo(riverLayer);
     });
 }
 
@@ -445,7 +445,7 @@ async function searchCity(){
                 }
                 // put info into its dom
                 $("aqBox").innerHTML = `
-                                       <div class="big-num ${aqiClass}">${aqiClass ?? "?"}</div>
+                                       <div class="big-num ${aqiClass}">${aqi ?? "?"}</div>
                                        <div class="sub">AQI: ${aqiLabel}</div>
                                        <div class="sub">PM2.5: ${pm25 ?? "?"}</div>`;
             } else{
@@ -473,7 +473,7 @@ async function searchCity(){
         // remove existing city marker
         if (cityMarker) map.removeLayer(cityMarker);
         // new marker for user entered city
-        cityMarker = L.marker([city.lat, city.lon]).addTo(map).bindPop(`<b>${city.displayName}</b><br>Your search location`).openPopup();
+        cityMarker = L.marker([city.lat, city.lon]).addTo(map).bindPopup(`<b>${city.displayName}</b><br>Your search location`).openPopup();
         // zoom to new city
         map.setView([city.lat, city.lon], 9);
         setStatus("ok", "Live");
@@ -510,7 +510,7 @@ async function init(){
     // listener on theme toggle button
     $("themeToggle").addEventListener("click", toggleTheme);
     // listener on city search button
-    $("searchCityBtn").addEventListener("click", searchCity);
+    $("searchBtn").addEventListener("click", searchCity);
     // listener to trigger search on enter press
     $("cityInput").addEventListener("keydown", (e) => {
         if (e.key === "Enter"){
