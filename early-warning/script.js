@@ -39,7 +39,7 @@ const LAKES = [
     {name: "Rara Lake", lat: 29.53, lon: 82.08, city: "Mugu"},
     {name: "Tilicho Lake", lat: 28.68, lon: 83.85, city: "Annapurna"},
     {name: "Shey Phoksundo", lat: 29.20, lon: 82.95, city: "Dolpa"},
-    {name: "Tso Rolpa", lat: 27.83, lon: 85.47, city: "Rolwaling"},
+    {name: "Tso Rolpa", lat: 27.52, lon: 86.28, city: "Rolwaling"},
     {name: "Imjo Lake", lat: 27.98, lon: 85.93, city: "Everest"},
     {name: "Gokyo Lake", lat: 27.95, lon: 87.68, city: "Everest"}
 ];
@@ -122,8 +122,8 @@ function initMap(){
     // Nepal map at zoom level 6 
     map = L.map("map").setView([28.3, 84.1], 6);
     // map key attributes
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_4ya0_1_c816b38399d7415dffd75aab', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: "abcd",
         maxZoom: 19
     }).addTo(map);
@@ -185,6 +185,9 @@ async function fetchEarthquakes(){
         const data = await res.json();
         // filter using Nepal coordinates
         earthquakes = (data.features || []).filter((f) => {
+            if (!f.geometry || !f.geometry.coordinates || f.geometry.coordinates.length < 2){
+                return false;
+            }
             const [lon, lat] = f.geometry.coordinates;
             return(
                 lat >= NEPAL_COORDS.minLat &&
@@ -296,8 +299,8 @@ function renderRivers(){
         return `
                <div class="data-item ${floodRiskClass(ratio)}">
                     <div class="item-main">
-                        <div class="item_title">${rv.name}</div>
-                        <div class="item_meta">${rv.system}</div>
+                        <div class="item-title">${rv.name}</div>
+                        <div class="item-meta">${rv.system}</div>
                     </div>
                     <div class="item-value ${floodValueClass(ratio)}">
                         ${rv.discharge?.toFixed(0) || "?"} m³/s
@@ -484,7 +487,7 @@ async function searchCity(){
         $("cityCoords").textContent = "";
         $("cityResultContainer").style.display = "block";
         $("nearestRiverBox").innerHTML = `<span class="warn-text" style="font-size: 0.75rem">${err.message}</span>`;
-        $("nearestEqBox").innerHTML = "";
+        $("nearbyEqBox").innerHTML = "";
         $("aqBox").innerHTML = "";
         $("lakeBox").innerHTML = "";
         setStatus("error", "City error");
