@@ -490,3 +490,45 @@ async function searchCity(){
         setStatus("error", "City error");
     }
 }
+
+// function to toggle between light and dark theme
+function toggleTheme(){
+    // toggle light class
+    document.body.classList.toggle("light");
+    // save current theme
+    localStorage.setItem('nepalTheme', document.body.classList.contains("light") ? "light" : "dark");
+}
+
+// initialization function
+async function init(){
+    // check light theme previosuly saved and apply it 
+    if (localStorage.getItem("nepalTheme") === "light"){
+        document.body.classList.add("light");
+    }
+    // initialize map
+    initMap();
+    // listener on theme toggle button
+    $("themeToggle").addEventListener("click", toggleTheme);
+    // listener on city search button
+    $("searchCityBtn").addEventListener("click", searchCity);
+    // listener to trigger search on enter press
+    $("cityInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter"){
+            searchCity();
+        }
+    });
+    // get earthquakes and rivers concurrently
+    await Promise.allSettled([fetchEarthquakes(), fetchRivers()]);
+    // check for error during initialization
+    if (!$("statusDot").classList.contains("error")){
+        setStatus("ok", "Live");
+    }
+    // update last updated details
+    $("lastUpdated").textContent = `Updated ${new Date().toLocaleTimeString()}`;
+    // interval to refresh data every 3 minutes
+    setInterval(async () => {
+        await Promise.allSettled([fetchEarthquakes(), fetchRivers()]);
+        $("lastUpdated").textContent = `Updated ${new Date().toLocaleTimeString()}`;
+    }, 3 * 60 * 1000);
+}
+init();
