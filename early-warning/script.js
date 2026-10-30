@@ -440,7 +440,7 @@ async function searchCity(){
                 // aqi categorization labels
                 let aqiLabel = "Good";
                 let aqiClass = "ok-text";
-                if (aqi > 500){
+                if (aqi >= 500){
                     aqiLabel = "Hazardous";
                     aqiClass = "warn-text";
                 } else if (aqi >= 150){
@@ -449,7 +449,7 @@ async function searchCity(){
                 } else if (aqi > 100){
                     aqiLabel = "Moderate";
                     aqiClass = "ok-text";
-                } else if (aqi < 50){
+                } else if (aqi <= 50){
                     aqiLabel = "Good";
                     aqiClass = "ok-text";
                 }
