@@ -569,46 +569,46 @@ mark{
 }
 
 .stepper button{
-   border: 0;
-   background: transparent;
-   width: 34px;
-   height: 34px;
-   font-size: 18px;
-   border-radius: 50%;
+    border: 0;
+    background: transparent;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+    border-radius: 50%;
 }
 
 .stepper span{
-   min-width: 24px;
-   text-align: center;
-   font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
 }
 
 .empty{
-   text-align: center;
-   padding: 60px 10px;
-   color: var(--muted);
+    text-align: center;
+    padding: 60px 10px;
+    color: var(--muted);
 }
 
 .empty .big{
-   font-size: 56px;
+    font-size: 56px;
 }
 
 .legend{
-   margin-top: 10px;
-   font-size: 13px;
-   color: var(--muted);
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
 }
 
 .legend summary{
-   cursor: pointer;
+    cursor: pointer;
 }
 
 .legend div{
-   display: flex;
-   gap: 16px;
-   flex-wrap: wrap;
-   margin-top: 8px;
-   align-items: center;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    align-items: center;
 }
 
 .scrim{
