@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Himalicious Kitchen</title>
+    <meta name="theme-color" content="#7a1f2b">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <a class="skip" href="#menu">Skip To Menu</a>
+    <header class="site-header" id="siteHeader">
+        <div class="dhaka" aria-hidden="true"></div>
+        <div class="wrap-bar">
+            <a class="brand" href="#top" aria-label="Home">
+                <span class="brand-mark" aria-hidden="true">🏞️</span>
+                <span><b id="brand-name">Himalicious</b><small> Cloud Kitchen</small></span>
+            </a>
+            <span class="status" id="status" aria-live="polite"></span>
+            <button class="btn cart-btn" id="openCart" aria-label="Open cart">🛒
+                <span id="cartCount">0</span class="hide-sm" id="cartTotal"><span></span>
+            </button>
+        </div>
+    </header>
+    <main id="top">
+        <section class="hero">
+            <div class="wrap">
+                <h1>Delivering Authentic Taste & Flavors</h1>
+                <p>Freshly cooked food -- from Himalayas to Terai and everything in between.</p>
+                <div class="cta">
+                    <a class="btn" href="#menu" style="text-decoration: none;">Menu</a>
+                    <button class="btn-ghost" id="heroChat" type="button">Chat</button>
+                </div>
+                <div class="facts" id="heroFacts"></div>
+            </div>
+            <svg viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+                <polygon fill="#a8434f" opacity=".55" points="0,90 0,60 140,25 230,52 360,8 470,50 560,30 700,70 820,22 940,55 1060,30 1200,62 1200,90"/>
+                <polygon fill="#fbf5ea" points="0,90 0,76 180,50 300,70 460,42 620,72 780,48 960,74 1100,52 1200,72 1200,90"/>
+            </svg>
+        </section>
+        <section class="wrap" id="specialsWrap" hidden>
+            <div class="section-title"><h2>⭐ Today's Specials</h2><small id="speicalsDate"></small></div>
+            <div class="grid" id="specialsGrid"></div>
+        </section>
+        <div class="controls" id="controls">
+            <div class="wrap">
+                <div class="searchbox">
+                    <span aria-hidden="true">🔎</span>
+                    <input id="q" type="search" autocomplete="off" aria-label="Search menu" placeholder="Search for momo, thakali...">
+                    <button class="icon" id="clearQ" type="button" aria-label="Clear search" hidden>X</button>
+                </div>
+                <div class="chips" id="catChips" aria-label="Categories"></div>
+                <div class="chips" id="dietChips" aria-label="Dietary filter"></div>
+                <div class="chips" id="cultChips" aria-label="Cultural filter"></div>
+                <div class="toolbar">
+                    <label>Sort <select id="sort">
+                        <option value="default">Menu Order</option>
+                        <option value="priceAsc">Price: low→high</option>
+                        <option value="priceDesc">Price: high→low</option>
+                        <option value="spice">Spiciest</option>
+                        <option value="name">Name: A-Z</option>
+                    </select></label>
+                    <label><input type="checkbox" id="hideSold">Hide Sold-Out</label>
+                    <span id="count" aria-live="polite"></span>
+                </div>
+            </div>
+        </div>
+        <section class="wrap" id="menu">
+            <details class="legend">
+                <summary>Click here for marker details ↓</summary>
+                <div>
+                    <span><span class="dot veg"></span> Vegetarian</span>
+                    <span><span class="dot nonveg"></span> Non-Vegetarian</span>
+                    <span><span class="tag diet">Vegan</span> 100% animal free</span>
+                    <span><span class="tag diet">Gluten-free</span> 100% non-wheat</span>
+                    <span><span class="tag diet">Contains Dairy</span> 100% non-wheat</span>
+                    <span><span class="tag cult">Newari</span> <span class="tag cult">Thakali</span> <span class="tag cult">Pahadi</span> <span class="tag cult">Tibetian</span> <span class="tag cult">Festive</span> origin</span>
+                    <span>🔥 Spicy [1-3]</span>
+                </div>
+            </details>
+            <div id="menuRoot"></div>
+        </section>
+    </main>
+    <footer>
+        <div class="wrap-cols">
+            <div><h3 id="footBrand">Hamlicious</h3><p id="footAbout"></p></div>
+            <div><h3>Reach Us</h3><p id="footContact"></p></div>
+            <div><h3>Good to Know</h3>
+                <p>Price included are in NPR. Food is cooked fresh to order -- please tell us in advance regarding any cultural preferences. Dietray markers are included for further information.</p>
+                <p>©<span id="year"></span> о <button class="staff-link" type="button"></button></p>
+            </div>
+        </div>
+    </footer>
+    <div class="scrim" id="scrim" hidden></div>
+    <aside class="drawer" id="cart" aria-label="Your cart" inert>
+        <header><h2>Your Order</h2><button class="icon" data-act="closeCart" aria-label="Close cart">X</button></header>
+        <div class="scroll">
+            <div id="cartLines"></div>
+            <div id="cartSummary"></div>
+            <form class="checkout" id="checkoutForm" novalidate>
+                <div class="seg" id="radioGroup" aria-label="Order type">
+                    <label><input type="radio" name="mode" value="delivery" checked>🛵 Delivery</label>
+                    <label><input type="radio" name="mode" value="delivery">🏪 Pickup</label>
+                </div>
+                <label>Full Name <input name="name" autocomplete="name" required maxlength="30"></label>
+                <label>Contact No. <input name="contact" type="tel" inputmode="numeric" autocomplete="tel" required maxlength="10" pattern="9[678][0-9][8]" placeholder="9XXXXXXXXX"></label>
+                <div id="deliveryFields" style="display: grid; gap: 10px;">
+                    <label>Delivery Area <select name="zone"></select></label>
+                    <label>Address &amp; Landmark <textarea name="address" maxlength="100" required placeholder="Enter tole, street name or nearby landmark..."></textarea></label>
+                </div>
+                <label>Payment <select name="pay">
+                    <option>Cash on Delivery</option>
+                    <option>eSewa</option>
+                    <option>Khalti</option>
+                    <option>ConnectIPS</option>
+                </select></label>
+                <label>Notes for kitchen <textarea name="note" maxlength="200" placeholder="Spice level, allergies, no garlic/onion..."></textarea></label>
+                <div id="sendNotice"></div>
+                <div class="send">
+                    <button class="btn wa" type="button" data-send="whatsapp">WhatsApp</button>
+                    <button class="btn vb" type="button" data-send="viber">Viber</button>
+                    <button class="btn ms" type="button" data-send="messenger">Messenger</button>
+                    <button class="btn cp" type="button" data-send="copy">Copy Order</button>
+                </div>
+                <p class="hint">Your order is sent as a text message. Please wait for final bill and delivery time reply.</p>
+                <button class="btn ghost" type="button" data-act="clearCart" style="color: black;">Empty Cart</button>
+            </form>
+        </div>
+    </aside>
+    <div class="fab" id="fab">
+        <div class="menu" id="fabMenu"></div>
+        <button class="main" id="fabBtn" type="button" aria-expanded="false">💬 Chat With Us</button>
+    </div>
+    <dialog id="staffDialog" aria-labelledby="staffTitle">
+        <div class="dlg-head"><h2 id="staffTitle">Kitchen Dashboard</h2>
+            <button class="icon" data-act="closeStaff" aria-label="Close">X</button>
+        </div>
+        <div class="dlg-body" id="staffBody"></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
