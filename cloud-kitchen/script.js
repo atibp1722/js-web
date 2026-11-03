@@ -103,7 +103,7 @@ for(const m of MENU){
         m.diet.includes("gf") ? "gluten free glutenfree" : "",
         m.diet.includes("dairy") ? "dairy" : "",
         m.spice >= 2 ? "spicy hot" : "mild",
-        m.culture.map(c => TAGS.culture[c].join("")),
+        m.culture.map(c => TAGS.culture[c] || []).join(""),
         CATEGORIES.find(c => c.id === m.cat).label
     ].join("");
     // parse and split into arrays
@@ -254,7 +254,7 @@ function highlight(text, tokens){
     // regular expression to match search query and escape regex characters
     const regex = new RegExp('(' + tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi');
     // split and pattern matching using regex
-    return text.split(regex).map((part, i) => i % 2 ? `<mark>${escapeHTML(part)}</mark>` : escapeHTML(part)),join("");
+    return text.split(regex).map((part, i) => i % 2 ? `<mark>${escapeHTML(part)}</mark>` : escapeHTML(part)).join("");
 }
 
 // function to create dynamic menu card
@@ -296,4 +296,172 @@ function cardHTML(v, tokens = []){
                     <div class="foot">${price} ${action}</div>
                 </div>
             </article>`;
+}
+
+// function to handle filter by diet, culture
+function getFiltered(){
+    // search query convert and split
+    const tokens = STATE.query.toLowerCase().split(/\s+/).filter(Boolean);
+    // map to view state and filter
+    let list = MENU.map(view).filter(v => {
+        // exclusion conditions
+        if (STATE.cat !== "all" && v.cat !== STATE.cat) return false;
+        if (STATE.hideSold && v.soldOut) return false;
+        if (STATE.culture !== "all" && !v.culture.includes(STATE.culture)) return false;
+        // iterate all diet restrictions
+        for(const d of STATE.diet){
+            if (d === "veg" && !isVeg(v)) return false;
+            if (d === "vegan" && !v.diet.includes("vegan")) return false;
+            if (d === "gf" && !v.diet.includes("gf")) return false;
+            if (d === "mild" && v.spice > 1) return false;
+        }
+        // search query matching
+        return tokens.every(t => v._words.some(w => w.startsWith(t)));
+    });
+    // sorters
+    const sorters = {
+        priceAsc: (a, b) => a.price - b.price, 
+        priceDesc: (a, b) => b.price - a.price,
+        spice: (a, b) => b.spice - a.spice,
+        name: (a, b) => a.name.localeCompare(b.name)
+    };
+    // valid sorter trigger
+    if (sorters[STATE.sort]){
+        list.sort(sorters[STATE.sort]);
+    }
+    // return filtered list and search query
+    return {list, tokens};
+}
+
+// function for filter chip (category, diet and culture)
+function renderControls(){
+    // display category filters
+    $("#catChips").innerHTML = [
+        {id: "all", label: "All"},
+        ...CATEGORIES.map(c => ({id: c.id, label: `${c.pic} ${c.label}`}))
+    ].map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${STATE.cat === c.id}">${escapeHTML(c.label)}</button>`).join("");
+    // display dietary filters
+    $("#dietChips").innerHTML = DIET_FILTERS.map(f => `<button class="chip" data-diet="${f.key}" aria-pressed="${STATE.diet.has(f.key)}">${escapeHTML(f.label)}</button>`).join("");
+    // display cultural filters
+    $("#cultChips").innerHTML = [
+        ["all", "All Cuisines"],
+        ...Object.entries(TAGS.culture)
+    ].map(([k, l]) => `<button class="chip cult" data-cult="${k}" aria-pressed="${STATE.culture === k}">${escapeHTML(l)}</button>`).join("");
+}
+
+// function to display menu
+function renderMenu(){
+    // get filtered list and search query
+    const {list, tokens} = getFiltered();
+    // item count indicator
+    $("#count").textContent = `${list.length} dish${list.length === 1 ? "" : "es"}`;
+    // clear button based on true/false return
+    $("#clearQ").hidden = !STATE.query;
+    const root = $("#menuRoot");
+    // if no items match with searc query
+    if (!list.length){
+        root.innerHTML = `<div class="empty">
+                                <div class="big">🔎</div>
+                                <h3>No matching items found.</h3>
+                                <p>Try a different word or clear the filters.</p>
+                                <button class="btn dark" data-act="resetFilters">Reset Filters</button>
+                          </div>`;
+        return;
+    }
+    // display items by category
+    root.innerHTML = CATEGORIES.map(c => {
+        const items = list.filter(v => v.cat === c.id);
+        // only display if category has item
+        return items.length ? `<div class="section-title">
+                                    <h2>${c.pic} ${esc(c.label)}</h2><small>${items.length}</small>
+                               </div>
+                               <div class="grid">
+                                    ${items.map(v => cardHTML(v, tokens)).join('')}
+                               </div>` : "";
+    }).join("");
+}
+
+// function render current day special items
+function renderSpecials(){
+    // get cuurent day special item
+    const sp = activeSpecials();
+    // menu include only item present in special
+    const items = MENU.filter(m => m.id in sp).map(view);
+    // hide if no specials for the day
+    $("#specialsWrap").hidden = !items.length;
+    // display special item card grid
+    $("#specialsGrid").innerHTML = items.map(v => cardHTML(v)).join("");
+    // format date to Nepal time
+    $("#specialsDate").textContent = new Date().toLocaleString('en-GB',{
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        timeZone: "Asia/Kathmandu"
+    });
+}
+
+// function to update restaurant open & close time
+function renderStatus(){
+    // get minutes and data from CONFIG object
+    const {minutes} = liveTime(), {open, close} = CONFIG.hours;
+    // check if it fits threhold
+    const isOpen = minutes >= open && minutes < close;
+    const el = $("#status");
+    // toggle "close" class
+    el.classList.toggle("closed", !isOpen);
+    // content with formatted open & close hours
+    el.textContent = isOpen ? `Open 󠁯•󠁏 until ${formatTime(close)}` : `Close 󠁯•󠁏 opens ${formatTime(open)}`;
+}
+
+// save current cart state
+const saveCart = () => store.set("cart", STATE.cart);
+
+// function to update item quantities in cart
+function changeQty(id, delta){
+    // get menu by id
+    const m = BY_ID.get(id);
+    if (!m) return;
+    const v = view(m);
+    // increment not allowed if item sold out
+    if (v.soldOut && delta > 0){
+        return toast(`${m.name} is sold out today.`);
+    }
+    // new quantity (20 max limit)
+    const qty = Math.min(20, (STATE.cart[id] || 0) + delta);
+    // remove item from cart if quantity below 0
+    if (qty <= 0){
+        delete STATE.cart[id];
+    } else{
+        // update cart quantity
+        STATE.cart[id] = qty;
+    }
+    // update cart
+    saveCart();
+    renderAll();
+    // newly added item notification
+    if (delta > 0 && qty === 1){
+        toast(`Added Item: ${m.name}`);
+    }
+}
+
+// function to into active cart items by filtering out invalid id
+function cartLines(){
+    return Object.entries(STATE.cart).map(([id, qty]) => BY_ID.has(id) ? {v: view(BY_ID.get(id)), qty} : null).filter(Boolean);
+}
+
+// function to calculate total price
+function totals(){
+    const f = $("#checkoutForm");
+    const mode = f.mode.value;
+    const zone = zoneID(f.zone.value);
+    const lines = cartLines();
+    // price of cart items
+    const sub = lines.reduce((s, l) => s + l.v.price * l.qty, 0);
+    // delivery fee of cart items
+    const fee = mode === "delivery" && sub > 0 ? (sub >= CONFIG.freeDeliveryOrder ? 0 : zone.fee) : 0;
+    // return total
+    return {lines, sub, fee, 
+        total: sub + fee, 
+        mode, zone
+    };
 }
