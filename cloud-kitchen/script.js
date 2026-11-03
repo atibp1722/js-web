@@ -144,3 +144,156 @@ const STATE = {
     overrides: store.get("overrides", {}),
     specials: store.get("specials", {Date: null, items: {}})
 };
+
+// shorthands for selectors
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+// prevent cross scripting attack
+const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// price in Nepalese format
+const money = n => `${CONFIG.currency} ${Number(n).toLocaleString('en-NP')}`;
+// limit function triggering
+const debounce = (fn, ms = 150) => {let t; return (...a) => {clearTimeout(t); t = setTimeout(() => fn(...a), ms);};};
+// lookup for delivery zone
+const zoneID = id => CONFIG.zones.find(z => z.id === id) || CONFIG.zones[0];
+
+// function to format time to Nepal time
+function liveTime(){
+    const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Kathmandu",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    }).formatToParts(new Date());
+    // extract specific date/time part
+    const g = t => parts.find(p => p.type === t).value;
+    return {
+        // YYYY-MM-DD format
+        date: `${g("year")}-${g("month")}-${g("day")}`,
+        // minutes elapsed
+        minutes: (+g("hour") % 24) * 60 + +g("minute") 
+    };
+}
+
+// function to format time in AM or PM
+const formatTime = m => {
+    const h = Math.floor(m / 60), mm = String(m % 60).padStart(2, "0");
+    return `${((h + 11) % 12) + 1}:${mm} ${h < 12 ? "AM" : "PM"}`;
+}
+
+let toastTimer;
+// function to set toast content
+function toast(msg){
+    const t = $("#toast");
+    // toast message
+    t.textContent = msg;
+    // display notification
+    t.classList.add("show");
+    // clear after 3s
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        // hide toast
+        t.classList.remove("show")
+    }, 3000);
+}
+
+// async function to copy text
+async function textCopy(text){
+    // get text from clipboard
+    try{
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch{
+        // fallback using textarea
+        const ta = Object.assign(document.createElement("textarea"), {value: text});
+        ta.style.cssText = "position: fixed; opacity: 0;";
+        document.body.appendChild(ta);
+        ta.select();
+        let ok = false;
+        try{
+            ok = document.execCommand("copy");
+        } catch{
+
+        }
+        // clean textarea
+        document.body.removeChild(ta);
+        return ok;
+    }
+}
+
+// check if special exist for current date if no fallback to default specials
+const activeSpecials = () => STATE.specials.date === liveTime().date ? STATE.specials.items : CONFIG.defaultSpecial;
+
+// function to process object and make ready for display
+function view(m){
+    // get soldout overrides
+    const o = STATE.overrides[m.id] || {};
+    // base price
+    const base = Number.isFinite(o.price) ? o.price : m.price;
+    // current day specials
+    const sp = activeSpecials();
+    // menu item is current day special
+    const isSpecial = m.id in sp;
+    // spcial price only if it is special
+    const sPrice = isSpecial && Number.isFinite(sp[m.id]) ? sp[m.id] : null;
+    // return object with all properties
+    return {...m, base, isSpecial, 
+        price: sPrice ?? base, 
+        soldOut: !!o.soldOut
+    };
+}
+
+// function to highlight text from search
+function highlight(text, tokens){
+    if (!tokens.length){
+        return escapeHTML(text);
+    } 
+    // regular expression to match search query and escape regex characters
+    const regex = new RegExp('(' + tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi');
+    // split and pattern matching using regex
+    return text.split(regex).map((part, i) => i % 2 ? `<mark>${escapeHTML(part)}</mark>` : escapeHTML(part)),join("");
+}
+
+// function to create dynamic menu card
+function cardHTML(v, tokens = []){
+    // quantity in cart
+    const qty = STATE.cart[v.id] || 0;
+    // diet tags
+    const tags = [
+        ...v.diet.filter(d => TAGS.diet[d]).map(d => `<span class="tag diet">${escapeHTML(TAGS.diet[d])}</span>`),
+        ...v.culture.map(c => `<span class="tag cult">${escapeHTML(TAGS.culture[c])}</span>`)
+    ].join("");
+    // create helper for spice level visualization
+    const spice = v.spice ? `<span class="spice" role="img" aria-label="Spice Level ${v.spice} of 3">${"🌶️".repeat(v.spice)}</span>` : "";
+    // price display to cross put base price and show discounted price
+    const price = v.isSpecial && v.price < v.base ? `<span class="price"><s>${money(v.base)}</s>${money(v.price)}</span>` : `<span class="price">${money(v.price)}</span>`;
+    let action;
+    // if item sold out
+    if (v.soldOut){
+        action = `<button class="btn" disabled>Sold Out</button>`;
+    } else if (qty){
+        // quanity "+/-" button
+        action = `<span class="stepper"><button data-act="dec" data-id="${v.id}" aria-label="Remove ${escapeHTML(v.name)}">-</button><span aria-live="polite">${qty}</span><button data-act="inc" data-id="${v.id}" aria-label="Add One More ${escapeHTML(v.name)}">+</button></span>`;
+    } else{
+        // "+" button if item not in cart
+        action = `<button class="btn" data-act="add" data-id="${v.id}">Add +</button>`;
+    }
+    // template string literal for menu card
+    return `<article class="card ${v.soldOut ? "sold" : ""}" data-cat="${v.cat}">
+                ${v.soldOut ? '<span class="badge sold">Sold out today</span>' : v.isSpecial ? '<span class="badge">⭐ Today\'s Special</span>' : ""}
+                <div class="thumb" aria-hidden="true">${v.pic}</div>
+                <div class="body">
+                    <div class="top">
+                        <span class="dot ${isVeg(v) ? "veg" : "nonveg"}" title="${isVeg(v) ? "Vegetarian" : "Non-Vegetarian"}"></span>
+                        <h3>${highlight(v.name, tokens)}</h3>
+                    </div>
+                    <div class="np" lang="ne">${highlight(v.np, tokens)}</div>
+                    <p class="desc">${highlight(v.desc, tokens)}</p>
+                    <div class="tags">${tags} ${spice}</div>
+                    <div class="foot">${price} ${action}</div>
+                </div>
+            </article>`;
+}
