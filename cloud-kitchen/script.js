@@ -465,3 +465,115 @@ function totals(){
         mode, zone
     };
 }
+
+// function display cart with details
+function renderCart(){
+    const t = totals;
+    // quantity of items in cart
+    const count = t.lines.reduce((s, l) => s + l.qty, 0);
+    // update count
+    $("#cartCount").textContent = count;
+    // update total price
+    $("#cartTotal").textContent = count ? money(t.sub) : "";
+    // display cart line & handle if no items in cart
+    $("#cartLines").innerHTML = t.lines.length ? t.lines.map(({v, qty}) => 
+                                `<div class="line">
+                                    <span class="dot ${isVeg(v) ? "veg" : "nonveg"}"></span>
+                                    <div class="info">
+                                        <b>${escapeHTML(v.name)}</b>
+                                        <small>${money(v.price)} each${v.soldOut ? ' ⬩ <span class="warn">Sold Out -- Remove to Continue</span>' : ""}</small>
+                                    </div>
+                                    <span class="stepper">
+                                        <button data-act="dec" data-id="${v.id}" aria-label="Decrease">−</button><span>${qty}</span><button data-act="inc" data-id="${v.id}" aria-label="Increase">+</button>
+                                    </span>
+                                    <b>${money(v.price * qty)}</b>
+                                    <button class="icon" data-act="remove" data-id="${v.id}" aria-label="Remove ${escapeHTML(v.name)}">🗑️</button>
+                                </div>`).join("") : `<div class="empty">
+                                                        <div class="big">🧺</div>
+                                                        <p>Cart is empty.<br>Add something delicious!</p>
+                                                     </div>`;
+    // check whether order is eligible for free delivery                                                 
+    const free = t.mode === "delivery" && t.sub > 0 && t.sub >= CONFIG.freeDeliveryOrder;
+    // display order summary with subtotal and final total
+    $("#cartSummary").innerHTML = t.lines.length ? `<div class="summary">
+                                                        <div>
+                                                            <span>Subtotal:</span><span>${money(t.sub)}</span>
+                                                        </div>
+                                                        <div>
+                                                            <span>${t.mode === 'delivery' ? `Delivery (${escapeHTML(t.zone.name)})` : 'Pickup'}</span><span>${free ? 'FREE' : money(t.fee)}</span>
+                                                        </div>
+                                                        <div class="total">
+                                                            <span>Total</span><span>${money(t.total)}</span>
+                                                        </div>
+                                                    </div>
+                                                    ${t.mode === "delivery" && !free ? `<p class="hint">Free delivery on orders escedding ${money(CONFIG.freeDeliveryOrder)}. Estimated time: ${escapeHTML(t.zone.eta)}.</p>` : ""}` : "";
+    // apply order constraints                                                 
+    const problems = [];
+    if (t.lines.some(l => l.v.soldOut)){
+        problems.push("Remove sold out items to continue.");
+    }
+    if (t.mode === "delivery" && t.sub > 0 && t.sub < CONFIG.minDeliveryOrder){
+        problems.push(`Minimum order amount is ${money(CONFIG.minDeliveryOrder)}.`);
+    }
+    // restaurant currently closed
+    const closed = $("#status").classList.contains("closed");
+    // warning message when restaurant closed
+    $("#sendNotice").innerHTML = problems.map(p => `<div class="notice err">${escapeHTML(p)}</div>`).join("") + (closed ? `<div class="notice">We're closed right now — your order will be confirmed when we open at' ${fmtTime(CONFIG.hours.open)}.</div>` : '');
+    // disable send button if cart empty
+    const blocked = !t.lines.length || problems.length > 0;
+    $$("[data-send]").forEach(b => b.disabled = blocked);
+}
+
+/// function for when cart open or closed
+function setDrawer(open){
+    const d = $("#cart");
+    // toggle css class
+    d.classList.toggle("open", open);
+    d.inert = !open;
+    $("#scrim").hidden = !open;
+    // body scrolling diabled when cart open
+    document.body.style.overflow = open ? "hidden" : "";
+    if (open){
+        // refresh cart
+        renderCart();
+        $("[data-act=closeCart]", d).focus();
+    } else{
+        $("#openCart").focus();
+    }
+}
+
+// function sync fields for delivery
+function syncMode(){
+    const f = $("#checkoutForm"), delivery = f.mode.value === "delivery";
+    $("#deliveryFields").hidden = !delivery;
+    // address required if a mode selected
+    f.address.required = delivery;
+}
+
+// function to initialize checkout form
+function initCheckoutForm(){
+    const f = $("#checkoutForm");
+    // delivery zone dropdowns add
+    f.zone.innerHTML = CONFIG.zones.map(z => `<option value="${z.id}">${escapeHTML(z.name)} -- ${money(z.fee)}</option>`).join("");
+    // get previous checkout data
+    const saved = store.get("checkout", {});
+    // restore saved values if they exist
+    for(const k of ["name", "contact", "address", "note", "pay", "zone"]){
+        if (saved[k] && f.elements[k]){
+            f.elements[k].value = saved[k];
+        }
+    }
+    // restore delivery mode
+    if (saved.mode){
+        $$("input[name=mode]", f).forEach(r => r.checked = r.value === saved.mode);
+    }
+    syncMode();
+    // listen for changes in checkout form
+    f.addEventListener("input", () => {
+        syncMode();
+        // save current status
+        store.set('checkout', {mode: f.mode.value, zone: f.zone.value, name: f.elements.name.value, contact: f.contact.value, address: f.address.value, note: f.note.value, pay: f.pay.value});
+        // update cart with new details
+        renderCart();
+    });
+}
