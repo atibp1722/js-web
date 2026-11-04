@@ -770,3 +770,85 @@ async function handleAuth(e){
     show("Incorrect PIN");
 }
 
+// function to display dashboard on webpage
+function renderDashboard(){
+    const sp = activeSpecials();
+    // map over menu to create row for each item
+    const rows = MENU.map(m => {
+        // dtermine price use override if it is valid else use default
+        const o = STATE.overrides[m.id] || {}, 
+        price = Number.isFinite(o.price) ? o.price : m.price;
+        // check if item exist in specials list
+        const isSp = m.id in sp,
+        spPrice = isSp && Number.isFinite(sp[m.id]) ? sp[m.id] : "";
+        // return template string literal
+        return `
+               <tr data-id="${m.id}" class=""${o.soldOut ? "is-sold" : ""} data-name="${escapeHTML((m.name + "" + m.np).toLowerCase())}">
+                    <td><b>${escapeHTML(m.name)}</b><small>${escapeHTML(CATEGORIES.find(c => c.id === m.cat).label)}</small></td>
+                    <td><input type="number" data-f="price" min="0" max="99999" step="5" value="${price}" aria-label="Price for ${escapeHTML(m.name)}">></td>
+                    <td><input type="checkbox" data-f="special" ${isSp ? 'checked' : ''} aria-label="${escapeHTML(m.name)} is today's special"></td>
+                    <td><input type="number" data-f="specialPrice" min="0" max="99999" step="5" value="${spPrice}" placeholder="same" ${isSp ? '' : 'disabled'} aria-label="Special price for ${escapeHTML(m.name)}"></td>
+                    <td><input type="checkbox" data-f="soldOut" ${o.soldOut ? 'checked' : ''} aria-label="${esc(m.name)} is sold out"></td>
+               </tr>`
+    }).join("");
+    // template string literal for staff body
+    staffBody.innerHTML = `
+                          <div class="stats" id="stats"></div>
+                          <div class="dash-tools">
+                                <input type="search" id="dashFilter" palceholder="Filter dishes..." aria-label="Filter dishes">
+                                <button class="btn ghost" data-act="clearSpecials">Clear Specials</button>
+                                <button class="btn ghost" data-act="allAvailable">All Available</button>
+                                <button class="btn ghost" data-act="Logout">Logout</button>
+                          </div>
+                          <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Dish</th>
+                                            <th>Price (${CONFIG.currency})</th>
+                                            <th>Today's Special</th>
+                                            <th>Special Price</th>
+                                            <th>Sold Out</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashRows">${rows}</tbody>
+                                </table>
+                          </div>
+                          <p class="hint">Changes updated instantly, everyday new special item.</p>
+                          <details class="box"><summary>Backup &amp; Restore</summary>
+                                <div class="dash-tools" style="margin-top: 10px;">
+                                    <button class="btn ghost" data-act="export">Export</button>
+                                    <label class="btn ghost" style="cursor: pointer;">Import<input type="file" id="importFile" accept="application/json"></label>
+                                </div>
+                          </details>
+                          <details class="box"><summary>Change PIN</summary>
+                                <form class="pin-form" id="pinForm" autocomplete="off">
+                                    <input type="password" id="currPin" placeholder="Current PIN" required autocomplete="current-password">
+                                    <input type="password" id="newPin" placeholder="New PIN (min. 6 chars)" minlength="6" required autocomplete="new-password">
+                                    <button class="btn dark" type="submit">Update PIN</button>
+                                </form>
+                          </details>`;
+    updateStats();
+}
+
+// function to update item stats
+function updateStats(){
+    // item count with soldout override
+    const sold = Object.values(STATE.overrides).filter(o => o.soldOut).length;
+    // count specials
+    const sp = Object.keys(activeSpecials()).length;
+    const el = $("#stats");
+    // if it exist generate stats card
+    if (el){
+        el.innerHTML = `<div class="stat">
+                            <b>${MENU.length}</b>dishes
+                        </div>
+                        <div class="stat">
+                            <b>${sp}</b>specials today
+                        </div>
+                        <div class="stat">
+                            <b>${sold}</b>sold out
+                        </div>`;
+    }
+}
+
