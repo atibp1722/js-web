@@ -577,3 +577,81 @@ function initCheckoutForm(){
         renderCart();
     });
 }
+
+// function to create complete order message
+function buildMessage(t){
+    const f = $("#checkoutForm");
+    // unique reference code
+    const ref = "HH-" + Date.now().toString(36).slice(-5).toUpperCase();
+    // whether it is delivery or restaurant pickup
+    const where = t.mode === "delivery" ? `Delivery - ${t.zone.name}\nAddress: ${f.address.value.trim()}` : "Restaurant Pickup";
+    // map each cart item to create readable price line
+    const lines = t.lines.map(l => `${l.qty} 𝐗 ${l.v.name} -- ${money(l.v.price * l.qty)}`).join("\n");
+    // final order message format
+    return [
+        `🏞️ *New Order ${ref} -- ${CONFIG.brand}`,
+        `Name: ${f.elements.name.value.trim()}`,
+        `Phone: ${f.phone.value.trim()}`, where, '', lines, '',
+        `Sub-Total: ${money(t.sub)}`, 
+        `Delivery: ${t.mode === "delivery" ? (t.fee ? money(t.fee) : "FREE") : "--"}`,
+        `*Total: ${money(t.total)}`,
+        `Payment: $${f.pay.value}`,
+        f.note.value.trim() ? `Note: ${f.note.value.trim()}` : ""
+        // remove empty lines
+    ].filter((l, i, a) => l !== "" || a[i - 1] !== "").join("\n").trim();
+}
+
+// function to send order based on user selection
+function sendOrder(channel){
+    const f = $("#checkoutForm");
+    // fetch cart and total
+    const t = totals();
+    if (!t.lines.length) return;
+    syncMode();
+    // stop if not validated 
+    if (!f.reportValidity()) return;
+    // final message order
+    const msg = buildMessage(t);
+    const enc = encodeURIComponent(msg);
+    if (channel === "whatsapp"){
+        // whatsapp message in new tab 
+        window.open(`https://wa.me/${CONFIG.whatsapp}?text=${enc}`, '_blank', 'noopener');
+        toast("Opening WhatsApp...");
+    } else if (channel === "viber"){
+        // copy text for viber
+        textCopy(msg);
+        window.location.href = `viber://chat?number=%2B${CONFIG.viber}`;
+        toast("Order copied -- paste it in Viber.");
+    } else if (channel === "messenger"){
+        // copy text for messenger
+        textCopy(msg);
+        window.open(`https://m.me/${CONFIG.messenger}`, '_blank', 'noopener');
+        toast("Order copied -- paste it in Messenger.");
+    } else{
+        // fallback message
+        textCopy(msg).then(ok => toast(ok ? "Order copied to clipboard." : "Sorry, please select text manually."));
+    }
+}
+
+// function for floating chat buttons
+function initChatShortcuts(){
+    // default greeting
+    const hello = encodeURIComponent("Namaste, I would like to place an order.");
+    // create folating elements
+    $("#fabMenu").innerHTML = `
+                                <a class="wa" href="https://wa.me/${CONFIG.whatsapp}?text=${hello}" target="_blank" rel="noopener">WhatsApp</a>
+                                <a class="vb" href="viber://chat?number=%2B${CONFIG.viber}">Viber</a>
+                                <a class="me" href="https://m.me/${CONFIG.messenger}" target="_blank" rel="noopener">Messenger</a>
+                                <a class="tel" href="tel:${CONFIG.phone.replace(/[^+\d]/g, '')}">📞 Call</a>
+                              `;
+    // toggle open/close of float elements
+    const toggle = open => {
+        $("#fab").classList.toggle("open", open); 
+        $("#fabBtn").setAttribute("aria-expanded", open);
+    };
+    // listener to switch state on click
+    $("#fabBtn").addEventListener("click", () => toggle(!$("#fab").classList.contains("open")));
+    // open chat shortcut mneu
+    $("#heroChat").addEventListener("click", () => toggle(true));
+}
+
