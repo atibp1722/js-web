@@ -852,3 +852,173 @@ function updateStats(){
     }
 }
 
+// function to save current menu item & special
+function persistAdmin(){
+    store.set("overrides", STATE.overrides);
+    store.set("overrides", STATE.specials);
+    renderAll();
+    updateStats();
+}
+
+// function to retrieve specials for current day
+function ensureTodaySpecials(){
+    const today = liveTime().date;
+    // check special date does not match current date
+    if (STATE.specials.date !== today){
+        // reset special object for the day
+        STATE.specials = {
+            date: today,
+            items: {...CONFIG.defaultSpecial}
+        };
+    }
+}
+
+// function to handle dashboard interactions
+function handleDashboardChange(e){
+    // login still valid
+    if (!AUTH.isStaff()){
+        toast("Session expired -- login again");
+        return renderStaff();
+    }
+    AUTH.touch();
+    // identify element, retrieve attribute, find root
+    const input = e.target;
+    const f = input.dataset.f;
+    const tr = input.closest("tr");
+    if (!f || !tr) return;
+    // get menu item id
+    const id = tr.dataset.id;
+    const m = BY_ID.get(id);
+    // get override object for menu item
+    const o = STATE.overrides[id] = STATE.overrides[id] || {};
+    // if changes made to price field
+    if (f === "price"){
+        const n = Number(input.value);
+        if (input.value === "" || !Number.isFinite(n) || n < 0 || n > 99999){
+            // reset to previous override in case validation fails
+            input.value = Number.isFinite(o.price) ? o.price : m.price;
+            return toast("Enter a valid price.");
+        }
+        if (n === m.price){
+            delete o.price;
+        } else{
+            o.price = Math.round(n);
+        }
+    // changes made to soldout checkbox
+    } else if(f === "soldOut"){
+        if (input.checked){
+            o.soldOut = true;
+        } else{
+            delete o.soldOut
+        }
+        // toggle and switch css class
+        tr.classList.toggle("is-sold", input.checked);
+    // changes to today special checkbox    
+    } else if(f === "special"){
+        ensureTodaySpecials();
+        const sp = $("[data-f=specialPrice]", tr);
+        if (input.checked){
+            // set item id to null
+            STATE.specials.items[id] = null;
+        } else{
+            // remove item from specials and clear price
+            delete STATE.specials.items[id];
+            sp.value = "";
+        }
+        // enable/disable input based on checkbox
+        sp.disabled = !input.checked;
+    // changes to special price     
+    } else if (f === "specialPrice"){
+        ensureTodaySpecials();
+        const n = Number(input.value);
+        // set price of specials
+        STATE.specials.items[id] = input.value === "" || Number.isFinite(n) || n < 0 ? null : Math.round(n);
+        if (input.value !== "" && STATE.specials.items[id] === null){
+            input.value ="";
+        }
+    }
+    // clean empty override objects
+    if (!Object.keys(o).length){
+        delete STATE.overrides[id];
+    }
+    persistAdmin();
+    toast("Saved.");
+}
+
+// function to handle pin change
+async function handlePinChange(e){
+    e.preventDefault();
+    // verify current pin is correct
+    if (!(await AUTH.verify($("#curPin").value))){
+        return toast("Curent PIN is incorrect.");
+    }
+    // update to new pin in form
+    await AUTH.setPIN($("#newPin").value);
+    toast("PIN updated.");
+    e.target.reset();
+}
+
+// function to export data 
+function exportData(){
+    // bolb initialization with json serialization
+    const blob = new Blob([JSON.stringify({
+        overrides: STATE.overrides, 
+        specials: STATE.specials}, null, 2)], 
+        {type: "application/json"});
+    // link to download file    
+    const a = Object.assign(document.createElement("a"), {
+        href: URL.createObjectURL(blob), 
+        download: `himalicious-complete-menu-${liveTime().date}.json`
+    });
+    // trigger download
+    a.click();
+    // clear object afer 1s
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// function to import data
+function importData(file){
+    const reader = new FileReader();
+    // file read successfully
+    reader.onload = () => {
+        try{
+            // parse json data
+            const d = JSON.parse(reader, result);
+            const ov = {}; 
+            const items = {};
+            // iterate override to clean and validate data
+            for(const [id, o] of Object.entries(d.overrides || {})){
+                if (!BY_ID.has(id) || typeof o !== "object" || !o) continue;
+                const clean = {};
+                if (Number.isFinite(o.price) && o.price >= 0 && o.price <= 9999){
+                    clean.price = Math.round(o.price);
+                }
+                if (o.soldOut === true){
+                    clean.soldOut = true;
+                }
+                if (Object.keys(clean).length){
+                    ov[id] = clean;
+                }
+            }
+            const s = d.specials || {};
+            // iterate special items
+            for(const[id, p] of Object.entries(s.items || {})){
+                if (BY_ID.has(id)){
+                    items[id] = Number.isFinite(p) && p >= 0 ? Math.round(p) : null;
+                }
+            }
+            // update state with clean data
+            STATE.overrides = ov;
+            STATE.specials = {date: /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : null, items};
+            // save data and show success toast
+            persistAdmin();
+            renderDashboard();
+            toast("Backup imported.");
+        } catch{
+            // catch any errors
+            toast("Sorry, file cannot be backed up.")
+        }
+    };
+    // read file as plain text
+    reader.readAsText(file);
+}
