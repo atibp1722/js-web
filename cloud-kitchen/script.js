@@ -642,8 +642,7 @@ function initChatShortcuts(){
                                 <a class="wa" href="https://wa.me/${CONFIG.whatsapp}?text=${hello}" target="_blank" rel="noopener">WhatsApp</a>
                                 <a class="vb" href="viber://chat?number=%2B${CONFIG.viber}">Viber</a>
                                 <a class="me" href="https://m.me/${CONFIG.messenger}" target="_blank" rel="noopener">Messenger</a>
-                                <a class="tel" href="tel:${CONFIG.phone.replace(/[^+\d]/g, '')}">📞 Call</a>
-                              `;
+                                <a class="tel" href="tel:${CONFIG.phone.replace(/[^+\d]/g, '')}">📞 Call</a>`;
     // toggle open/close of float elements
     const toggle = open => {
         $("#fab").classList.toggle("open", open); 
@@ -653,5 +652,121 @@ function initChatShortcuts(){
     $("#fabBtn").addEventListener("click", () => toggle(!$("#fab").classList.contains("open")));
     // open chat shortcut mneu
     $("#heroChat").addEventListener("click", () => toggle(true));
+}
+
+// security handling object
+const AUTH = {
+    // hasg pin with random salt
+    async hash(salt, pin){
+        // encode string to bytes
+        const data = new TextEncoder().encode(salt + ":" + pin);
+        // web crypto api
+        if (crypto?.subtle){
+            const buf = await crypto.subtle.digest("SHA-256", data);
+            return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+        // fallback if web crypto fails
+        let h = 2166136261;
+        for(const b of data){
+            h ^= b;
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return "f" + h.toString(16);
+    }, 
+    // get authenticaton record
+    record: () => store.get("auth", null),
+    // set new pin using random salt and hash
+    async setPIN(pin){
+        const salt = [...crypto.getRandomValues(new Uint8Array(12))].map(b => b.toString(16).padStart(2, "0")).join("");
+        store.set("auth", {salt, hash: await this.hash(salt, pin)});
+    }, 
+    // verify pin against record hash
+    async verify(pin){
+        const r = this.record();
+        return !!r && (await this.hash(r.salt, pin)) === r.hash;
+    },
+    // current staff session valid or not
+    isStaff: () => +sessionStorage.getItem("hh:until") > Date.now(),
+    // start staff session
+    touch: () => sessionStorage.setItem("hh:until", Date.now() + CONFIG.staffSession * 60000),
+    // clear timestamp for logout
+    logout: () => sessionStorage.removeItem("hh:until"),
+    // consecutive failed attempts to login
+    fails: 0,
+    // login locked due to too many fals
+    lockUntil: 0
+};
+
+const dlg = $("#staffDlg"); 
+const staffBody = $("#staffBody");
+
+// function for staff modal dialog
+function openStaff(){
+    renderStaff();
+    if (!dlg.open){
+        dlg.showModal();
+    }
+}
+
+// function to display content inside staff element
+function renderStaff(){
+    // if already authenticated jump to dashboard 
+    if (AUTH.isStaff()){
+        return renderDashboard();
+    }
+    // pin created previously
+    const hasPIN = !!AUTH.record();
+    // form template literal
+    staffBody.innerHTML = `
+                          <form class="auth" id="authForm" autocomplete="off">
+                                <h3>${hasPIN ? "Staff Login" : "Create Staff PIN"}</h3>
+                                <p class="hint">${hasPIN ? "Enter PIN to manage menu." : "First time: choose 6 digit PIN code. Only for staff."}</p>
+                                <input type="password" id="pin1" placeholder="${hasPIN ? 'PIN' : 'New PIN (6 characters)'}" minlength="${hasPIN ? 1:6}" required autocomplete="${hasPIN ? 'current-password' : 'new-password'}">
+                                ${hasPIN ? "" : '<input type="password" id="pin2" placeholder="Re-enter PIN" required autocomplete="new-password">'}
+                                <div id="authMsg" class="notice err" hidden></div>
+                                <button class="btn dark" type="submit">${hasPIN ? "Login" : "Save PIN & Continue"}</button>
+                          </form>`;
+    $("#pin1").focus();
+}
+
+// function to ensure pin verfification
+async function handleAuth(e){
+    e.preventDefault();
+    const msg = $("#authMsg");
+    // error message inside form 
+    const show = t => {
+        msg.textContent = t; 
+        msg.hidden = false;
+    };
+    const pin = $("#pin1").value;
+    // if no pin exists
+    if (!AUTH.record()){
+        if (pin.length < 6){
+            return show("Must be 6 characters long.");
+        }
+        if (pin !== $("#pin2").value){
+            return show("PINS don't match.");
+        }
+        await AUTH.setPIN(pin);
+        AUTH.touch();
+        toast("PIN saved.");
+        return renderDashboard();
+    }
+    // prevent brute-force attempt
+    if (Date.now() < AUTH.lockUntil){
+        return show(`Too many login attempts. Please wait for ${Math.ceil((AUTH.lockUntil - Date.now()) / 1000)}s.`);
+    }
+    // login attempt with existing pin
+    if (await AUTH.verify(pin)){
+        AUTH.fails = 0;
+        AUTH.touch();
+        return renderDashboard();
+    }
+    // increment counter and lockout after consecutive failures  
+    if (++AUTH.fails >= 5){
+        AUTH.lockUntil = Date.now() + 30000;
+        AUTH.fails = 0;
+    }
+    show("Incorrect PIN");
 }
 
