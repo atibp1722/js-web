@@ -1022,3 +1022,192 @@ function importData(file){
     // read file as plain text
     reader.readAsText(file);
 }
+
+// function display all components on webpage
+function renderAll(){
+    renderSpecials();
+    renderMenu();
+    renderCart();
+}
+
+// function to bind all events for website
+function bindEvents(){
+    const q = $("#q");
+    // listener for search bar
+    q.addEventListener("input", debounce(() => {
+        STATE.query = q.value.trim();
+        renderMenu();
+    }));
+    // listener for clear search button
+    $("#clearQ").addEventListener("click", () => {
+        q.value = "";
+        STATE.query = "";
+        renderMenu();
+        q.focus();
+    });
+    // listener for keyboard shortcuts
+    document.addEventListener("keydown", e => {
+        if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test.document.activeElement.tagName && !dlg.open){
+            e.preventDefault();
+            e.focus();
+        }
+        if (e.key === "Escape" && $("#cart").classList.contains("open")){
+            setDrawer(false);
+        }
+    });
+    // listener for filter chips
+    $("#controls").addEventListener("click", e => {
+        const b = target.closest(".chip");
+        if (!b) return;
+        if (b.dataset.cat){
+            STATE.cat = b.dataset.cat;
+        }
+        if (b.dataset.diet){
+            STATE.diet.has(b.dataset.diet) ? STATE.diet.delete(b.dataset.diet) : STATE.diet.add(b.dataet.diet);
+        }
+        if (b.dataset.cult){
+            STATE.culture = b.dataset.cult;
+        }
+    });
+    // listener for sorting based changes
+    $("#sort").addEventListener("change", e => {
+        STATE.sort = e.target.value;
+        renderMenu();
+    });
+    // listener for hide sold items toggle
+    $("#hideSold").addEventListener("change", e => {
+        STATE.hideSold = e.target.checked;
+        renderMenu();
+    });
+    // listener for click event delegation
+    document.addEventListener("click", e => {
+        const el = e.target.closest([data-act]);
+        if (!el) return;
+        const id = el.dataset.id;
+        switch(el.dataset.act){
+            // increase cart quantity
+            case "add": case "inc": 
+                changeQty(id, 1);
+                break;
+            // decrease cart quantity
+            case "dec": 
+                changeQty(id, -1);
+                break;
+            // remove from cart
+            case "remove": 
+                delete STATE.cart[id]; 
+                saveCart(); 
+                renderAll(); 
+                break;
+            // clear entire cart (ask before clearing)
+            case "clearCart":
+                if (Object.keys(STATE.cart).length && confirm("Empty the cart?")){
+                    STATE.cart = {};
+                    saveCart();
+                    renderAll();
+                    break;
+                }
+            // close cart drawer
+            case "closeCart":
+                setDrawer(false);
+                break;
+            // reset filters to default
+            case "resetFilters": 
+                Object.assign(STATE, {
+                    query: "", 
+                    cat: "all", 
+                    culture: "all", 
+                    hideSold: false
+                }); 
+                STATE.diet.clear();
+                $("#q").value = ""; 
+                $("#hideSold").checked = false;
+                renderControls(); 
+                renderMenu(); 
+                break;
+            // close staff modal
+            case "closeStaff": 
+                dlg.close(); 
+                break;
+            // logout staff
+            case "logout":
+                AUTH.logout();
+                renderStaff();
+                toast("Logged out.");
+                break;
+            // clear all special (first check if staff)
+            case "clearSpecials":
+                if (!AUTH.isStaff()){
+                    renderStaff();
+                    AUTH.touch();
+                }
+                STATE.specials = {date: liveTime().date, items: {}};
+                persistAdmin();
+                renderDashboard();
+                toast("Specials cleared.");
+                break;
+            // mark all items as avialable
+            case "allAvailable":
+                if (!AUTH.isStaff()){
+                    renderStaff();
+                    AUTH.touch();
+                }
+                // remove soldout override from all items
+                for(const k of Object.keys(STATE.overrides)){
+                    delete STATE.overrides[k].soldOut;
+                    if (!Object.keys(STATE.overrides[k]).length){
+                        delete STATE.overrides[k];
+                    }
+                }
+                persistAdmin();
+                renderDashboard();
+                toast("All items marked as available.");
+                break;
+            case "export":
+                if (!AUTH.isStaff()){
+                    renderStaff();
+                    exportData();
+                    break;
+                }
+        }
+    });
+    // cart toggle and checkout form listeners
+    $("#openCart").addEventListener("click", () => setDrawer(true));
+    $("#scrim").addEventListener("click", () => setDrawer(false));
+    $$("[data-send]").forEach(b => b.addEventListener("click", () => sendOrder(b.dataset.send)));
+    $("#checkoutForm").addEventListener("submit", e => e.preventDefault());
+    // url hashing
+    $("#openStaff").addEventListener("click", openStaff);
+    location.hash === "#staff" && openStaff();
+    // listeners for staff body
+    staffBody.addEventListener("submit", e => {
+        if (e.target.id === "authForm"){
+            handleAuth(e);
+        }
+        if (e.target.id === "pinForm"){
+            handlePinChange(e);
+        }
+    });
+    // listner for import files
+    staffBody.addEventListener("change", e => {
+        if (e.target.id === "importFile"){
+            if (AUTH.isStaff() && e.target.files[0]){
+                importData(e.target.file[0]);
+                return;
+            }
+        }
+    });
+    staffBody.addEventListener("input", e => {
+        if (e.target.id !== "dashFilter") return;
+        const t = e.target.value.toLowerCase().trim();
+        $$("#dashRows tr").forEach(tr => tr.hidden = t && !tr.dataset.name.includes(t));
+    });
+    // synchronization using local storage
+    window.addEventListener("storage", e => {
+        if (!e.key?.startsWith(store.prefix)) return;
+        STATE.cart = store.get("cart", {});
+        STATE.overrides = store.get("overrides", {});
+        STATE.specials = store.get("specials", {date: null, items: {}});
+        renderAll();
+    })
+}
