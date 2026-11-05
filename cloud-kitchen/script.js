@@ -1212,19 +1212,23 @@ function bindEvents(){
     })
 }
 
+// function for initialization
 function init(){
+    // set content and dynamic title
     document.title = `${CONFIG.brand} -- Himalicious Cloud Kitchen, KTM`;
     $("#brandName").textContent = CONFIG.brand;
     $("#footBrand").textContent = CONFIG.brand;
     $("#year").textContent = new Date().getFullYear();
+    // insert data into website parts
     $("#heroFacts").innerHTML = `<span>🕙 ${formatTime(CONFIG.hours.open)} – ${formatTime(CONFIG.hours.close)} daily</span><span>🛵 From ${money(Math.min(...CONFIG.zones.map(z => z.fee)))} delivery</span><span>🎁 Free delivery over ${money(CONFIG.freeDeliveryOrder)}</span>`;
     $("#footAbout").innerHTML = `Kathmandu based cloud kitchen cooking Nepal\'s regional foods -- fresh and one dish at a time with no dine-in overhead.`;
     $("#footContact").innerHTML = `${escapeHTML(CONFIG.address)}<br>📞 <a href="tel:${CONFIG.phone.replace(/[^+\d]/g, '')}">${escapeHTML(CONFIG.phone)}</a><br>Daily ${formatTime(CONFIG.hours.open)} – ${formatTime(CONFIG.hours.close)}`;
-
+    // set site header for css styling 
     const setHeader = () => document.documentElement.style.setProperty("--hdr", $("#siteHeader").offsetHeight + "px");
     setHeader();
+    // recalibrate window uppn change
     window.addEventListener("resize", setHeader);
-
+    // function calls
     renderControls();
     renderStatus();
     initCheckoutForm();

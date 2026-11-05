@@ -22,7 +22,8 @@
             </a>
             <span class="status" id="status" aria-live="polite"></span>
             <button class="btn cart-btn" id="openCart" aria-label="Open cart">🛒
-                <span id="cartCount">0</span class="hide-sm" id="cartTotal"><span></span>
+                <span id="cartCount">0</span>
+                <span class="hide-sm" id="cartTotal"></span>
             </button>
         </div>
     </header>
@@ -91,7 +92,7 @@
             <div><h3>Reach Us</h3><p id="footContact"></p></div>
             <div><h3>Good to Know</h3>
                 <p>Price included are in NPR. Food is cooked fresh to order -- please tell us in advance regarding any cultural preferences. Dietray markers are included for further information.</p>
-                <p>©<span id="year"></span> о <button class="staff-link" type="button"></button></p>
+                <p>©<span id="year"></span> • <button class="staff-link" type="button"></button></p>
             </div>
         </div>
     </footer>
@@ -104,7 +105,7 @@
             <form class="checkout" id="checkoutForm" novalidate>
                 <div class="seg" id="radioGroup" aria-label="Order type">
                     <label><input type="radio" name="mode" value="delivery" checked>🛵 Delivery</label>
-                    <label><input type="radio" name="mode" value="delivery">🏪 Pickup</label>
+                    <label><input type="radio" name="mode" value="pickup">🏪 Pickup</label>
                 </div>
                 <label>Full Name <input name="name" autocomplete="name" required maxlength="30"></label>
                 <label>Contact No. <input name="contact" type="tel" inputmode="numeric" autocomplete="tel" required maxlength="10" pattern="9[678][0-9][8]" placeholder="9XXXXXXXXX"></label>
