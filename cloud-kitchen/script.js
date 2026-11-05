@@ -1211,3 +1211,30 @@ function bindEvents(){
         renderAll();
     })
 }
+
+function init(){
+    document.title = `${CONFIG.brand} -- Himalicious Cloud Kitchen, KTM`;
+    $("#brandName").textContent = CONFIG.brand;
+    $("#footBrand").textContent = CONFIG.brand;
+    $("#year").textContent = new Date().getFullYear();
+    $("#heroFacts").innerHTML = `<span>🕙 ${formatTime(CONFIG.hours.open)} – ${formatTime(CONFIG.hours.close)} daily</span><span>🛵 From ${money(Math.min(...CONFIG.zones.map(z => z.fee)))} delivery</span><span>🎁 Free delivery over ${money(CONFIG.freeDeliveryOrder)}</span>`;
+    $("#footAbout").innerHTML = `Kathmandu based cloud kitchen cooking Nepal\'s regional foods -- fresh and one dish at a time with no dine-in overhead.`;
+    $("#footContact").innerHTML = `${escapeHTML(CONFIG.address)}<br>📞 <a href="tel:${CONFIG.phone.replace(/[^+\d]/g, '')}">${escapeHTML(CONFIG.phone)}</a><br>Daily ${formatTime(CONFIG.hours.open)} – ${formatTime(CONFIG.hours.close)}`;
+
+    const setHeader = () => document.documentElement.style.setProperty("--hdr", $("#siteHeader").offsetHeight + "px");
+    setHeader();
+    window.addEventListener("resize", setHeader);
+
+    renderControls();
+    renderStatus();
+    initCheckoutForm();
+    initChatShortcuts();
+    bindEvents();
+    renderAll();
+    setInterval(() => {
+        renderStatus();
+        renderSpecials();
+    }, 60000);
+}
+
+init();
