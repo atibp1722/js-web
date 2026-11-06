@@ -107,7 +107,7 @@ for(const m of MENU){
         CATEGORIES.find(c => c.id === m.cat).label
     ].join("");
     // parse and split into arrays
-    m_words = `${m.name} ${m.np} ${m.desc} ${syn}`.toLowerCase().split(/[^a-z0-9\u0900-\u097f]+/).filter(Boolean);
+    m._words = `${m.name} ${m.np} ${m.desc} ${syn}`.toLowerCase().split(/[^a-z0-9\u0900-\u097f]+/).filter(Boolean);
 }
 
 // wrapper for error handling
@@ -373,7 +373,7 @@ function renderMenu(){
         const items = list.filter(v => v.cat === c.id);
         // only display if category has item
         return items.length ? `<div class="section-title">
-                                    <h2>${c.pic} ${esc(c.label)}</h2><small>${items.length}</small>
+                                    <h2>${c.pic} ${escapeHTML(c.label)}</h2><small>${items.length}</small>
                                </div>
                                <div class="grid">
                                     ${items.map(v => cardHTML(v, tokens)).join('')}
@@ -468,7 +468,7 @@ function totals(){
 
 // function display cart with details
 function renderCart(){
-    const t = totals;
+    const t = totals();
     // quantity of items in cart
     const count = t.lines.reduce((s, l) => s + l.qty, 0);
     // update count
@@ -518,7 +518,7 @@ function renderCart(){
     // restaurant currently closed
     const closed = $("#status").classList.contains("closed");
     // warning message when restaurant closed
-    $("#sendNotice").innerHTML = problems.map(p => `<div class="notice err">${escapeHTML(p)}</div>`).join("") + (closed ? `<div class="notice">We're closed right now — your order will be confirmed when we open at' ${fmtTime(CONFIG.hours.open)}.</div>` : '');
+    $("#sendNotice").innerHTML = problems.map(p => `<div class="notice err">${escapeHTML(p)}</div>`).join("") + (closed ? `<div class="notice">We're closed right now — your order will be confirmed when we open at' ${formatTime(CONFIG.hours.open)}.</div>` : '');
     // disable send button if cart empty
     const blocked = !t.lines.length || problems.length > 0;
     $$("[data-send]").forEach(b => b.disabled = blocked);
@@ -591,7 +591,7 @@ function buildMessage(t){
     return [
         `🏞️ *New Order ${ref} -- ${CONFIG.brand}`,
         `Name: ${f.elements.name.value.trim()}`,
-        `Phone: ${f.phone.value.trim()}`, where, '', lines, '',
+        `Phone: ${f.elements.contact.value.trim()}`, where, '', lines, '',
         `Sub-Total: ${money(t.sub)}`, 
         `Delivery: ${t.mode === "delivery" ? (t.fee ? money(t.fee) : "FREE") : "--"}`,
         `*Total: ${money(t.total)}`,
@@ -783,7 +783,7 @@ function renderDashboard(){
         spPrice = isSp && Number.isFinite(sp[m.id]) ? sp[m.id] : "";
         // return template string literal
         return `
-               <tr data-id="${m.id}" class=""${o.soldOut ? "is-sold" : ""} data-name="${escapeHTML((m.name + "" + m.np).toLowerCase())}">
+               <tr data-id="${m.id}" class="${o.soldOut ? "is-sold" : ""} data-name="${escapeHTML((m.name + "" + m.np).toLowerCase())}">
                     <td><b>${escapeHTML(m.name)}</b><small>${escapeHTML(CATEGORIES.find(c => c.id === m.cat).label)}</small></td>
                     <td><input type="number" data-f="price" min="0" max="99999" step="5" value="${price}" aria-label="Price for ${escapeHTML(m.name)}">></td>
                     <td><input type="checkbox" data-f="special" ${isSp ? 'checked' : ''} aria-label="${escapeHTML(m.name)} is today's special"></td>
@@ -798,7 +798,7 @@ function renderDashboard(){
                                 <input type="search" id="dashFilter" palceholder="Filter dishes..." aria-label="Filter dishes">
                                 <button class="btn ghost" data-act="clearSpecials">Clear Specials</button>
                                 <button class="btn ghost" data-act="allAvailable">All Available</button>
-                                <button class="btn ghost" data-act="Logout">Logout</button>
+                                <button class="btn ghost" data-act="logout">Logout</button>
                           </div>
                           <div class="table-wrap">
                                 <table>
@@ -855,7 +855,7 @@ function updateStats(){
 // function to save current menu item & special
 function persistAdmin(){
     store.set("overrides", STATE.overrides);
-    store.set("overrides", STATE.specials);
+    store.set("specials", STATE.specials);
     renderAll();
     updateStats();
 }
@@ -932,9 +932,13 @@ function handleDashboardChange(e){
         ensureTodaySpecials();
         const n = Number(input.value);
         // set price of specials
-        STATE.specials.items[id] = input.value === "" || Number.isFinite(n) || n < 0 ? null : Math.round(n);
-        if (input.value !== "" && STATE.specials.items[id] === null){
-            input.value ="";
+        if (input.value === "") {
+            STATE.specials.items[id] = null;
+        } else if (Number.isFinite(n) &&n >= 0 &&n <= 99999){
+            STATE.specials.items[id] = Math.round(n);
+        } else{
+            input.value = "";
+            return toast("Enter a valid special price.");
         }
     }
     // clean empty override objects
@@ -949,7 +953,7 @@ function handleDashboardChange(e){
 async function handlePinChange(e){
     e.preventDefault();
     // verify current pin is correct
-    if (!(await AUTH.verify($("#curPin").value))){
+    if (!(await AUTH.verify($("#currPin").value))){
         return toast("Curent PIN is incorrect.");
     }
     // update to new pin in form
@@ -983,7 +987,7 @@ function importData(file){
     reader.onload = () => {
         try{
             // parse json data
-            const d = JSON.parse(reader, result);
+            const d = JSON.parse(reader.result);
             const ov = {}; 
             const items = {};
             // iterate override to clean and validate data
@@ -1047,7 +1051,7 @@ function bindEvents(){
     });
     // listener for keyboard shortcuts
     document.addEventListener("keydown", e => {
-        if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test.document.activeElement.tagName && !dlg.open){
+        if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !dlg.open){
             e.preventDefault();
             e.focus();
         }
@@ -1068,6 +1072,8 @@ function bindEvents(){
         if (b.dataset.cult){
             STATE.culture = b.dataset.cult;
         }
+        renderControls();
+        renderMenu();
     });
     // listener for sorting based changes
     $("#sort").addEventListener("change", e => {
@@ -1081,7 +1087,7 @@ function bindEvents(){
     });
     // listener for click event delegation
     document.addEventListener("click", e => {
-        const el = e.target.closest([data-act]);
+        const el = e.target.closest("[data-act]");
         if (!el) return;
         const id = el.dataset.id;
         switch(el.dataset.act){
@@ -1193,7 +1199,6 @@ function bindEvents(){
         if (e.target.id === "importFile"){
             if (AUTH.isStaff() && e.target.files[0]){
                 importData(e.target.file[0]);
-                return;
             }
         }
     });
@@ -1216,7 +1221,7 @@ function bindEvents(){
 function init(){
     // set content and dynamic title
     document.title = `${CONFIG.brand} -- Himalicious Cloud Kitchen, KTM`;
-    $("#brandName").textContent = CONFIG.brand;
+    $("#brand-name").textContent = CONFIG.brand;
     $("#footBrand").textContent = CONFIG.brand;
     $("#year").textContent = new Date().getFullYear();
     // insert data into website parts
