@@ -44,12 +44,12 @@
             </svg>
         </section>
         <section class="wrap" id="specialsWrap" hidden>
-            <div class="section-title"><h2>⭐ Today's Specials</h2><small id="speicalsDate"></small></div>
+            <div class="section-title"><h2>⭐ Today's Specials</h2><small id="specialsDate"></small></div>
             <div class="grid" id="specialsGrid"></div>
         </section>
         <div class="controls" id="controls">
             <div class="wrap">
-                <div class="searchbox">
+                <div class="searchBox">
                     <span aria-hidden="true">🔎</span>
                     <input id="q" type="search" autocomplete="off" aria-label="Search menu" placeholder="Search for momo, thakali...">
                     <button class="icon" id="clearQ" type="button" aria-label="Clear search" hidden>X</button>
@@ -91,7 +91,7 @@
             <div><h3 id="footBrand">Himalicious</h3><p id="footAbout"></p></div>
             <div><h3>Reach Us</h3><p id="footContact"></p></div>
             <div><h3>Good to Know</h3>
-                <p>Price included are in NPR. Food is cooked fresh to order -- please tell us in advance regarding any cultural preferences. Dietray markers are included for further information.</p>
+                <p>Price included are in NPR. Food is cooked fresh to order -- please tell us in advance regarding any cultural preferences. Dietary markers are included for further information.</p>
                 <p>©<span id="year"></span> • <button class="staff-link" type="button"></button></p>
             </div>
         </div>
@@ -108,7 +108,7 @@
                     <label><input type="radio" name="mode" value="pickup">🏪 Pickup</label>
                 </div>
                 <label>Full Name <input name="name" autocomplete="name" required maxlength="30"></label>
-                <label>Contact No. <input name="contact" type="tel" inputmode="numeric" autocomplete="tel" required maxlength="10" pattern="9[678][0-9][8]" placeholder="9XXXXXXXXX"></label>
+                <label>Contact No. <input name="contact" type="tel" inputmode="numeric" autocomplete="tel" required maxlength="10" pattern="9[678]\d{8}" placeholder="9XXXXXXXXX"></label>
                 <div id="deliveryFields" style="display: grid; gap: 10px;">
                     <label>Delivery Area <select name="zone"></select></label>
                     <label>Address &amp; Landmark <textarea name="address" maxlength="100" required placeholder="Enter tole, street name or nearby landmark..."></textarea></label>

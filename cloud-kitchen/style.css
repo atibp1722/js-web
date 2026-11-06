@@ -12,6 +12,7 @@
     --red: #c0392b;
     --blue: #1f4e8c;
     --r: 15px;
+    --hdr: 64px
     --shadow: 0 5px 25px rgba(60, 20, 10, 0.1);
     --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     --serif: "Fraunces", Georgia, serif;
@@ -84,6 +85,10 @@ mark{
 .focus-visible{
     outline: 3px solid var(--saffron);
     outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible){
+    outline: none;
 }
 
 @media(prefers-reduced-motion: reduce){
@@ -197,10 +202,15 @@ mark{
 
 .dhaka{
     height: 7px;
-    background: repeating-linear-gradient(90deg, var(--red)0 14px, var(--gold)14px 22px, var(--blue)22px 36px, white 36px 40px);
+    background: repeating-linear-gradient(
+        90deg, 
+        var(--red)0 14px, 
+        var(--gold)14px 22px, 
+        var(--blue)22px 36px, 
+        white 36px 40px);
 }
 
-.site-header .bar{
+.site-header .wrap-bar{
     display: flex;
     align-items: center;
     gap: 14px;
@@ -298,7 +308,7 @@ mark{
 
 .hero .cta{
     display: flex;
-    gap: 10;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -529,7 +539,7 @@ mark{
 }
 
 .price{
-    font-weight: 700px;
+    font-weight: 700;
     font-size: 18px;
 }
 
@@ -657,13 +667,13 @@ mark{
 
 .line{
     display: flex;
-    gap: 10;
+    gap: 10px;
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid var(--line);
 }
 
-.libe .info{
+.line .info{
     flex: 1;
     min-height: 0;
 }
@@ -1040,7 +1050,7 @@ footer{
     font-size: 14px;
 }
 
-footer .cols{
+footer .wrap-cols{
     display: grid;
     gap: 22px;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
