@@ -669,7 +669,7 @@ const AUTH = {
         let h = 2166136261;
         for(const b of data){
             h ^= b;
-            h = Math.imul(h, 16777619) >>> 0;
+            h = Math.imul(h, 16777619) >>> 0; 
         }
         return "f" + h.toString(16);
     }, 
