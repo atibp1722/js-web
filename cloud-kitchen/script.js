@@ -53,41 +53,41 @@ const DIET_FILTERS = [
 // menu containing restaurant items
 const MENU = [
     // momo related items
-    {id: "momo-chicken", cat: "momo", name: "Chicken Momo Steam", np: "", price: 200, pic: "🥟", spice: 1, diet: [], culture: ["newari", "tibetian"], desc: ""},
-    {id: "momo-buff", cat: "momo", name: "Buff Momo Steam", np: "", price: 200, pic: "", spice: 1, diet: [], culture: ["newari", "tibetian"], desc: ""},
-    {id: "momo-veg", cat: "momo", name: "Veg Momo Steam", np: "", price: 200, pic: "", spice: 1, diet: ["vegan", "gf"], culture: ["newari", "tibetian"], desc: ""},
-    {id: "momo-jhol", cat: "momo", name: "Chicken Momo Jhol", np: "", price: 200, pic: "", spice: 2, diet: [], culture: ["newari", "tibetian"], desc: ""},
-    {id: "momo-fry", cat: "momo", name: "Buff Momo Kothey", np: "", price: 200, pic: "", spice: 1, diet: [], culture: ["newari", "tibetian"], desc: ""},
+    {id: "momo-chicken", cat: "momo", name: "Chicken Momo Steam", np: "चिकेन मःमः", price: 200, pic: "🥟", spice: 1, diet: [], culture: ["newari", "tibetian"], desc: "Juicy dumplings made with chicken mince served hot with tomato based sauce and spicy chilli dip."},
+    {id: "momo-buff", cat: "momo", name: "Buff Momo Steam", np: "बफ मःमः", price: 150, pic: "🥟", spice: 1, diet: [], culture: ["newari", "tibetian"], desc: "Juicy dumplings made with minced buffalo served hot with tomato based sauce and spicy chilli dip."},
+    {id: "momo-veg", cat: "momo", name: "Veg Momo Steam", np: "भेज मःमः", price: 120, pic: "🥟", spice: 1, diet: ["vegan", "gf"], culture: ["newari", "tibetian"], desc: "Juicy dumplings made with minced veg served hot with tomato based sauce and spicy chilli dip."},
+    {id: "momo-jhol", cat: "momo", name: "Chicken Momo Jhol", np: "चिकेन झोल मःमः", price: 220, pic: "🥟", spice: 2, diet: [], culture: ["newari", "tibetian"], desc: "Juicy dumplings made with chicken mince served hot with tomato and sesame based sauce (jhol)."},
+    {id: "momo-fry", cat: "momo", name: "Buff Momo Kothey", np: "चिकेन फ्राई मःमः", price: 220, pic: "🥟", spice: 1, diet: [], culture: ["newari", "tibetian"], desc: "Pan-fried dumplings made with minced buffalo served hot with tomato based sauce and spicy chilli dip."},
     // thakali related items
-    {id: "thakali-veg", cat: "thali", name: "Veg Thakali Khana", np: "", price: 300, pic: "🍛", spice: 1, diet: ["veg", "dairy"], culture: ["thakali"], desc: ""},
-    {id: "thakali-chicken", cat: "thali", name: "Chicken Thakali Khana", np: "", price: 300, pic: "🍛", spice: 1, diet: [], culture: ["thakali"], desc: ""},
-    {id: "thakali-mutton", cat: "thali", name: "Mutton Thakali Khana", np: "", price: 300, pic: "🍛", spice: 1, diet: [], culture: ["thakali"], desc: ""},
-    {id: "thakali-fish", cat: "thali", name: "Fish Thakali Khana", np: "", price: 300, pic: "🍛", spice: 1, diet: [], culture: ["thakali"], desc: ""},
+    {id: "thakali-veg", cat: "thali", name: "Veg Thakali Khana", np: "भेज थकाली", price: 250, pic: "🍛", spice: 1, diet: ["veg", "dairy"], culture: ["thakali"], desc: "Iconic and traditional meal set featuring perfect balance of taste and nutrition with seasonal veg."},
+    {id: "thakali-chicken", cat: "thali", name: "Chicken Thakali Khana", np: "चिकेन थकाली", price: 350, pic: "🍛", spice: 1, diet: [], culture: ["thakali"], desc: "Iconic and traditional meal set featuring perfect balance of taste and nutrition with local chicken."},
+    {id: "thakali-mutton", cat: "thali", name: "Mutton Thakali Khana", np: "मटन थकाली", price: 500, pic: "🍛", spice: 1, diet: [], culture: ["thakali"], desc: "Iconic and traditional meal set featuring perfect balance of taste and nutrition with tender mutton."},
+    {id: "thakali-fish", cat: "thali", name: "Fish Thakali Khana", np: "माछा थकाली", price: 400, pic: "🍛", spice: 1, diet: [], culture: ["thakali"], desc: "Iconic and traditional meal set featuring perfect balance of taste and nutrition with flavorful fish."},
     // newari related items
-    {id: "choila", cat: "newari", name: "Mushroom Choila", np: "", price: 300, pic: "🍝", spice: 2, diet: ["veg", "gf", "mild"], culture: ["newari"], desc: ""},
-    {id: "chatamari", cat: "newari", name: "Chatamari", np: "", price: 300, pic: "🍝", spice: 1, diet: ["veg"], culture: ["newari"], desc: ""},
-    {id: "bara", cat: "newari", name: "Egg & Keema Bara", np: "", price: 300, pic: "🍝", spice: 1, diet: [], culture: ["newari"], desc: ""},
-    {id: "yomari", cat: "newari", name: "Chaku (Molasses) Yomari", np: "", price: 300, pic: "🍝", spice: 1, diet: ["veg"], culture: ["newari"], desc: ""},
+    {id: "choila", cat: "newari", name: "Mushroom Choila", np: "छोइला", price: 175, pic: "🍝", spice: 2, diet: ["veg", "gf", "mild"], culture: ["newari"], desc: "The iconic spicy Newari dish made with mushrooms --- intensely tangy, smoky and savory."},
+    {id: "chatamari", cat: "newari", name: "Chatamari", np: "चटामरी", price: 150, pic: "🍝", spice: 1, diet: ["veg"], culture: ["newari"], desc: "The iconic savory Newari pizza dish made with rice flour --- intensely rich, flavorful and filling."},
+    {id: "bara", cat: "newari", name: "Egg & Keema Bara", np: "बारा", price: 180, pic: "🍝", spice: 1, diet: [], culture: ["newari"], desc: "The iconic spicy Newari pancake dish made with lentil paste --- intensely flavorful, savory and filling."},
+    {id: "yomari", cat: "newari", name: "Chaku (Molasses) Yomari", np: "योमरी", price: 75, pic: "🍝", diet: ["veg"], culture: ["newari"], desc: "The iconic steamed Newari dessert --- filled with molasses or khuwa for wonderful end of meal treat."},
     //himalayan related items
-    {id: "thupka-chicken", cat: "himalayan", name: "Boiled Chicken Thupka", np: "", price: 300, pic: "🍜", spice: 1, diet: ["dairy"], culture: ["tibetian"], desc: ""},
-    {id: "thupka-veg", cat: "himalayan", name: "Steamed Veg Thupka", np: "", price: 300, pic: "🍜", spice: 1, diet: ["veg", "vegan"], culture: ["tibetian"], desc: ""},
-    {id: "thupka-vegan", cat: "himalayan", name: "Wheat-less Noodle Thupka", np: "", price: 300, pic: "🍜", spice: 1, diet: ["veg", "vegan"], culture: ["tibetian"], desc: ""},
-    {id: "syabale", cat: "himalayan", name: "Deep Fried Mince Filled Pastry", np: "", price: 300, pic: "🍜", spice: 1, diet: [], culture: ["tibetian"], desc: ""},
+    {id: "thukpa-chicken", cat: "himalayan", name: "Boiled Chicken Thupka", np: "चिकेन थुक्पा", price: 250, pic: "🍜", spice: 1, diet: ["dairy"], culture: ["tibetian"], desc: "Comforting and warming soup from The Himalayas --- featuring hand made noodles, spiced broth with chicken."},
+    {id: "thukpa-veg", cat: "himalayan", name: "Steamed Veg Thupka", np: "भेज थुक्पा", price: 200, pic: "🍜", spice: 1, diet: ["veg", "vegan"], culture: ["tibetian"], desc: "Comforting and warming soup from The Himalayas --- featuring hand made noodles, spiced broth with saeasonal veg."},
+    {id: "thukpa-vegan", cat: "himalayan", name: "Wheat-less Noodle Thupka", np: "भिगन थुक्पा", price: 350, pic: "🍜", spice: 1, diet: ["veg", "vegan"], culture: ["tibetian"], desc: "Comforting and warming soup from The Himalayas --- featuring hand made gluten-free noodles, spiced broth with seasonal veg."},
+    {id: "syabale", cat: "himalayan", name: "Syabale (Deep Fried Mince Filled Pastry)", np: "स्याबाले", price: 60, pic: "🍜", spice: 1, diet: [], culture: ["tibetian"], desc: "Traditional deep fried pastry pocket filled with spicy minced meat served with tomato based sauce and chilli dip."},
     // sweets related items
-    {id: "juju-dhau", cat: "sweets", name: "Juju Dhau", np: "", price: 300, pic: "🍰", spice: 1, diet: ["veg", "dairy"], culture: ["newari"], desc: ""},
-    {id: "kheer", cat: "sweets", name: "Rice & Coconut Kheer", np: "", price: 300, pic: "🍰", spice: 1, diet: ["veg", "dairy"], culture: ["festive"], desc: ""},
-    {id: "anarsa", cat: "sweets", name: "Fried Rice Biscuit", np: "", price: 300, pic: "🍰", spice: 1, diet: ["veg"], culture: ["festive"], desc: ""},
+    {id: "juju-dhau", cat: "sweets", name: "Juju Dhau", np: "जुजु धौ", price: 80, pic: "🍰", diet: ["veg", "dairy"], culture: ["newari"], desc: "Also reffered to as 'King Curd' this decadently sweet yogurt makes for an incredible dessert."},
+    {id: "kheer", cat: "sweets", name: "Rice & Coconut Kheer", np: "खीर", price: 125, pic: "🍰", diet: ["veg", "dairy"], culture: ["festive"], desc: "One of the most well known desserts made with coconut milk and rice served with dry fruits."},
+    {id: "anarsa", cat: "sweets", name: "Fried Rice Biscuit", np: "अनर्सा", price: 75, pic: "🍰", diet: ["veg"], culture: ["festive"], desc: "Deep fried rice flour cookie --- crunchy on the outside wonderfully sweet and soft in the middle."},
     // snacks related items
-    {id: "mustang-aloo", cat: "snacks", name: "Deep Fried Spicy Potato Wedges", np: "", price: 300, pic: "🍟", spice: 3, diet: ["veg", "vegan"], culture: ["himalayan"], desc: ""},
-    {id: "potato-fries", cat: "snacks", name: "Classic Salted Fries", np: "", price: 300, pic: "🍟", spice: 1, diet: ["veg", "vegan"], culture: ["newari"], desc: ""},
-    {id: "aloo-char", cat: "snacks", name: "Spicy Potato Pickle", np: "", price: 300, pic: "🍟", spice: 3, diet: ["veg", "vegan"], culture: ["pahadi"], desc: ""},
-    {id: "chatpatey", cat: "snacks", name: "Spiced Puffed Wheat Salad", np: "", price: 300, pic: "🍟", spice: 3, diet: ["veg"], culture: ["pahadi"], desc: ""},
+    {id: "mustang-aloo", cat: "snacks", name: "Deep Fried Spicy Potato Wedges", np: "मुस्ताङ आलु", price: 180, pic: "🍟", spice: 3, diet: ["veg", "vegan"], culture: ["himalayan"], desc: "Nepal's take on fried potatoes --- crispy potatoes flavored with fried sichuan pepper, dried chilies and garlic."},
+    {id: "potato-fries", cat: "snacks", name: "Classic Salted Fries", np: "फ्रेन्च फ्राई", price: 150, pic: "🍟", spice: 1, diet: ["veg", "vegan"], culture: ["newari"], desc: "Iconic fried potatoes --- crispy on the outside, fluffy inside served with tomato ketchup and spicy chilli sauce."},
+    {id: "aloo-char", cat: "snacks", name: "Spicy Potato Salad", np: "आलुको अचार", price: 120, pic: "🍟", spice: 3, diet: ["veg", "vegan"], culture: ["pahadi"], desc: "Spicy potato salad made with fluffy potatoes mixed with various spices for a warm tingling flavor profile."},
+    {id: "chatpatey", cat: "snacks", name: "Chatpate (Spiced Puffed Wheat Salad)", np: "चटपटे", price: 75, pic: "🍟", spice: 3, diet: ["veg"], culture: ["pahadi"], desc: "Iconic street food dish made with puffed wheat, assortment of spices and veegtables --- best enjoyed by sharing with friends."},
     // drink related items
-    {id: "chiya", cat: "drinks", name: "Classic Milk Tea", np: "", price: 300, pic: "🫖", spice: 1, diet: ["vegan", "dairy"], culture: ["pahadi"], desc: ""},
-    {id: "tongba", cat: "drinks", name: "Millet Based Alcoholic Beverage", np: "", price: 300, pic: "🧉", spice: 1, diet: ["vegan"], culture: ["festive", "tibetian"], desc: ""},
-    {id: "coffee", cat: "drinks", name: "Classic Milk Tea", np: "", price: 300, pic: "☕", spice: 1, diet: ["veg", "vegan"], culture: ["pahadi"], desc: ""},
-    {id: "lemonade", cat: "drinks", name: "Nepali Style Lemonade", np: "", price: 300, pic: "🍋", spice: 1, diet: [], culture: ["festive"], desc: ""},
-    {id: "chiso", cat: "drinks", name: "Coke / Fanta / Sprite", np: "", price: 300, pic: "🥤", spice: 1, diet: [], culture: ["pahadi"], desc: ""}
+    {id: "chiya", cat: "drinks", name: "Classic Milk Tea", np: "चिया", price: 65, pic: "🫖", diet: ["veg", "dairy"], culture: ["pahadi"], desc: "The most famous drink in Nepal made with buffalo milk and hand picked tea leaves."},
+    {id: "tongba", cat: "drinks", name: "Millet Based Alcoholic Beverage", np: "तोङ्बा", price: 250, pic: "🧉", diet: ["vegan"], culture: ["festive", "tibetian"], desc: "Mildly alocholic beverage of soaked millet seeds inside a cylindrical flask (tongba)."},
+    {id: "coffee", cat: "drinks", name: "Classic Milk Coffee", np: "कफी", price: 80, pic: "☕", diet: ["dairy"], culture: ["pahadi"], desc: "Milk coffee made with highest quality organic coffee grown in Gulmi District."},
+    {id: "lemonade", cat: "drinks", name: "Nepali Style Lemonade", np: "कागती पानी", price: 70, pic: "🍋", diet: ["vegan"], culture: ["festive"], desc: "Refreshing cold drink made using lemons, cane sugar and water."},
+    {id: "chiso", cat: "drinks", name: "Coke / Fanta / Sprite", np: "चिसो", price: 70, pic: "🥤", diet: ["vegan"], culture: ["pahadi"], desc: "Selection of soft drinks Coke/Fanta/Sprite/Pepsi/Dew."}
 ];
 
 // map id with their objects
