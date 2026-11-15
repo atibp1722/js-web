@@ -20,7 +20,7 @@ const CONFIG = {
         {id: "ktm1", name: "Balaju / Kirtipur / Budhanilkantha", fee: 125, eta: "50-60 mins"}
     ],
     // default daily restaurant specials
-    defaultSpecial: {"Sukuti Choila": 250, "Chyangra Thakali": null},
+    defaultSpecial: {"thakali-mutton": 500, "thukpa-vegan": 350},
     // staff dashboard timeout
     staffSession: 15
 };
@@ -386,11 +386,13 @@ function renderSpecials(){
     // get cuurent day special item
     const sp = activeSpecials();
     // menu include only item present in special
-    const items = MENU.filter(m => m.id in sp).map(view);
-    // hide if no specials for the day
-    $("#specialsWrap").hidden = !items.length;
-    // display special item card grid
-    $("#specialsGrid").innerHTML = items.map(v => cardHTML(v)).join("");
+    const items = MENU.filter(m => Object.prototype.hasOwnProperty.call(sp, m.id)).map(view);
+    // hide/show sepcial items
+    const wrap = $("#specialsWrap");
+    const grid = $("#specialsGrid");
+    grid.innerHTML = items.map(v => cardHTML(v)).join("");
+    // hide when no specials exist
+    wrap.hidden = items.length === 0;
     // format date to Nepal time
     $("#specialsDate").textContent = new Date().toLocaleString('en-GB',{
         weekday: "long",
@@ -1239,6 +1241,7 @@ function init(){
     initCheckoutForm();
     initChatShortcuts();
     bindEvents();
+    ensureTodaySpecials();
     renderAll();
     setInterval(() => {
         renderStatus();
