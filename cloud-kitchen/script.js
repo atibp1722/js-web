@@ -67,7 +67,7 @@ const MENU = [
     {id: "choila", cat: "newari", name: "Mushroom Choila", np: "छोइला", price: 175, pic: "🍝", spice: 2, diet: ["veg", "gf", "mild"], culture: ["newari"], desc: "The iconic spicy Newari dish made with mushrooms --- intensely tangy, smoky and savory."},
     {id: "chatamari", cat: "newari", name: "Chatamari", np: "चटामरी", price: 150, pic: "🍝", spice: 1, diet: ["veg"], culture: ["newari"], desc: "The iconic savory Newari pizza dish made with rice flour --- intensely rich, flavorful and filling."},
     {id: "bara", cat: "newari", name: "Egg & Keema Bara", np: "बारा", price: 180, pic: "🍝", spice: 1, diet: [], culture: ["newari"], desc: "The iconic spicy Newari pancake dish made with lentil paste --- intensely flavorful, savory and filling."},
-    {id: "yomari", cat: "newari", name: "Chaku (Molasses) Yomari", np: "योमरी", price: 75, pic: "🍝", diet: ["veg"], culture: ["newari"], desc: "The iconic steamed Newari dessert --- filled with molasses or khuwa for wonderful end of meal treat."},
+    {id: "yomari", cat: "newari", name: "Chaku (Molasses) Yomari", np: "योमरी", price: 75, pic: "🍝", diet: ["veg"], culture: ["newari"], desc: "The iconic steamed Newari dessert --- filled with molasses for wonderful end of meal treat."},
     //himalayan related items
     {id: "thukpa-chicken", cat: "himalayan", name: "Boiled Chicken Thupka", np: "चिकेन थुक्पा", price: 250, pic: "🍜", spice: 1, diet: ["dairy"], culture: ["tibetian"], desc: "Comforting and warming soup from The Himalayas --- featuring hand made noodles, spiced broth with chicken."},
     {id: "thukpa-veg", cat: "himalayan", name: "Steamed Veg Thupka", np: "भेज थुक्पा", price: 200, pic: "🍜", spice: 1, diet: ["veg", "vegan"], culture: ["tibetian"], desc: "Comforting and warming soup from The Himalayas --- featuring hand made noodles, spiced broth with saeasonal veg."},
@@ -76,7 +76,7 @@ const MENU = [
     // sweets related items
     {id: "juju-dhau", cat: "sweets", name: "Juju Dhau", np: "जुजु धौ", price: 80, pic: "🍰", diet: ["veg", "dairy"], culture: ["newari"], desc: "Also reffered to as 'King Curd' this decadently sweet yogurt makes for an incredible dessert."},
     {id: "kheer", cat: "sweets", name: "Rice & Coconut Kheer", np: "खीर", price: 125, pic: "🍰", diet: ["veg", "dairy"], culture: ["festive"], desc: "One of the most well known desserts made with coconut milk and rice served with dry fruits."},
-    {id: "anarsa", cat: "sweets", name: "Fried Rice Biscuit", np: "अनर्सा", price: 75, pic: "🍰", diet: ["veg"], culture: ["festive"], desc: "Deep fried rice flour cookie --- crunchy on the outside wonderfully sweet and soft in the middle."},
+    {id: "anarsa", cat: "sweets", name: "Anarsa (Fried Rice Cookie)", np: "अनर्सा", price: 75, pic: "🍰", diet: ["veg"], culture: ["festive"], desc: "Deep fried rice flour cookie --- crunchy on the outside wonderfully sweet and soft in the middle."},
     // snacks related items
     {id: "mustang-aloo", cat: "snacks", name: "Deep Fried Spicy Potato Wedges", np: "मुस्ताङ आलु", price: 180, pic: "🍟", spice: 3, diet: ["veg", "vegan"], culture: ["himalayan"], desc: "Nepal's take on fried potatoes --- crispy potatoes flavored with fried sichuan pepper, dried chilies and garlic."},
     {id: "potato-fries", cat: "snacks", name: "Classic Salted Fries", np: "फ्रेन्च फ्राई", price: 150, pic: "🍟", spice: 1, diet: ["veg", "vegan"], culture: ["newari"], desc: "Iconic fried potatoes --- crispy on the outside, fluffy inside served with tomato ketchup and spicy chilli sauce."},
@@ -84,7 +84,7 @@ const MENU = [
     {id: "chatpatey", cat: "snacks", name: "Chatpate (Spiced Puffed Wheat Salad)", np: "चटपटे", price: 75, pic: "🍟", spice: 3, diet: ["veg"], culture: ["pahadi"], desc: "Iconic street food dish made with puffed wheat, assortment of spices and veegtables --- best enjoyed by sharing with friends."},
     // drink related items
     {id: "chiya", cat: "drinks", name: "Classic Milk Tea", np: "चिया", price: 65, pic: "🫖", diet: ["veg", "dairy"], culture: ["pahadi"], desc: "The most famous drink in Nepal made with buffalo milk and hand picked tea leaves."},
-    {id: "tongba", cat: "drinks", name: "Millet Based Alcoholic Beverage", np: "तोङ्बा", price: 250, pic: "🧉", diet: ["vegan"], culture: ["festive", "tibetian"], desc: "Mildly alocholic beverage of soaked millet seeds inside a cylindrical flask (tongba)."},
+    {id: "tongba", cat: "drinks", name: "Tongba (Millet Based Alcoholic Beverage)", np: "तोङ्बा", price: 250, pic: "🧉", diet: ["vegan"], culture: ["festive", "tibetian"], desc: "Mildly alocholic beverage of soaked millet seeds inside a cylindrical flask (tongba)."},
     {id: "coffee", cat: "drinks", name: "Classic Milk Coffee", np: "कफी", price: 80, pic: "☕", diet: ["dairy"], culture: ["pahadi"], desc: "Milk coffee made with highest quality organic coffee grown in Gulmi District."},
     {id: "lemonade", cat: "drinks", name: "Nepali Style Lemonade", np: "कागती पानी", price: 70, pic: "🍋", diet: ["vegan"], culture: ["festive"], desc: "Refreshing cold drink made using lemons, cane sugar and water."},
     {id: "chiso", cat: "drinks", name: "Coke / Fanta / Sprite", np: "चिसो", price: 70, pic: "🥤", diet: ["vegan"], culture: ["pahadi"], desc: "Selection of soft drinks Coke/Fanta/Sprite/Pepsi/Dew."}
@@ -661,7 +661,7 @@ const AUTH = {
         // encode string to bytes
         const data = new TextEncoder().encode(salt + ":" + pin);
         // web crypto api
-        if (crypto?.subtle){
+        if (typeof crypto !== "undefined" && crypto.subtle){
             const buf = await crypto.subtle.digest("SHA-256", data);
             return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
         }
@@ -783,12 +783,12 @@ function renderDashboard(){
         spPrice = isSp && Number.isFinite(sp[m.id]) ? sp[m.id] : "";
         // return template string literal
         return `
-               <tr data-id="${m.id}" class="${o.soldOut ? "is-sold" : ""} data-name="${escapeHTML((m.name + "" + m.np).toLowerCase())}">
+               <tr data-id="${m.id}" class="${o.soldOut ? "is-sold" : ""}" data-name="${escapeHTML((m.name + "" + m.np).toLowerCase())}">
                     <td><b>${escapeHTML(m.name)}</b><small>${escapeHTML(CATEGORIES.find(c => c.id === m.cat).label)}</small></td>
-                    <td><input type="number" data-f="price" min="0" max="99999" step="5" value="${price}" aria-label="Price for ${escapeHTML(m.name)}">></td>
+                    <td><input type="number" data-f="price" min="0" max="99999" step="5" value="${price}" aria-label="Price for ${escapeHTML(m.name)}"></td>
                     <td><input type="checkbox" data-f="special" ${isSp ? 'checked' : ''} aria-label="${escapeHTML(m.name)} is today's special"></td>
                     <td><input type="number" data-f="specialPrice" min="0" max="99999" step="5" value="${spPrice}" placeholder="same" ${isSp ? '' : 'disabled'} aria-label="Special price for ${escapeHTML(m.name)}"></td>
-                    <td><input type="checkbox" data-f="soldOut" ${o.soldOut ? 'checked' : ''} aria-label="${esc(m.name)} is sold out"></td>
+                    <td><input type="checkbox" data-f="soldOut" ${o.soldOut ? 'checked' : ''} aria-label="${escapeHTML(m.name)} is sold out"></td>
                </tr>`
     }).join("");
     // template string literal for staff body
@@ -1053,7 +1053,7 @@ function bindEvents(){
     document.addEventListener("keydown", e => {
         if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !dlg.open){
             e.preventDefault();
-            e.focus();
+            q.focus();
         }
         if (e.key === "Escape" && $("#cart").classList.contains("open")){
             setDrawer(false);
@@ -1061,13 +1061,13 @@ function bindEvents(){
     });
     // listener for filter chips
     $("#controls").addEventListener("click", e => {
-        const b = target.closest(".chip");
+        const b = e.target.closest(".chip");
         if (!b) return;
         if (b.dataset.cat){
             STATE.cat = b.dataset.cat;
         }
         if (b.dataset.diet){
-            STATE.diet.has(b.dataset.diet) ? STATE.diet.delete(b.dataset.diet) : STATE.diet.add(b.dataet.diet);
+            STATE.diet.has(b.dataset.diet) ? STATE.diet.delete(b.dataset.diet) : STATE.diet.add(b.dataset.diet);
         }
         if (b.dataset.cult){
             STATE.culture = b.dataset.cult;
@@ -1198,7 +1198,7 @@ function bindEvents(){
     staffBody.addEventListener("change", e => {
         if (e.target.id === "importFile"){
             if (AUTH.isStaff() && e.target.files[0]){
-                importData(e.target.file[0]);
+                importData(e.target.files[0]);
             }
         }
     });

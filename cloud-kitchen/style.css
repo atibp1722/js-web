@@ -12,7 +12,7 @@
     --red: #c0392b;
     --blue: #1f4e8c;
     --r: 15px;
-    --hdr: 64px
+    --hdr: 75px;
     --shadow: 0 5px 25px rgba(60, 20, 10, 0.1);
     --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     --serif: "Fraunces", Georgia, serif;
@@ -25,7 +25,7 @@
 
 html{
     scroll-behavior: smooth;
-    scroll-padding-top: 150px;
+    scroll-padding-top: 145px;
 }
 
 body{
@@ -84,7 +84,7 @@ mark{
 
 .focus-visible{
     outline: 3px solid var(--saffron);
-    outline-offset: 2px;
+    outline-offset: 3px;
 }
 
 button:focus:not(:focus-visible){
