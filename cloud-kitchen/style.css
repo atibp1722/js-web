@@ -210,6 +210,11 @@ button:focus:not(:focus-visible){
         white 36px 40px);
 }
 
+.wrap-bar{
+    width: min(100% - 40px, 1100px);
+    margin-inline: auto;
+}
+
 .site-header .wrap-bar{
     display: flex;
     align-items: center;
@@ -863,7 +868,7 @@ form.checkout textarea{
     background: #7360f2;
 }
 
-.fab .ms{
+.fab .me{
     background: #0a7cff;
 }
 
